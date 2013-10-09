@@ -14,6 +14,7 @@
 #include <limits>
 #include <vector>
 #include <chrono>
+#include <functional>
 
 
 namespace CommonAPI {
