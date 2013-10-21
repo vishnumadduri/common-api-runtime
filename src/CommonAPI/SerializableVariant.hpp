@@ -461,7 +461,7 @@ const _Type & Variant<_Types...>::get() const {
     if (cType == valueType_) {
         return *(reinterpret_cast<const _Type *>(&valueStorage_));
     } else {
-#ifdef __EXCEPTIONS
+#if defined(__EXCEPTIONS) || defined(WIN32)
         std::bad_cast toThrow;
         throw toThrow;
 #else
