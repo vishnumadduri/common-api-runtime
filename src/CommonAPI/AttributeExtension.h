@@ -25,7 +25,11 @@ class AttributeExtension {
     }
 
  protected:
+#ifdef WIN32
+    AttributeExtension();
+#else
     AttributeExtension() = delete;
+#endif
     AttributeExtension(_AttributeType& baseAttribute): baseAttribute_(baseAttribute) {
     }
 

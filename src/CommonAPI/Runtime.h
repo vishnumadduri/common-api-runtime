@@ -15,7 +15,6 @@
 #include <memory>
 #include <fstream>
 #include <unordered_map>
-#include <dlfcn.h>
 #include <string>
 #include <cassert>
 #include <cstring>

@@ -175,7 +175,11 @@ public:
     void operator()(const _Type&) {
         _Type value;
         inputStream_ >> value;
+#ifdef WIN32
+        lhs_.set<_Type>(std::move(value), false);
+#else
         lhs_.Variant<_Types...>::template set<_Type>(std::move(value), false);
+#endif        
     }
 
 private:
@@ -233,7 +237,11 @@ public:
 
     template<typename _Type>
     void operator()(const _Type& value) const {
+#ifdef WIN32
+        lhs_.set<_Type>(value, clear_);
+#else
         lhs_.Variant<_Types...>::template set<_Type>(value, clear_);
+#endif
     }
 
     template<typename _Type>

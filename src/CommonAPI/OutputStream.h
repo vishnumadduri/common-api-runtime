@@ -11,7 +11,6 @@
 #include "SerializableStruct.h"
 #include "SerializableVariant.h"
 #include "types.h"
-#include <unistd.h>
 #include <iostream>
 
 #include <cstdint>

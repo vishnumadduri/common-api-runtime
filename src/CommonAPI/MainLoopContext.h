@@ -10,14 +10,32 @@
 
 
 #include <stdint.h>
-#include <poll.h>
+
+#ifdef WIN32
+	#undef max
+#endif
+
+#ifdef WIN32
+#define COMMONAPI_POLLFD commonapi_pollfd
+#else
+#define COMMONAPI_POLLFD pollfd
+#endif
+
 #include <limits>
 #include <vector>
+#include <list>
 #include <chrono>
 #include <functional>
 
+#ifdef WIN32
+	#include "pollStructures.h"
+#else
+	#include <poll.h>
+#endif
 
 namespace CommonAPI {
+
+
 
 
 enum class DispatchPriority {
@@ -98,7 +116,7 @@ struct Watch {
      *
      * @return The associated file descriptor.
      */
-    virtual const pollfd& getAssociatedFileDescriptor() = 0;
+	virtual const COMMONAPI_POLLFD& getAssociatedFileDescriptor() = 0;
 
     /**
      * \brief Returns a vector of all dispatch sources that depend on the watched file descriptor.
@@ -110,9 +128,8 @@ struct Watch {
     virtual const std::vector<DispatchSource*>& getDependentDispatchSources() = 0;
 };
 
-
-constexpr int64_t TIMEOUT_INFINITE = std::numeric_limits<int64_t>::max();
-constexpr int64_t TIMEOUT_NONE = 0;
+const int64_t TIMEOUT_INFINITE = std::numeric_limits<int64_t>::max();
+const int64_t TIMEOUT_NONE = 0;
 
 
 /**
