@@ -9,6 +9,8 @@
 
 #include "types.h"
 #include "Event.h"
+#include "Proxy.h"
+#include "Attribute.h"
 
 #include <cstdint>
 #include <functional>
@@ -35,6 +37,20 @@ class AttributeExtension {
 
     _AttributeType& baseAttribute_;
 };
+
+#ifdef WIN32
+template<typename _AttributeType>
+class WINDummyAttributeExtension : public CommonAPI::AttributeExtension<_AttributeType> {
+    typedef AttributeExtension<_AttributeType> __baseClass_t;
+    WINDummyAttribute dummyAttribute;
+public:
+    WINDummyAttributeExtension() {};
+    WINDummyAttributeExtension(Proxy& proxy) :
+    AttributeExtension<_AttributeType>(dummyAttribute) {}
+
+    ~WINDummyAttributeExtension() {}
+};
+#endif
 
 } // namespace CommonAPI
 
