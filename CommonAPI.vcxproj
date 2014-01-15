@@ -58,7 +58,6 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>C:\work\bmw\2.0\gtest-1.7.0\msvc\gtest\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <Verbose>true</Verbose>
     </Lib>
   </ItemDefinitionGroup>
