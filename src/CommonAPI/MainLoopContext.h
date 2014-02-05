@@ -11,14 +11,15 @@
 
 #include <stdint.h>
 
+
 #ifdef WIN32
-	#undef max
+#include <WinSock2.h>
+#else
+#include <poll.h>
 #endif
 
 #ifdef WIN32
-#define COMMONAPI_POLLFD commonapi_pollfd
-#else
-#define COMMONAPI_POLLFD pollfd
+	#undef max
 #endif
 
 #include <limits>
@@ -27,11 +28,6 @@
 #include <chrono>
 #include <functional>
 
-#ifdef WIN32
-	#include "pollStructures.h"
-#else
-	#include <poll.h>
-#endif
 
 namespace CommonAPI {
 
@@ -116,7 +112,7 @@ struct Watch {
      *
      * @return The associated file descriptor.
      */
-	virtual const COMMONAPI_POLLFD& getAssociatedFileDescriptor() = 0;
+	virtual const pollfd& getAssociatedFileDescriptor() = 0;
 
     /**
      * \brief Returns a vector of all dispatch sources that depend on the watched file descriptor.
