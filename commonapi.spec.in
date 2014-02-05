@@ -1,6 +1,6 @@
 Name:               @PROJECT_NAME@
 Version:            @COMPONENT_VERSION@
-Release:            @PACKAGE_VERSION@
+Release:            @RPM_PACKAGE_VERSION@
 Summary:            CommonAPI
 Group:              libs
 License:            @LICENSE@
@@ -17,6 +17,12 @@ CAPI middleware for IPC
 Summary:           CommonAPI header files
 Group:             Development/Libraries
 Requires:          libcommonapi3
+
+%package staticdev
+Summary:           CommonAPI header files
+Group:             Development/Libraries
+Requires:          libcommonapi3
+
 
 %description dev
 CAPI middleware headers for IPC development
@@ -51,11 +57,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libCommonAPI.so.3.0.0
 %{_libdir}/libCommonAPI.so
 
+%files staticdev
+#%{_libdir}/libCommonAPI.la
 
 %files dev
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/CommonAPI.pc
-/usr/include/CommonAPI-2.1/CommonAPI
+/usr/include/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Attribute.h 
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/AttributeExtension.h
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ByteBuffer.h
@@ -81,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Stub.h 
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/types.h
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/utils.h
+/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfig.cmake
+/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIMacros.cmake
+/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
 
 
 %changelog dev

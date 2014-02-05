@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8.1)
 PROJECT(libcommonapi)
 
 # create the commandline variable:
-SET(PACKAGE_VERSION "r0" CACHE STRING "rpm packet version")
+SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version")
 SET(BUILD_RELEASE "No" CACHE STRING "Build release vesrion")
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 2 )
@@ -11,20 +11,15 @@ SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 5 ) 
 
 set(COMPONENT_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL})
-
-#package version is needed for building rpm packets
-#set(PACKAGE_VERSION ${COMPONENT_VERSION})
-
-
 set(COMMONAPI_API_HEADER_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION})
 
-message("RPM packet version set to ${PACKAGE_VERSION}")
+SET(PACKAGE_VERSION "${COMPONENT_VERSION}")
+
+message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
 message("Build type Release: ${BUILD_RELEASE}")
 ##################### RPM CONFIG ########################
 SET( LICENSE "MPLv2" )
 #########################################################
-message("------------------------------") 
-message("${CMAKE_CXX_FLAGS}") 
 
 if(${BUILD_RELEASE} STREQUAL "Yes")
  STRING(REGEX REPLACE "-g " "-s " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -32,13 +27,18 @@ if(${BUILD_RELEASE} STREQUAL "Yes")
  message("Building Release Version !") 
 endif(${BUILD_RELEASE} STREQUAL "Yes")
 
-message("${CMAKE_CXX_FLAGS}") 
+SET( prefix "/usr")
+SET( exec_prefix "${prefix}")
+SET( libdir "${prefix}/lib" )
+SET( datadir "${prefix}/share" )
+SET( includedir "${exec_prefix}/include" )
+set(cmakeinstalldir "${libdir}/cmake")
+set(ESCAPED_API_HEADER_VERSION "@ESCAPED_API_HEADER_VERSION@")
 
-message("------------------------------") 
-
-SET( prefix ${CMAKE_INSTALL_PREFIX})
-SET( libdir "\${exec_prefix}/lib" )
-SET( includedir "\${exec_prefix}/include" )
+message("${prefix}")
+message("${exec_prefix}")
+message("${libdir}")
+message("${includedir}")
 
 FIND_PACKAGE(PkgConfig)
 FIND_PACKAGE(Threads REQUIRED)
@@ -59,18 +59,17 @@ OPTION(ENABLE_BUILD_DOC "Set to ON to build Documentation" OFF)
 ADD_SUBDIRECTORY( src/CommonAPI )
 
 
-##############################################################################
-# installing files
-
-INSTALL(FILES CommonAPI.pc
-	DESTINATION /usr/lib/pkgconfig 
-	COMPONENT base)
-
-
 CONFIGURE_FILE(commonapi.spec.in commonapi.spec)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/CommonAPI.pc.in ${CMAKE_CURRENT_SOURCE_DIR}/CommonAPI.pc)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake @ONLY)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake @ONLY)
 CONFIGURE_FILE(CommonAPI-uninstalled.pc.in CommonAPI-uninstalled.pc)
 CONFIGURE_FILE(doxygen.cfg Doxygen)
 
-
+##############################################################################
+# installing files
+INSTALL(FILES CommonAPI.pc DESTINATION /usr/lib/pkgconfig COMPONENT base)
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIMacros.cmake )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIConfig.cmake )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIConfigVersion.cmake )
 
