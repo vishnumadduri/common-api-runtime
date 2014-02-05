@@ -86,7 +86,6 @@
     <ClInclude Include="src\CommonAPI\MainLoopContext.h" />
     <ClInclude Include="src\CommonAPI\MiddlewareInfo.h" />
     <ClInclude Include="src\CommonAPI\OutputStream.h" />
-    <ClInclude Include="src\CommonAPI\pollStructures.h" />
     <ClInclude Include="src\CommonAPI\Proxy.h" />
     <ClInclude Include="src\CommonAPI\Runtime.h" />
     <ClInclude Include="src\CommonAPI\SerializableStruct.h" />
