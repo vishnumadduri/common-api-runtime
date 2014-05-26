@@ -6,8 +6,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef WIN32
 #include <dirent.h>
 #include <dlfcn.h>
+#endif
 
 #include <algorithm>
 #include <iostream>
@@ -28,8 +30,8 @@ static bool isDynamic_ = false;
 static const char COMMONAPI_LIB_PREFIX[] = "libCommonAPI-";
 static const char MIDDLEWARE_INFO_SYMBOL_NAME[] = "middlewareInfo";
 
-
-inline bool Runtime::tryLoadLibrary(const std::string& libraryPath,
+#ifndef WIN32
+bool Runtime::tryLoadLibrary(const std::string& libraryPath,
                                     void** sharedLibraryHandle,
                                     MiddlewareInfo** foundMiddlewareInfo) {
 
@@ -46,7 +48,7 @@ inline bool Runtime::tryLoadLibrary(const std::string& libraryPath,
     //called, thereby causing memory corruptions. Therefore, we must be able to access the middlewareInfo
     //of the newly dlopened library in order to determine whether it already has been linked.
     *sharedLibraryHandle = dlopen(libraryPath.c_str(), RTLD_LAZY | RTLD_LOCAL | RTLD_DEEPBIND);
-    if (sharedLibraryHandle == NULL) {
+    if (*sharedLibraryHandle == NULL) {
         return false;
     }
 
@@ -65,7 +67,6 @@ inline bool Runtime::tryLoadLibrary(const std::string& libraryPath,
 
     return true;
 }
-
 
 bool Runtime::checkAndLoadLibrary(const std::string& libraryPath,
                                   const std::string& requestedBindingIdentifier,
@@ -102,7 +103,6 @@ bool Runtime::checkAndLoadLibrary(const std::string& libraryPath,
     return true;
 }
 
-
 bool Runtime::checkAndLoadDefaultLibrary(std::string& foundBindingIdentifier, const std::string& libraryPath) {
     void* sharedLibraryHandle = NULL;
     MiddlewareInfo* foundMiddlewareInfo;
@@ -121,7 +121,6 @@ bool Runtime::checkAndLoadDefaultLibrary(std::string& foundBindingIdentifier, co
 
     return true;
 }
-
 
 const std::vector<std::string> Runtime::readDirectory(const std::string& path) {
     std::vector<std::string> result;
@@ -167,7 +166,7 @@ const std::vector<std::string> Runtime::readDirectory(const std::string& path) {
 
     return result;
 }
-
+#endif
 
 struct LibraryVersion {
     int32_t major;
@@ -185,7 +184,7 @@ bool operator<(LibraryVersion const& lhs, LibraryVersion const& rhs) {
     return lhs.major < rhs.major;
 }
 
-
+#ifndef WIN32
 std::shared_ptr<Runtime> Runtime::checkDynamicLibraries(const std::string& requestedMiddlewareName, LoadState& loadState) {
     const std::string& middlewareLibraryPath = Configuration::getInstance().getMiddlewareLibraryPath(requestedMiddlewareName);
 
@@ -212,7 +211,6 @@ std::shared_ptr<Runtime> Runtime::checkDynamicLibraries(const std::string& reque
 
     LibraryVersion highestVersionFound = {0, 0, 0};
     std::string fqnOfHighestVersion = "";
-    struct stat filestat;
 
     for (const std::string& singleSearchPath: librarySearchPaths) {
         std::vector<std::string> orderedLibraries = readDirectory(singleSearchPath);
@@ -294,7 +292,7 @@ std::shared_ptr<Runtime> Runtime::checkDynamicLibraries(LoadState& loadState) {
 
     return std::shared_ptr<Runtime>();
 }
-
+#endif
 
 void Runtime::registerRuntimeLoader(const std::string& middlewareName, const MiddlewareRuntimeLoadFunction& middlewareRuntimeLoadFunction) {
     if (!registeredRuntimeLoadFunctions_) {
@@ -325,14 +323,23 @@ std::shared_ptr<Runtime> Runtime::load(LoadState& loadState) {
         if (defaultRuntimeLoader != registeredRuntimeLoadFunctions_->end()) {
             return (defaultRuntimeLoader->second)();
         }
+
+#ifdef WIN32
+        return std::shared_ptr<Runtime>();
+#else
         return checkDynamicLibraries(defaultBindingIdentifier, loadState);
+#endif
 
     } else {
         const auto defaultRuntimeLoader = registeredRuntimeLoadFunctions_->begin();
         if (defaultRuntimeLoader != registeredRuntimeLoadFunctions_->end()) {
             return (defaultRuntimeLoader->second)();
         }
+#ifdef WIN32
+        return std::shared_ptr<Runtime>();
+#else
         return checkDynamicLibraries(loadState);
+#endif
     }
 }
 
@@ -356,7 +363,11 @@ std::shared_ptr<Runtime> Runtime::load(const std::string& middlewareIdOrAlias, L
         return (foundRuntimeLoader->second)();
     }
 
+#ifdef WIN32
+    return std::shared_ptr<Runtime>();
+#else
     return checkDynamicLibraries(middlewareName, loadState);
+#endif
 }
 
 
