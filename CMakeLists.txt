@@ -69,7 +69,7 @@ CONFIGURE_FILE(doxygen.cfg Doxygen)
 ##############################################################################
 # installing files
 INSTALL(FILES CommonAPI.pc DESTINATION /usr/lib/pkgconfig COMPONENT base)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIMacros.cmake )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIConfig.cmake )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION}/CommonAPIConfigVersion.cmake )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
 
