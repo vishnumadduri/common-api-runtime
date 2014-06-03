@@ -65,8 +65,9 @@ if(CommonAPI_GENERATOR_JAR)
 
         # Store result in a temporary directory so a clean file listing can be retrieved via globbing
         mktmpdir(TEMP_DESTINATION)
-
-        execute_process(COMMAND ${Java_JAVA_EXECUTABLE} -jar ${CommonAPI_GENERATOR_JAR} -dest ${TEMP_DESTINATION} ${ARGS} ${FIDLS}
+	
+        #execute_process(COMMAND ${CommonAPI_GENERATOR_JAR} -dest ${TEMP_DESTINATION} ${ARGS} ${FIDLS}
+	execute_process(COMMAND ${Java_JAVA_EXECUTABLE} -jar ${CommonAPI_GENERATOR_JAR} -dest ${TEMP_DESTINATION} ${ARGS} ${FIDLS}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                         RESULT_VARIABLE EXIT_CODE
                         OUTPUT_VARIABLE GENERATOR_OUTPUT
@@ -88,7 +89,8 @@ if(CommonAPI_GENERATOR_JAR)
 
         add_custom_command(OUTPUT ${MOVED_SOURCES}
                            COMMAND ${CMAKE_COMMAND} -E make_directory ${PARAMS_DESTINATION}
-                           COMMAND ${Java_JAVA_EXECUTABLE} -jar ${CommonAPI_GENERATOR_JAR} -dest ${PARAMS_DESTINATION} ${ARGS} ${FIDLS}
+			   COMMAND ${Java_JAVA_EXECUTABLE} -jar ${CommonAPI_GENERATOR_JAR} -dest ${PARAMS_DESTINATION} ${ARGS} ${FIDLS}
+                           #COMMAND ${CommonAPI_GENERATOR_JAR} -dest ${PARAMS_DESTINATION} ${ARGS} ${FIDLS}
                            DEPENDS ${PARAMS_FIDLS} ${PARAMS_FIDL_DEPENDS})
         add_custom_target(${PARAMS_TARGET} DEPENDS ${MOVED_SOURCES})
 

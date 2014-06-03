@@ -37,7 +37,8 @@ strip_sysroot(${CommonAPI_CMAKE_PREFIX} CommonAPI_BARE_CMAKE_PREFIX)
 
 find_path(CommonAPI_INCLUDE_DIR CommonAPI/CommonAPI.h HINTS "${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_INCLUDE_DIR}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@" NO_DEFAULT_PATH)
 find_library(CommonAPI_LIBRARY CommonAPI HINTS ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_LIB_DIR} NO_DEFAULT_PATH)
-find_file(CommonAPI_GENERATOR_JAR common-api-generator.jar HINTS ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-@PACKAGE_VERSION@ NO_DEFAULT_PATH)
+find_file(CommonAPI_GENERATOR_JAR common-api-generator.jar HINTS ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-2.1.5 NO_DEFAULT_PATH)
+#find_file(CommonAPI_GENERATOR_JAR commonapi_generator HINTS ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-@PACKAGE_VERSION@ NO_DEFAULT_PATH)
 
 unset(RELATIVE_INCLUDE_DIR)
 unset(RELATIVE_LIB_DIR)
@@ -45,7 +46,8 @@ unset(RELATIVE_DATA_DIR)
 unset(CommonAPI_BARE_CMAKE_PREFIX)
 
 if(CommonAPI_FIND_REQUIRED_GENERATOR AND NOT CommonAPI_GENERATOR_JAR)
-    message(FATAL_ERROR "Could not find CommonAPI common-api-generator.jar in ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-@PACKAGE_VERSION@/")
+    message(FATAL_ERROR "Could not find CommonAPI common-api-generator.jar in ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-2.1.5/")
+    #message(FATAL_ERROR "Could not find CommonAPI commonapi_generator in ${CommonAPI_BARE_CMAKE_PREFIX}/${RELATIVE_DATA_DIR}/CommonAPI-@PACKAGE_VERSION@/")
     return()
 endif()
 
