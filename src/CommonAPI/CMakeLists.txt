@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8.1)
 FIND_PACKAGE(PkgConfig)
 file(GLOB CAPI_SRCS "*.cpp")
-add_library(CommonAPI ${CAPI_LIB_SRCS})
+add_library(CommonAPI ${CAPI_SRCS})
 target_link_libraries(CommonAPI ${DL_LIBRARY})
 set_target_properties(CommonAPI PROPERTIES VERSION 3.0.0 SOVERSION 3 LINKER_LANGUAGE C)
 
