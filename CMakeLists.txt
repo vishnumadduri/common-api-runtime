@@ -54,7 +54,7 @@ FIND_PACKAGE(Threads REQUIRED)
 ##############################################################################
 # general stuff
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
 
 message("Compiler options: ${CMAKE_CXX_FLAGS}") 
 
