@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.1)
 file(GLOB CAPI_SRCS "*.cpp")
 add_library(CommonAPI ${CAPI_SRCS})
 target_link_libraries(CommonAPI ${DL_LIBRARY})
-set_target_properties(CommonAPI PROPERTIES VERSION 3.0.1 SOVERSION 3 LINKER_LANGUAGE C)
+set_target_properties(CommonAPI PROPERTIES VERSION ${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_PATCH_VERSION} SOVERSION ${LIB_MAJOR_VERSION} LINKER_LANGUAGE C)
 
 install(TARGETS CommonAPI LIBRARY DESTINATION /usr/lib 	ARCHIVE DESTINATION lib/static	COMPONENT base)	
 

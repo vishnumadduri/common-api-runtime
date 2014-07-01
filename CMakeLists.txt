@@ -11,11 +11,17 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # create the commandline variable:
-SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version")
+SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
 SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
 SET(GTEST_INCLUDE_PATH "na" CACHE STRING "Path to the root folder of the include files of google test")
 SET(GTEST_LIB_PATH "na" CACHE STRING "Path to the folder, containing the libraries of google test")
 
+# version of library
+SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
+SET( LIB_MINOR_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
+SET( LIB_PATCH_VERSION 1 ) # used in e.g. sub cmake file, commonapi.spec.in
+
+# version of CommonAPI
 SET( ${PROJECT_NAME}_MAJOR_VERSION 2 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 6 ) 

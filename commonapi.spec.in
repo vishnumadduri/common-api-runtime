@@ -53,8 +53,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_libdir}/libCommonAPI.so.3
-%{_libdir}/libCommonAPI.so.3.0.0
+%{_libdir}/libCommonAPI.so.@LIB_MAJOR_VERSION@
+%{_libdir}/libCommonAPI.so.@LIB_MAJOR_VERSION@.@LIB_MINOR_VERSION@.@LIB_PATCH_VERSION@
 %{_libdir}/libCommonAPI.so
 
 %files staticdev
@@ -93,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIMacros.cmake
 /usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
 
+%changelog dev
+*Tue July 1 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
+- LIB_MAJOR_VERSION, LIB_MINOR_VERSION and LIB_PATCH_VERSION introduced
 
 %changelog dev
 * Wed Jan 29 2014 Gernot Wirschal <Gernot.Wirschal@bmw.de> @GENIVI_PROJECT_VERSION@
