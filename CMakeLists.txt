@@ -11,7 +11,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # create the commandline variable:
-#SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version")
+SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version")
 SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
 SET(GTEST_INCLUDE_PATH "na" CACHE STRING "Path to the root folder of the include files of google test")
 SET(GTEST_LIB_PATH "na" CACHE STRING "Path to the folder, containing the libraries of google test")
@@ -25,7 +25,7 @@ set(COMMONAPI_API_HEADER_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NA
 
 SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in e.g. CommonAPI.pc.in, *.cmake.in
 
-#message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
+message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
 message("Build type Release: ${BUILD_RELEASE}")
 ##################### RPM CONFIG ########################
 SET( LICENSE "MPLv2" )
