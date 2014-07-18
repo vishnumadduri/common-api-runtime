@@ -13,8 +13,6 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # create the commandline variable:
 SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
 SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
-SET(GTEST_INCLUDE_PATH "na" CACHE STRING "Path to the root folder of the include files of google test")
-SET(GTEST_LIB_PATH "na" CACHE STRING "Path to the folder, containing the libraries of google test")
 
 # version of library
 SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
@@ -49,11 +47,6 @@ SET( datadir "${prefix}/share" ) # used in e.g. *.cmake.in
 SET( includedir "${exec_prefix}/include" ) # used in e.g. CommonAPI.pc.in, *.cmake.in
 set(cmakeinstalldir "${libdir}/cmake") # used in e.g. *.cmake.in
 set(ESCAPED_API_HEADER_VERSION "@ESCAPED_API_HEADER_VERSION@") # used in e.g. *.cmake.in
-
-message("${prefix}")
-message("${exec_prefix}")
-message("${libdir}")
-message("${includedir}")
 
 #FIND_PACKAGE(PkgConfig)
 #FIND_PACKAGE(Threads REQUIRED)
@@ -91,24 +84,41 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATIO
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
 
 ##############################################################################
+# clean-all
+add_custom_target(clean-all COMMAND rm -rf *)
+
+##############################################################################
+# Test section
+##############################################################################
+
+##############################################################################
+# google test
+
+# check for set environment variable
+if(DEFINED ENV{GTEST_ROOT})
+    message("GTEST_ROOT is set. gtest found in $ENV{GTEST_ROOT}")
+else()
+    message("GTEST_ROOT is not defined. For building the tests environment variable
+             GTEST_ROOT have to be defined. Tests can not be built.")
+    # early exit
+    return()  # test can not be build -> make commands build_tests and check are not available
+endif()
+
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory($ENV{GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+set(BUILD_SHARED_LIBS ON)
+
+##############################################################################
+# add test directory
+add_subdirectory( src/test EXCLUDE_FROM_ALL )
+
+add_dependencies(CommonAPI_Tests gtest)
+
+##############################################################################
 # build tests
+add_custom_target(build_tests)
+add_dependencies(build_tests CommonAPI_Tests)
 
-if((NOT ${GTEST_INCLUDE_PATH} STREQUAL "na") AND
-   (NOT ${GTEST_LIB_PATH} STREQUAL "na"))
-  message("Tests will be built!")
-
-  include_directories(
-      src,
-      ${GTEST_INCLUDE_PATH}
-  )
-
-  ADD_SUBDIRECTORY( src/test )
-  
-else((NOT ${GTEST_INCLUDE_PATH} STREQUAL "na") AND
-   (NOT ${GTEST_LIB_PATH} STREQUAL "na"))
-  message("Tests will not be built!")
-endif((NOT ${GTEST_INCLUDE_PATH} STREQUAL "na") AND
-   (NOT ${GTEST_LIB_PATH} STREQUAL "na"))
-
-
+add_custom_target(check COMMAND CommonAPI_Tests)
+add_dependencies(check build_tests)
 
