@@ -109,16 +109,19 @@ add_subdirectory($ENV{GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM
 set(BUILD_SHARED_LIBS ON)
 
 ##############################################################################
-# add test directory
-add_subdirectory( src/test EXCLUDE_FROM_ALL )
+# build tests
 
-add_dependencies(CommonAPI_Tests gtest)
+enable_testing()
+
+add_custom_target(build_tests)
+
+set(CMAKE_CTEST_COMMAND ctest -V)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+
+add_dependencies(check build_tests)
 
 ##############################################################################
-# build tests
-add_custom_target(build_tests)
-add_dependencies(build_tests CommonAPI_Tests)
+# add test directory
 
-add_custom_target(check COMMAND CommonAPI_Tests)
-add_dependencies(check build_tests)
+add_subdirectory( src/test EXCLUDE_FROM_ALL )
 

@@ -6,3 +6,10 @@ include_directories(
       ${gtest_SOURCE_DIR}/include
 )
 target_link_libraries(CommonAPI_Tests CommonAPI ${DL_LIBRARY} gtest ${PTHREAD_LIBRARY})
+
+add_dependencies(CommonAPI_Tests gtest)
+
+add_dependencies(build_tests CommonAPI_Tests)
+
+add_test(NAME CommonAPI_Tests COMMAND CommonAPI_Tests)
+
