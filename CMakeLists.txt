@@ -14,6 +14,14 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
 SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
 
+##############################################################################
+# define standard installation path in case CMAKE_INSTALL_PREFIX is not set
+if (${CMAKE_INSTALL_PREFIX} STREQUAL "")
+  SET(CMAKE_INSTALL_PREFIX "/usr/local")
+endif()
+
+string(TOLOWER ${BUILD_RELEASE} BUILD_RELEASE)
+
 # version of library
 SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
 SET( LIB_MINOR_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
@@ -23,6 +31,8 @@ SET( LIB_PATCH_VERSION 1 ) # used in e.g. sub cmake file, commonapi.spec.in
 SET( ${PROJECT_NAME}_MAJOR_VERSION 2 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 6 ) 
+
+message("Project name: ${PROJECT_NAME}")
 
 set(COMPONENT_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL})
 set(COMMONAPI_API_HEADER_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}) # used in e.g. CommonAPI.pc.in, *.cmake.in
@@ -35,10 +45,32 @@ message("Build type Release: ${BUILD_RELEASE}")
 SET( LICENSE "MPLv2" )
 #########################################################
 
-if(${BUILD_RELEASE} STREQUAL "Yes")
- STRING(REGEX REPLACE "-g " "-s " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
- message("Building Release Version !") 
-endif(${BUILD_RELEASE} STREQUAL "Yes")
+##############################################################################
+# set compiler options depending on release or debug build
+
+if(${BUILD_RELEASE} STREQUAL "yes")
+  message("Building Release Version !")
+  string(REGEX MATCH "-g " DEBUGINFO "${CMAKE_CXX_FLAGS}")
+  if(${DEBUGINFO} STREQUAL "-g ")
+    string(REGEX REPLACE "-g " " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  string(REGEX MATCH "-s " RMSYMBOLTABLE "${CMAKE_CXX_FLAGS}")
+  if(NOT (${RMSYMBOLTABLE} STREQUAL "-s "))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ")
+  endif()
+else()
+  message("Building Debug Version !")
+  string(REGEX MATCH "-s " RMSYMBOLTABLE "${CMAKE_CXX_FLAGS}")
+  if(${RMSYMBOLTABLE} STREQUAL "-s ")
+    string(REGEX REPLACE "-s " " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  string(REGEX MATCH "-g " DEBUGINFO "${CMAKE_CXX_FLAGS}")
+  if(NOT (${DEBUGINFO} STREQUAL "-g "))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
+  endif()
+endif()
 
 SET( prefix "/usr") # used in e.g. CommonAPI.pc.in, *.cmake.in
 SET( exec_prefix "${prefix}") # used in e.g. CommonAPI.pc.in, *.cmake.in
@@ -48,11 +80,6 @@ SET( includedir "${exec_prefix}/include" ) # used in e.g. CommonAPI.pc.in, *.cma
 set(cmakeinstalldir "${libdir}/cmake") # used in e.g. *.cmake.in
 set(ESCAPED_API_HEADER_VERSION "@ESCAPED_API_HEADER_VERSION@") # used in e.g. *.cmake.in
 
-#FIND_PACKAGE(PkgConfig)
-#FIND_PACKAGE(Threads REQUIRED)
-
-###############################################################################
-# is using the 'pkg-config' tool
 ##############################################################################
 # general stuff
 
@@ -78,10 +105,10 @@ CONFIGURE_FILE(doxygen.cfg Doxygen)
 
 ##############################################################################
 # installing files
-INSTALL(FILES CommonAPI.pc DESTINATION /usr/lib/pkgconfig COMPONENT base)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION /usr/lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+INSTALL(FILES CommonAPI.pc DESTINATION lib/pkgconfig COMPONENT base)
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
 
 ##############################################################################
 # clean-all
