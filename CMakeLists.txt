@@ -69,7 +69,7 @@ else()
 
   string(REGEX MATCH "-g " DEBUGINFO "${CMAKE_CXX_FLAGS}")
   if(NOT ("${DEBUGINFO}" STREQUAL "-g "))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
+    set(CMAKE_CXX_for needed pluginsFLAGS "${CMAKE_CXX_FLAGS} -g ")
   endif()
 endif()
 
@@ -112,8 +112,46 @@ INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATIO
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
 
 ##############################################################################
-# clean-all
-add_custom_target(clean-all COMMAND rm -rf *)
+# maintainer-clean
+add_custom_target(maintainer-clean COMMAND rm -rf *)
+
+##############################################################################
+# build documentation
+FIND_PACKAGE(Doxygen)
+if (NOT DOXYGEN_FOUND)
+    message("Doxygen is not installed. Documentation can not be built.")
+else()
+    # set configuration variables for doxygen.in
+    set(PROJECT "GENIVI IPC Common API C++")
+    set(DOCDIR doc)
+    set(SRCDIR .)
+    set(GENERATE_HTML YES)
+    set(GENERATE_HTMLHELP NO)
+    set(GENERATE_CHI NO)
+    set(GENERATE_LATEX NO)
+    set(GENERATE_PDF NO)
+    set(GENERATE_RTF NO)
+    set(GENERATE_MAN NO)
+    set(GENERATE_XML NO)
+
+    configure_file(doxygen.in ${PROJECT_BINARY_DIR}/Doxyfile @ONLY)
+
+    add_custom_target(doc)
+
+    add_custom_target(doxygen-doc
+                      COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
+                      SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
+
+    add_dependencies(doc doxygen-doc)
+
+    add_custom_command(TARGET doc
+                       POST_BUILD
+                       COMMAND asciidoc
+                               -a version=${PACKAGE_VERSION}
+                               -b html
+                               -o doc/html/README.html 
+                               ${PROJECT_BINARY_DIR}/../README)
+endif()
 
 ##############################################################################
 # Test section
