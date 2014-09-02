@@ -62,8 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files dev
 %defattr(-,root,root,-)
-%{_libdir}/pkgconfig/CommonAPI.pc
-/usr/include/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Attribute.h 
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/AttributeExtension.h
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ByteBuffer.h
@@ -89,12 +88,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Stub.h 
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/types.h
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/utils.h
-/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfig.cmake
-/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIMacros.cmake
-/usr/lib/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
+%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfig.cmake
+%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
+%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets.cmake
+%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets-noconfig.cmake
 
 %changelog dev
-*Tue July 1 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
+* Tue Sep 2 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
+- files dev reworked
+
+%changelog dev
+* Tue July 1 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
 - LIB_MAJOR_VERSION, LIB_MINOR_VERSION and LIB_PATCH_VERSION introduced
 
 %changelog dev
