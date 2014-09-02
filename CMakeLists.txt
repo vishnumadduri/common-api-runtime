@@ -2,27 +2,6 @@ cmake_minimum_required (VERSION 2.8.1)
 
 PROJECT(libcommonapi)
 
-# OS, pthread
-set(DL_LIBRARY "")
-set(PTHREAD_LIBRARY "")
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set(DL_LIBRARY "dl")
-        set(PTHREAD_LIBRARY "pthread")
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
-# create the commandline variable:
-SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
-SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
-
-##############################################################################
-# define standard installation path in case CMAKE_INSTALL_PREFIX is not set
-if ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-  SET(CMAKE_INSTALL_PREFIX "/usr/local")
-endif()
-message("CMAKE_INSTALL_PREFIX set to: ${CMAKE_INSTALL_PREFIX}")
-
-string(TOLOWER ${BUILD_RELEASE} BUILD_RELEASE)
-
 # version of library
 SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
 SET( LIB_MINOR_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
@@ -40,14 +19,58 @@ set(COMMONAPI_API_HEADER_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NA
 
 SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in e.g. CommonAPI.pc.in, *.cmake.in
 
+# OS, pthread
+set(DL_LIBRARY "")
+set(PTHREAD_LIBRARY "")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	set(DL_LIBRARY "dl")
+        set(PTHREAD_LIBRARY "pthread")
+endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+##############################################################################
+
+# define standard installation path in case CMAKE_INSTALL_PREFIX is not set
+if ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+  SET(CMAKE_INSTALL_PREFIX "/usr/local")
+endif()
+message("CMAKE_INSTALL_PREFIX set to: ${CMAKE_INSTALL_PREFIX}")
+
+# create the commandline variables:
+OPTION(BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
+message("BUILD_SHARED_LIBS is set to value: ${BUILD_SHARED_LIBS}")
+SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
+SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
+
+# Offer the user the choice of overriding the installation directories
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_INCLUDE_DIR include/CommonAPI-${COMMONAPI_API_HEADER_VERSION} CACHE PATH "Installation directory for header files")
+if(WIN32 AND NOT CYGWIN)
+  set(DEF_INSTALL_CMAKE_DIR cmake)
+else()
+  set(DEF_INSTALL_CMAKE_DIR lib/cmake/CommonAPI-${COMPONENT_VERSION})
+endif()
+set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
+
+# Make relative paths absolute (needed later on)
+foreach(p LIB INCLUDE CMAKE)
+  set(var INSTALL_${p}_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
+
+
 message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
-message("Build type Release: ${BUILD_RELEASE}")
 ##################### RPM CONFIG ########################
 SET( LICENSE "MPLv2" )
 #########################################################
 
 ##############################################################################
 # set compiler options depending on release or debug build
+
+string(TOLOWER ${BUILD_RELEASE} BUILD_RELEASE)
+
+message("Build type Release: ${BUILD_RELEASE}")
 
 if(${BUILD_RELEASE} STREQUAL "yes")
   message("Building Release Version !")
@@ -73,23 +96,13 @@ else()
   endif()
 endif()
 
-SET( prefix "/usr") # used in e.g. CommonAPI.pc.in, *.cmake.in
-SET( exec_prefix "${prefix}") # used in e.g. CommonAPI.pc.in, *.cmake.in
-SET( libdir "${prefix}/lib" ) # used in e.g. CommonAPI.pc.in, *.cmake.in
-SET( datadir "${prefix}/share" ) # used in e.g. *.cmake.in
-SET( includedir "${exec_prefix}/include" ) # used in e.g. CommonAPI.pc.in, *.cmake.in
-set(cmakeinstalldir "${libdir}/cmake") # used in e.g. *.cmake.in
-set(ESCAPED_API_HEADER_VERSION "@ESCAPED_API_HEADER_VERSION@") # used in e.g. *.cmake.in
-
 ##############################################################################
-# general stuff
+
+# CommonAPI build section
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
 
 message("Compiler options: ${CMAKE_CXX_FLAGS}") 
-
-OPTION(BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
-OPTION(ENABLE_BUILD_DOC "Set to ON to build Documentation" OFF)
 
 include_directories(
     src
@@ -97,19 +110,50 @@ include_directories(
 
 ADD_SUBDIRECTORY( src/CommonAPI )
 
+##############################################################################
+
+# configure files
+
 CONFIGURE_FILE(commonapi.spec.in commonapi.spec)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/CommonAPI.pc.in ${CMAKE_CURRENT_SOURCE_DIR}/CommonAPI.pc)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake @ONLY)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake @ONLY)
-CONFIGURE_FILE(CommonAPI-uninstalled.pc.in CommonAPI-uninstalled.pc)
 CONFIGURE_FILE(doxygen.cfg Doxygen)
 
 ##############################################################################
-# installing files
-INSTALL(FILES CommonAPI.pc DESTINATION lib/pkgconfig COMPONENT base)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIMacros.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake DESTINATION lib/cmake/CommonAPI-${COMPONENT_VERSION} )
+# exporting, configuring and installing of cmake files
+
+# Add all targets to the build-tree export set
+export(TARGETS CommonAPI
+  FILE "${PROJECT_BINARY_DIR}/CommonAPITargets.cmake")
+
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE CommonAPI)
+
+# Create the CommonAPIConfig.cmake and CommonAPIConfigVersion files ...
+file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
+
+# ... for the build tree
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src" )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/CommonAPIConfig.cmake" @ONLY)
+
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${COMMONAPI_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CommonAPIConfig.cmake" @ONLY)
+
+# ... for both
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfigVersion.cmake.in
+  "${PROJECT_BINARY_DIR}/CommonAPIConfigVersion.cmake" @ONLY)
+
+# Install the CommonAPIConfig.cmake and CommonAPIConfigVersion.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CommonAPIConfig.cmake"
+  "${PROJECT_BINARY_DIR}/CommonAPIConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_DIR}")
+
+# Install the export set for use with the install-tree
+install(EXPORT CommonAPITargets DESTINATION
+  "${INSTALL_CMAKE_DIR}")
 
 ##############################################################################
 # maintainer-clean
@@ -170,9 +214,17 @@ else()
     return()  # test can not be build -> make commands build_tests and check are not available
 endif()
 
-set(BUILD_SHARED_LIBS OFF)
+# build google test as static library (always) -> therefore deactivate BUILD_SHARED_LIBS in case it is active
+set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
+if ("${BUILD_SHARED_LIBS}" STREQUAL "ON")
+    set(BUILD_SHARED_LIBS OFF)
+    set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 1)
+endif()
 add_subdirectory($ENV{GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
-set(BUILD_SHARED_LIBS ON)
+if ("${BUILD_SHARED_LIBS_AUTOMATIC_OFF}" STREQUAL "1")
+    set(BUILD_SHARED_LIBS ON)
+    set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
+endif()
 
 ##############################################################################
 # build tests
@@ -190,4 +242,3 @@ add_dependencies(check build_tests)
 # add test directory
 
 add_subdirectory( src/test EXCLUDE_FROM_ALL )
-
