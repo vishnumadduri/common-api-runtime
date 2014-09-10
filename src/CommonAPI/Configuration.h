@@ -22,7 +22,7 @@ static const char COMMONAPI_CONFIG_SUFFIX[] = ".conf";
 static const char COMMONAPI_GLOBAL_CONFIG_ROOT[] = "/etc/CommonAPI/";
 static const char COMMONAPI_GLOBAL_CONFIG_FQN[] = "/etc/CommonAPI/CommonAPI.conf";
 
-static const char COMMONAPI_STD_LIB_PATH[] = "/usr/lib:/usr/local/lib/";
+static const char COMMONAPI_STD_LIB_PATH[] = "/usr/lib/:/usr/local/lib/";
 static const char COMMONAPI_ENVIRONMENT_BINDING_PATH[] = "COMMONAPI_BINDING_PATH";
 
 static const char CATEGORY_ENDING = '}';
