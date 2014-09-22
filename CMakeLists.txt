@@ -162,6 +162,7 @@ add_custom_target(maintainer-clean COMMAND rm -rf *)
 ##############################################################################
 # build documentation
 FIND_PACKAGE(Doxygen)
+FIND_PROGRAM(ASCIIDOC_PATH asciidoc)
 if (NOT DOXYGEN_FOUND)
     message("Doxygen is not installed. Documentation can not be built.")
 else()
@@ -188,13 +189,18 @@ else()
 
     add_dependencies(doc doxygen-doc)
 
-    add_custom_command(TARGET doc
-                       POST_BUILD
-                       COMMAND asciidoc
-                               -a version=${PACKAGE_VERSION}
-                               -b html
-                               -o doc/html/README.html 
-                               ${PROJECT_BINARY_DIR}/../README)
+    if ("${ASCIIDOC_PATH}" STREQUAL "ASCIIDOC_PATH-NOTFOUND")
+        message("asciidoc is not installed. Readme can not be built.")
+    else()
+        message("asciidoc found")
+        add_custom_command(TARGET doc
+                           POST_BUILD
+                           COMMAND asciidoc
+                                   -a version=${PACKAGE_VERSION}
+                                   -b html
+                                   -o doc/html/README.html 
+                                   ${PROJECT_BINARY_DIR}/../README)
+    endif()
 endif()
 
 ##############################################################################
