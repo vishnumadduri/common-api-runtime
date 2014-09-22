@@ -115,7 +115,6 @@ ADD_SUBDIRECTORY( src/CommonAPI )
 # configure files
 
 CONFIGURE_FILE(commonapi.spec.in commonapi.spec)
-CONFIGURE_FILE(doxygen.cfg Doxygen)
 
 ##############################################################################
 # exporting, configuring and installing of cmake files
