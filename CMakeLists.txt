@@ -39,7 +39,11 @@ message("CMAKE_INSTALL_PREFIX set to: ${CMAKE_INSTALL_PREFIX}")
 OPTION(BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
 message("BUILD_SHARED_LIBS is set to value: ${BUILD_SHARED_LIBS}")
 SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
-SET(BUILD_RELEASE "No" CACHE STRING "Build release version")
+
+if(NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+       "Choose the type of build, options are: Debug Release." FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -65,36 +69,7 @@ message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
 SET( LICENSE "MPLv2" )
 #########################################################
 
-##############################################################################
-# set compiler options depending on release or debug build
-
-string(TOLOWER ${BUILD_RELEASE} BUILD_RELEASE)
-
-message("Build type Release: ${BUILD_RELEASE}")
-
-if(${BUILD_RELEASE} STREQUAL "yes")
-  message("Building Release Version !")
-  string(REGEX MATCH "-g " DEBUGINFO "${CMAKE_CXX_FLAGS}")
-  if("${DEBUGINFO}" STREQUAL "-g ")
-    string(REGEX REPLACE "-g " " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  string(REGEX MATCH "-s " RMSYMBOLTABLE "${CMAKE_CXX_FLAGS}")
-  if(NOT ("${RMSYMBOLTABLE}" STREQUAL "-s "))
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ")
-  endif()
-else()
-  message("Building Debug Version !")
-  string(REGEX MATCH "-s " RMSYMBOLTABLE "${CMAKE_CXX_FLAGS}")
-  if("${RMSYMBOLTABLE}" STREQUAL "-s ")
-    string(REGEX REPLACE "-s " " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  string(REGEX MATCH "-g " DEBUGINFO "${CMAKE_CXX_FLAGS}")
-  if(NOT ("${DEBUGINFO}" STREQUAL "-g "))
-    set(CMAKE_CXX_for needed pluginsFLAGS "${CMAKE_CXX_FLAGS} -g ")
-  endif()
-endif()
+message("Build type: ${CMAKE_BUILD_TYPE}")
 
 ##############################################################################
 
