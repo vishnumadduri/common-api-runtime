@@ -99,13 +99,13 @@ typename Event<_Arguments...>::Subscription Event<_Arguments...>::subscribe(List
 	subscriptionMutex_.lock();
 	subscription = nextSubscription_++;
 	// TODO?: check for key/subscription overrun
-	pendingSubscriptions_[subscription] = std::move(listener);
-	isFirstListener = (0 == subscriptions_.size());
+	auto entry = pendingSubscriptions_.emplace(subscription, std::move(listener));
+	isFirstListener = (pendingUnsubscriptions_.size() == subscriptions_.size());
 	subscriptionMutex_.unlock();
 
 	if (isFirstListener)
-		onFirstListenerAdded(listener);
-	onListenerAdded(listener);
+		onFirstListenerAdded(entry.first->second);
+	onListenerAdded(entry.first->second);
 
 	return subscription;
 }
@@ -117,7 +117,7 @@ void Event<_Arguments...>::unsubscribe(Subscription subscription) {
 	subscriptionMutex_.lock();
 	auto listener = subscriptions_.find(subscription);
 	if (subscriptions_.end() != listener
-			&& pendingUnsubscriptions_.end() != pendingUnsubscriptions_.find(subscription)) {
+			&& pendingUnsubscriptions_.end() == pendingUnsubscriptions_.find(subscription)) {
 		if (0 == pendingSubscriptions_.erase(subscription)) {
 			pendingUnsubscriptions_.insert(subscription);
 			isLastListener = (1 == subscriptions_.size());
