@@ -91,7 +91,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfig.cmake
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets.cmake
-%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets-noconfig.cmake
 
 %changelog dev
 * Tue Sep 2 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
