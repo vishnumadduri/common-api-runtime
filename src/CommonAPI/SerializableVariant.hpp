@@ -9,6 +9,7 @@
 
 #include "OutputStream.h"
 #include "InputStream.h"
+#include "Serializable.h"
 
 #include <exception>
 
@@ -147,21 +148,28 @@ private:
     TypeOutputStream& typeStream_;
 };
 
+template<typename Type, typename TypeDepl>
+class Serializable;
+
 struct OutputStreamWriteVisitor {
 public:
     OutputStreamWriteVisitor(OutputStream& outputStream) :
                     outputStream_(outputStream) {
     }
-
-    template<typename _Type>
+	//TODO: Check if << operator has to be implemented
+    template<typename _Type, typename = typename std::enable_if<std::is_base_of<SerializableBase, _Type>::value>::type>
     void operator()(const _Type& value) const {
-        outputStream_ << value;
+        //outputStream_ << value;
+        value.serialize(outputStream_);
+    }
+
+    template<typename _Type, typename = typename std::enable_if<not std::is_base_of<SerializableBase, _Type>::value>::type>
+    void operator()(const _Type& value, int t = 0) const {
     }
 
 private:
     OutputStream& outputStream_;
 };
-
 
 template<typename ... _Types>
 struct InputStreamReadVisitor {
@@ -174,12 +182,9 @@ public:
     template<typename _Type>
     void operator()(const _Type&) {
         _Type value;
-        inputStream_ >> value;
-#ifdef WIN32
-        lhs_.set<_Type>(std::move(value), false);
-#else
+        //inputStream_ >> value;
+        value.deserialize(inputStream_);
         lhs_.Variant<_Types...>::template set<_Type>(std::move(value), false);
-#endif
     }
 
 private:

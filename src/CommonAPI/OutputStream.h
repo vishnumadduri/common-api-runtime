@@ -61,6 +61,7 @@ public:
 
     virtual void writeStringType() = 0;
     virtual void writeByteBufferType() = 0;
+
     virtual void writeVersionType() = 0;
 
     virtual void beginWriteVectorType() = 0;
@@ -235,6 +236,8 @@ public:
     }
     virtual bool hasError() const = 0;
 
+    virtual void alignToBoundary(const size_t alignBoundary) = 0;
+
     virtual OutputStream& writeValue(const bool& boolValue) = 0;
 
     virtual OutputStream& writeValue(const int8_t& int8Value) = 0;
@@ -287,6 +290,7 @@ public:
     virtual void beginWriteDoubleVector(uint32_t sizeOfVector) = 0;
     virtual void beginWriteStringVector(uint32_t sizeOfVector) = 0;
     virtual void beginWriteByteBufferVector(uint32_t sizeOfVector) = 0;
+
     virtual void beginWriteVersionVector(uint32_t sizeOfVector) = 0;
 
     virtual void beginWriteInt8EnumVector(uint32_t sizeOfVector) = 0;
@@ -314,6 +318,8 @@ public:
 
     virtual bool writeRawData(const char* rawDataPtr, const size_t sizeInByte) = 0;
 };
+
+// TODO Check if << operators can be removed
 
 inline OutputStream& operator<<(OutputStream& outputStream, const bool& boolValue) {
     return outputStream.writeValue(boolValue);
@@ -442,6 +448,7 @@ private:
     static inline void doBeginWriteVector(OutputStream& outputStream, const std::vector<ByteBuffer>& vectorValue) {
         outputStream.beginWriteByteBufferVector(vectorValue.size());
     }
+
     static inline void doBeginWriteVector(OutputStream& outputStream, const std::vector<Version>& vectorValue) {
         outputStream.beginWriteVersionVector(vectorValue.size());
     }

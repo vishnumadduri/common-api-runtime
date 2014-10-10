@@ -32,6 +32,8 @@ public:
     virtual ~InputStream() {}
     virtual bool hasError() const = 0;
 
+    virtual void alignToBoundary(const size_t alignBoundary) = 0;
+
     virtual InputStream& readValue(bool& boolValue) = 0;
 
     virtual InputStream& readValue(int8_t& int8Value) = 0;
@@ -88,6 +90,7 @@ public:
     virtual void beginReadDoubleVector() = 0;
     virtual void beginReadStringVector() = 0;
     virtual void beginReadByteBufferVector() = 0;
+
     virtual void beginReadVersionVector() = 0;
 
     virtual void beginReadInt8EnumVector() = 0;
@@ -224,6 +227,7 @@ private:
     static inline void doBeginReadVector(InputStream& inputStream, const std::vector<ByteBuffer>& vectorValue) {
         inputStream.beginReadByteBufferVector();
     }
+
     static inline void doBeginReadVector(InputStream& inputStream, const std::vector<Version>& vectorValue) {
         inputStream.beginReadVersionVector();
     }

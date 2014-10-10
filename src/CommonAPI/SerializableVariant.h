@@ -243,7 +243,7 @@ private:
     template<class Variant, typename ... _FTypes>
     friend struct ApplyVoidIndexVisitor;
 
-protected:
+ protected:
     inline bool hasValue() const {
         return valueType_ < TypesTupleSize::value;
     }
