@@ -46,7 +46,7 @@ class Proxy {
 
 	virtual ProxyStatusEvent& getProxyStatusEvent() = 0;
 
-	//virtual InterfaceVersionAttribute& getInterfaceVersionAttribute() = 0;
+	virtual InterfaceVersionAttribute& getInterfaceVersionAttribute() = 0;
 };
 
 } // namespace CommonAPI

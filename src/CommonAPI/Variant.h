@@ -4,17 +4,229 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-#ifndef COMMONAPI_SERIALIZABLE_VARIANT_IMPL_
-#define COMMONAPI_SERIALIZABLE_VARIANT_IMPL_
 
-#include "OutputStream.h"
-#include "InputStream.h"
-#include "Serializable.h"
+#if !defined (COMMONAPI_INTERNAL_COMPILATION)
+#error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
+#endif
 
-#include <exception>
+#ifndef COMMONAPI_SERIALIZABLE_VARIANT_H_
+#define COMMONAPI_SERIALIZABLE_VARIANT_H_
 
+#include <memory>
+#include <cstdint>
+#include <iostream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <cassert>
 
 namespace CommonAPI {
+
+template<class _Binding>
+class InputStream;
+
+template<class _Binding>
+class OutputStream;
+
+template<typename _Type>
+struct TypeWriter;
+
+template<typename ... _Types>
+struct MaxSize;
+
+template<>
+struct MaxSize<> {
+    static const unsigned int value = 0;
+};
+
+template<typename _Type, typename ... _Types>
+struct MaxSize<_Type, _Types...> {
+    static const unsigned int current_type_size = sizeof(_Type);
+    static const unsigned int next_type_size = MaxSize<_Types...>::value;
+    static const unsigned int value =
+                    current_type_size > next_type_size ?
+                                    current_type_size : next_type_size;
+};
+
+template<typename _SearchType, typename ... _RestTypes>
+struct VariantTypeSelector;
+
+template<typename _SearchType, typename ... _RestTypes>
+struct VariantTypeSelector<_SearchType, _SearchType, _RestTypes...> {
+    typedef _SearchType type;
+};
+
+/**
+ * \brief A templated generic variant class which provides type safe access and operators
+ *
+ * A templated generic variant class which provides type safe access and operators
+ */
+template<typename ... _Types>
+class Variant {
+private:
+    typedef std::tuple_size<std::tuple<_Types...>> TypesTupleSize;
+
+public:
+
+    static const unsigned int maxSize = MaxSize<_Types...>::value;
+
+    /**
+     * \brief Construct an empty variant
+     *
+     * Construct an empty variant
+     */
+    Variant();
+
+
+    /**
+     * \brief Copy constructor. Must have identical templates.
+     *
+     * Copy constructor. Must have identical templates.
+     *
+     * @param fromVariant Variant to copy
+     */
+    Variant(const Variant& fromVariant);
+
+    /**
+     * \brief Copy constructor. Must have identical templates.
+     *
+     * Copy constructor. Must have identical templates.
+     *
+     * @param fromVariant Variant to copy
+     */
+    Variant(Variant&& fromVariant);
+
+    ~Variant();
+
+    /**
+      * \brief Assignment of another variant. Must have identical templates.
+      *
+      * Assignment of another variant. Must have identical templates.
+      *
+      * @param rhs Variant to assign
+      */
+    Variant& operator=(const Variant& rhs);
+    /**
+     * \brief Assignment of another variant. Must have identical templates.
+     *
+     * Assignment of another variant. Must have identical templates.
+     *
+     * @param rhs Variant to assign
+     */
+    Variant& operator=(Variant&& rhs);
+
+    /**
+     * \brief Assignment of a contained type. Must be one of the valid templated types.
+     *
+     * Assignment of a contained type. Must be one of the valid templated types.
+     *
+     * @param value Value to assign
+     */
+    template<typename _Type>
+    typename std::enable_if<!std::is_same<_Type, Variant<_Types...>>::value, Variant<_Types...>&>::type
+    operator=(const _Type& value);
+
+    /**
+     * \brief Equality of another variant. Must have identical template list and content.
+     *
+     * Equality of another variant. Must have identical template list and content.
+     *
+     * @param rhs Variant to compare
+     */
+    bool operator==(const Variant<_Types...>& rhs) const;
+
+    /**
+      * \brief Not-Equality of another variant. Must have identical template list and content.
+      *
+      * Not-Equality of another variant. Must have identical template list and content.
+      *
+      * @param rhs Variant to compare
+      */
+    bool operator!=(const Variant<_Types...>& rhs) const;
+
+    /**
+      * \brief Testif the contained type is the same as the template on this method.
+      *
+      * Testif the contained type is the same as the template on this method.
+      *
+      * @return Is same type
+      */
+    template <typename _Type>
+    const bool isType() const;
+
+    /**
+     * \brief Construct variant with content type set to value.
+     *
+     * Construct variant with content type set to value.
+     *
+     * @param value Value to place
+     */
+    template <typename _Type>
+    Variant(const _Type& value,
+                    typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
+                    typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
+                    typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
+
+    /**
+     * \brief Construct variant with content type set to value.
+     *
+     * Construct variant with content type set to value.
+     *
+     * @param value Value to place
+     */
+    template <typename _Type>
+    Variant(_Type && value,
+                    typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
+                    typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
+                    typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
+
+    /**
+     * \brief Get value of variant, template to content type. Throws exception if type is not contained.
+     *
+     * Get value of variant, template to content type. Throws exception if type is not contained.
+     */
+    template <typename _Type>
+    const _Type& get() const;
+
+    /**
+     * \brief Get index in template list of type actually contained, starting at 1 at the end of the template list
+     *
+     * Get index in template list of type actually contained, starting at 1 at the end of the template list
+     *
+     * @return Index of contained type
+     */
+    uint8_t getValueType() const {
+        return valueType_;
+    }
+
+private:
+
+    template<typename _U>
+    void set( const _U& value, const bool clear);
+
+    template<typename _U>
+    void set( _U&& value, const bool clear);
+
+    template<typename _FriendType>
+    friend struct TypeWriter;
+    template<typename ... _FriendTypes>
+    friend struct AssignmentVisitor;
+    template<typename _FriendType>
+    friend struct TypeEqualsVisitor;
+    template<typename ... _FriendTypes>
+    friend struct PartialEqualsVisitor;
+    template<class _Binding, typename ... _FriendTypes>
+    friend struct InputStreamReadVisitor;
+    template<class Variant, typename ... _FTypes>
+    friend struct ApplyVoidIndexVisitor;
+
+ protected:
+    inline bool hasValue() const {
+        return valueType_ < TypesTupleSize::value;
+    }
+    uint8_t valueType_;
+    typename std::aligned_storage<maxSize>::type valueStorage_;
+};
 
 template<class Variant, typename ... _Types>
 struct ApplyVoidIndexVisitor;
@@ -133,63 +345,44 @@ private:
     typename std::aligned_storage<size>::type& storage_;
 };
 
-struct TypeOutputStreamWriteVisitor {
-public:
-    TypeOutputStreamWriteVisitor(TypeOutputStream& typeStream) :
-                    typeStream_(typeStream) {
-    }
-
-    template<typename _Type>
-    void operator()(const _Type&) const {
-        TypeWriter<_Type>::writeType(typeStream_);
-    }
-
-private:
-    TypeOutputStream& typeStream_;
-};
-
-template<typename Type, typename TypeDepl>
-class Serializable;
-
+template<class _Binding>
 struct OutputStreamWriteVisitor {
 public:
-    OutputStreamWriteVisitor(OutputStream& outputStream) :
-                    outputStream_(outputStream) {
-    }
-	//TODO: Check if << operator has to be implemented
-    template<typename _Type, typename = typename std::enable_if<std::is_base_of<SerializableBase, _Type>::value>::type>
-    void operator()(const _Type& value) const {
-        //outputStream_ << value;
-        value.serialize(outputStream_);
-    }
-
-    template<typename _Type, typename = typename std::enable_if<not std::is_base_of<SerializableBase, _Type>::value>::type>
-    void operator()(const _Type& value, int t = 0) const {
-    }
-
-private:
-    OutputStream& outputStream_;
-};
-
-template<typename ... _Types>
-struct InputStreamReadVisitor {
-public:
-    InputStreamReadVisitor(Variant<_Types...>& lhs, InputStream& inputStream) :
-                    lhs_(lhs),
-                    inputStream_(inputStream) {
+    OutputStreamWriteVisitor(OutputStream<_Binding> &_output, const Deployment *_depl)
+		: output_(_output), depl_(_depl) {
     }
 
     template<typename _Type>
-    void operator()(const _Type&) {
+    void operator()(const _Type& value) const {
+        output_.writeValue(value, depl_);
+    }
+
+private:
+    OutputStream<_Binding> &output_;
+    const Deployment *depl_;
+};
+
+
+template<class _Binding, typename ... _Types>
+struct InputStreamReadVisitor {
+public:
+    InputStreamReadVisitor(InputStream<_Binding> &_input, Variant<_Types...> &lhs, const Deployment *_depl)
+		: input_(_input), lhs_(lhs), depl_(_depl) {
+    }
+
+    template<typename _Type>
+    void operator()(const _Type&, typename std::enable_if<...>) {
         _Type value;
-        //inputStream_ >> value;
-        value.deserialize(inputStream_);
+        input_.readValue(value, depl_);
         lhs_.Variant<_Types...>::template set<_Type>(std::move(value), false);
     }
 
+    template<typename _Type,
+
 private:
-    Variant<_Types...>& lhs_;
-    InputStream& inputStream_;
+    InputStream<_Binding> &input_;
+    Variant<_Types...> &lhs_;
+    const Deployment *depl_;
 };
 
 
@@ -242,11 +435,7 @@ public:
 
     template<typename _Type>
     void operator()(const _Type& value) const {
-#ifdef WIN32
-        lhs_.set<_Type>(value, clear_);
-#else
         lhs_.Variant<_Types...>::template set<_Type>(value, clear_);
-#endif
     }
 
     template<typename _Type>
@@ -364,44 +553,12 @@ Variant<_Types...>::Variant(Variant&& fromVariant)
     ApplyVoidVisitor<AssignmentVisitor<_Types...> , Variant<_Types...>, _Types...>::visit(visitor, fromVariant);
 }
 
-/*template<typename ... _Types>
-Variant<_Types...>::Variant(Variant&& fromVariant) :
-    valueType_(std::move(fromVariant.valueType_)),
-    valueStorage_(std::move(fromVariant.valueStorage_))
-{
-}*/
-
 template<typename ... _Types>
 Variant<_Types...>::~Variant() {
     if (hasValue()) {
         DeleteVisitor<maxSize> visitor(valueStorage_);
         ApplyVoidVisitor<DeleteVisitor<maxSize>, Variant<_Types...>, _Types...>::visit(visitor, *this);
     }
-}
-
-template<typename ... _Types>
-void Variant<_Types...>::readFromInputStream(const uint8_t typeIndex, InputStream& inputStream) {
-    if(hasValue()) {
-		DeleteVisitor<maxSize> visitor(valueStorage_);
-        ApplyVoidVisitor<DeleteVisitor<maxSize>, Variant<_Types...>, _Types...>::visit(visitor, *this);
-    }
-    valueType_ = typeIndex;
-    InputStreamReadVisitor<_Types...> visitor(*this, inputStream);
-    ApplyVoidVisitor<InputStreamReadVisitor<_Types...>, Variant<_Types...>, _Types...>::visit(visitor, *this);
-}
-
-template<typename ... _Types>
-void Variant<_Types...>::writeToOutputStream(OutputStream& outputStream) const {
-    OutputStreamWriteVisitor visitor(outputStream);
-    ApplyVoidVisitor<OutputStreamWriteVisitor, Variant<_Types...>, _Types...>::visit(
-                    visitor, *this);
-}
-
-template<typename ... _Types>
-void Variant<_Types...>::writeToTypeOutputStream(TypeOutputStream& typeOutputStream) const {
-    TypeOutputStreamWriteVisitor visitor(typeOutputStream);
-    ApplyVoidVisitor<TypeOutputStreamWriteVisitor, Variant<_Types...>, _Types...>::visit(
-                    visitor, *this);
 }
 
 template<typename ... _Types>
@@ -466,7 +623,7 @@ const _Type & Variant<_Types...>::get() const {
     if (cType == valueType_) {
         return *(reinterpret_cast<const _Type *>(&valueStorage_));
     } else {
-#if defined(__EXCEPTIONS) || defined(WIN32)
+#ifdef __EXCEPTIONS
         std::bad_cast toThrow;
         throw toThrow;
 #else
@@ -522,6 +679,6 @@ bool Variant<_Types...>::operator!=(const Variant<_Types...>& rhs) const
     return !(*this == rhs);
 }
 
-}
+} // namespace CommonAPI
 
-#endif //COMMONAPI_SERIALIZABLE_VARIANT_IMPL_
+#endif // COMMONAPI_SERIALIZABLE_VARIANT_H_

@@ -18,18 +18,18 @@
 
 namespace CommonAPI {
 
-class InputStream;
-class OutputStream;
 class TypeOutputStream;
 
+template<class _InputStream, class _OutputStream>
 struct SerializableStruct {
 	virtual ~SerializableStruct() { }
 
-	virtual void readFromInputStream(InputStream& inputStream) = 0;
-	virtual void writeToOutputStream(OutputStream& outputStream) const = 0;
+	virtual void readFromInputStream(_InputStream &_input) = 0;
+	virtual void writeToOutputStream(_OutputStream &_output) const = 0;
 };
 
-struct SerializablePolymorphicStruct: SerializableStruct {
+template<class _InputStream, class _OutputStream>
+struct SerializablePolymorphicStruct: SerializableStruct<_InputStream, _OutputStream> {
 	virtual uint32_t getSerialId() const = 0;
 	virtual void createTypeSignature(TypeOutputStream& typeOutputStream) const = 0;
 };
