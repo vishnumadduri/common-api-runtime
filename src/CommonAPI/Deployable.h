@@ -20,11 +20,11 @@ struct DeployableBase {
 template<typename _Type, typename _TypeDepl>
 struct Deployable : DeployableBase
 {
-	Deployable(const _TypeDepl *_depl)
+	Deployable(const _TypeDepl *_depl = nullptr)
 		: depl_(const_cast<_TypeDepl *>(_depl)) {
 	}
 
-	Deployable(const _Type &_value, const _TypeDepl *_depl = nullptr)
+	Deployable(const _Type &_value, const _TypeDepl *_depl)
 		: value_(_value),
 		  depl_(const_cast<_TypeDepl *>(_depl)) {
     };

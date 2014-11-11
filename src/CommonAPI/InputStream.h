@@ -1,6 +1,7 @@
-/* Copyright (C) 2013 BMW Group
+/* Copyright (C) 2013, 2014 BMW Group
  * Author: Manfred Bathelt (manfred.bathelt@bmw.de)
  * Author: Juergen Gehring (juergen.gehring@bmw.de)
+ * Author: Lutz Bichler (lutz.bichler@bmw.de)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -15,6 +16,7 @@
 #include "ByteBuffer.h"
 #include "Deployable.h"
 #include "Deployment.h"
+#include "Struct.h"
 #include "Variant.h"
 #include "types.h"
 
@@ -28,180 +30,187 @@
 
 namespace CommonAPI {
 
-template<class _Binding>
+template<class _Derived>
 class InputStream {
 public:
     virtual ~InputStream() {}
     virtual bool hasError() const = 0;
 
-    InputStream &readValue(bool &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(bool &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream &readValue(int8_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(int8_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(int16_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(int16_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(int32_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(int32_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(int64_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(int64_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(uint8_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(uint8_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(uint16_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(uint16_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(uint32_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(uint32_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(uint64_t &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(uint64_t &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(float &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(float &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(double &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(double &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    InputStream& readValue(std::string &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment>
+    InputStream &readValue(std::string &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    template<typename _ElementType>
-    InputStream &readValue(std::vector<_ElementType> &_value, const Deployment *_depl = nullptr) {
+    template<class _Deployment, typename... _Types>
+    InputStream &readValue(Struct<_Types...> &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    template<typename _KeyType, typename _ValueType, typename _HasherType>
+    template<class _Deployment, typename... _Types>
+    InputStream &readValue(Variant<_Types...> &_value, const _Deployment *_depl = nullptr) {
+        return get()->readValue(_value, _depl);
+    }
+
+    template<class _Deployment, typename _ElementType>
+    InputStream &readValue(std::vector<_ElementType> &_value, const _Deployment *_depl = nullptr) {
+    	return get()->readValue(_value, _depl);
+    }
+
+    template<class _Deployment, typename _KeyType, typename _ValueType, typename _HasherType>
     InputStream &readValue(std::unordered_map<_KeyType, _ValueType, _HasherType> &_value,
-    					   const Deployment *_depl = nullptr) {
+    					   const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
-    template<typename... _Types>
-    InputStream &readValue(Variant<_Types...> &_value, const Deployment *_depl = nullptr) {
-        if(_value.hasValue()) {
-        	DeleteVisitor<_value.maxSize> visitor(_value.valueStorage_);
-            ApplyVoidVisitor<DeleteVisitor<_value.maxSize>,
-    			Variant<_Types...>, _Types... >::visit(visitor, _value);
-        }
-
-        _value.valueType_ = _value.typeIndex;
-        InputStreamReadVisitor<_Types...> visitor((*this), _value, _depl);
-        ApplyVoidVisitor<InputStreamReadVisitor<_Binding, _Types... >,
-    		Variant<_Types...>, _Types...>::visit(visitor, _value);
-
-        return (*this);
-    }
-
-    InputStream& readValue(Version &_value) {
-    	return get()->readValue(_value);
+    template<class _Deployment>
+    InputStream &readValue(Version &_value, const _Deployment *_depl = nullptr) {
+    	return get()->readValue(_value, _depl);
     }
 
 private:
-    inline _Binding *get() {
-    	return static_cast<_Binding *>(this);
+    inline _Derived *get() {
+    	return static_cast<_Derived *>(this);
     }
 };
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, bool &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, bool &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, int8_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, int16_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, int16_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, int32_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, int32_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, int64_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, int64_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, uint8_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, uint8_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, uint16_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, uint16_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, uint32_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, uint32_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, uint64_t &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, uint64_t &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, float &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, float &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, double &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, double &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::string &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, std::string &_value) {
-	return _input.readValue(_value);
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Version &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, Version &_value) {
-	return _input.readValue(_value);
+template<class _Derived, typename... _Types>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Struct<_Types...> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding, typename... _Types>
-InputStream<_Binding> & operator>>(InputStream<_Binding> &_input, Variant<_Types...> &_value) {
-	return _input.readValue(_value);
+template<class _Derived, typename... _Types>
+InputStream<_Derived> & operator>>(InputStream<_Derived> &_input, Variant<_Types...> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding, typename _ElementType>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, std::vector<_ElementType> &_value) {
-	return _input.readValue(_value);
+template<class _Derived, typename _ElementType>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::vector<_ElementType> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding, typename _KeyType, typename _ValueType, typename _HasherType>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, std::unordered_map<_KeyType, _ValueType, _HasherType> &_value) {
-	return _input.readValue(_value);
+template<class _Derived, typename _KeyType, typename _ValueType, typename _HasherType>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::unordered_map<_KeyType, _ValueType, _HasherType> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
 }
 
-template<class _Binding, typename _Type, typename _TypeDeployment>
-InputStream<_Binding> &operator>>(InputStream<_Binding> &_input, Deployable<_Type, _TypeDeployment> &_value) {
-	return _input.readValue(_value.getValue(), _value.getDepl());
+template<class _Derived, typename _Type, typename _TypeDeployment>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Deployable<_Type, _TypeDeployment> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value.getValue(), _value.getDepl());
 }
 
 } // namespace CommonAPI

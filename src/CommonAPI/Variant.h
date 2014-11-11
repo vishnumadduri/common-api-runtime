@@ -22,14 +22,11 @@
 
 namespace CommonAPI {
 
-template<class _Binding>
+template<class _Derived>
 class InputStream;
 
-template<class _Binding>
+template<class _Derived>
 class OutputStream;
-
-template<typename _Type>
-struct TypeWriter;
 
 template<typename ... _Types>
 struct MaxSize;
@@ -215,17 +212,18 @@ private:
     friend struct TypeEqualsVisitor;
     template<typename ... _FriendTypes>
     friend struct PartialEqualsVisitor;
-    template<class _Binding, typename ... _FriendTypes>
+    template<class _Derived, class _Deployment, typename ... _FriendTypes>
     friend struct InputStreamReadVisitor;
     template<class Variant, typename ... _FTypes>
     friend struct ApplyVoidIndexVisitor;
 
- protected:
+public:
     inline bool hasValue() const {
         return valueType_ < TypesTupleSize::value;
     }
-    uint8_t valueType_;
     typename std::aligned_storage<maxSize>::type valueStorage_;
+
+    uint8_t valueType_;
 };
 
 template<class Variant, typename ... _Types>
@@ -345,46 +343,60 @@ private:
     typename std::aligned_storage<size>::type& storage_;
 };
 
-template<class _Binding>
+template<class _Derived, class _Deployment>
 struct OutputStreamWriteVisitor {
 public:
-    OutputStreamWriteVisitor(OutputStream<_Binding> &_output, const Deployment *_depl)
+    OutputStreamWriteVisitor(OutputStream<_Derived> &_output, const _Deployment *_depl)
 		: output_(_output), depl_(_depl) {
     }
 
     template<typename _Type>
     void operator()(const _Type& value) const {
-        output_.writeValue(value, depl_);
+        Deployable<_Type, _Deployment> itsValue(value, depl_);
+        output_ << itsValue;
     }
 
 private:
-    OutputStream<_Binding> &output_;
-    const Deployment *depl_;
+    OutputStream<_Derived> &output_;
+    const _Deployment *depl_;
 };
 
 
-template<class _Binding, typename ... _Types>
+template<class _Derived, class _Deployment, typename ... _Types>
 struct InputStreamReadVisitor {
 public:
-    InputStreamReadVisitor(InputStream<_Binding> &_input, Variant<_Types...> &lhs, const Deployment *_depl)
+    InputStreamReadVisitor(InputStream<_Derived> &_input, Variant<_Types...> &lhs, const _Deployment *_depl)
 		: input_(_input), lhs_(lhs), depl_(_depl) {
     }
 
     template<typename _Type>
-    void operator()(const _Type&, typename std::enable_if<...>) {
-        _Type value;
-        input_.readValue(value, depl_);
-        lhs_.Variant<_Types...>::template set<_Type>(std::move(value), false);
+    void operator()(const _Type&) {
+        Deployable<_Type, _Deployment> itsValue(depl_);
+        input_ >> itsValue;
+        lhs_.Variant<_Types...>::template set<_Type>(std::move(itsValue.getValue()), false);
     }
 
-    template<typename _Type,
-
 private:
-    InputStream<_Binding> &input_;
+    InputStream<_Derived> &input_;
     Variant<_Types...> &lhs_;
-    const Deployment *depl_;
+    const _Deployment *depl_;
 };
 
+template<class _Derived>
+struct TypeOutputStreamWriteVisitor {
+public:
+    TypeOutputStreamWriteVisitor(_Derived &_output)
+		: output_(_output) {
+    }
+
+    template<typename _Type>
+    void operator()(const _Type &_value) const {
+        output_ << _value;
+    }
+
+private:
+    _Derived &output_;
+};
 
 template<typename _Type>
 struct TypeEqualsVisitor
