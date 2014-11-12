@@ -120,9 +120,17 @@ public:
     	return get()->writeValue(_value, _depl);
     }
 
+    bool hasError() const {
+    	return get()->hasError();
+    }
+
 private:
     inline _Derived *get() {
     	return static_cast<_Derived *>(this);
+    }
+
+    inline const _Derived *get() const {
+    	return static_cast<const _Derived *>(this);
     }
 };
 

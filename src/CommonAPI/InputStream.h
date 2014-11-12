@@ -34,7 +34,6 @@ template<class _Derived>
 class InputStream {
 public:
     virtual ~InputStream() {}
-    virtual bool hasError() const = 0;
 
     template<class _Deployment>
     InputStream &readValue(bool &_value, const _Deployment *_depl = nullptr) {
@@ -122,9 +121,17 @@ public:
     	return get()->readValue(_value, _depl);
     }
 
+    bool hasError() const {
+    	return get()->hasError();
+    }
+
 private:
     inline _Derived *get() {
     	return static_cast<_Derived *>(this);
+    }
+
+    inline const _Derived *get() const {
+    	return static_cast<const _Derived *>(this);
     }
 };
 
