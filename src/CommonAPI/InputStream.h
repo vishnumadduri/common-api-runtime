@@ -100,6 +100,12 @@ public:
     	return get()->readValue(_value, _depl);
     }
 
+    template<class _Deployment, class _PolymorphicStruct>
+    InputStream &readValue(std::shared_ptr<_PolymorphicStruct> &_value,
+    					   const _Deployment *_depl = nullptr) {
+    	return get()->readValue(_value, _depl);
+    }
+
     template<class _Deployment, typename... _Types>
     InputStream &readValue(Variant<_Types...> &_value, const _Deployment *_depl = nullptr) {
         return get()->readValue(_value, _depl);
@@ -197,6 +203,11 @@ InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Version &_value
 
 template<class _Derived, typename... _Types>
 InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Struct<_Types...> &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
+}
+
+template<class _Derived, class _PolymorphicStruct>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::shared_ptr<_PolymorphicStruct> &_value) {
 	return _input.template readValue<EmptyDeployment>(_value);
 }
 

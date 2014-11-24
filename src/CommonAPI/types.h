@@ -108,8 +108,10 @@ public:
     size_t operator()(const _EnumType& testEnum) const {
         return static_cast<int32_t>(testEnum);
     }
-
 };
+
+// Type identifier for polymorphic structs
+typedef uint32_t Serial;
 
 } // namespace CommonAPI
 

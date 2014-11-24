@@ -104,6 +104,11 @@ public:
     	return get()->writeValue(_value, _depl);
     }
 
+    template<class _Deployment, class _PolymorphicStruct>
+    OutputStream &writeValue(const std::shared_ptr<_PolymorphicStruct> &_value, const _Deployment *_depl = nullptr) {
+    	return get()->writeValue(_value, _depl);
+    }
+
     template<class _Deployment, typename... _Types>
     OutputStream &writeValue(const Variant<_Types...> &_value, const _Deployment *_depl = nullptr) {
     	return get()->writeValue(_value, _depl);
@@ -207,6 +212,11 @@ inline OutputStream<_Derived>& operator<<(OutputStream<_Derived> &_output, const
 template<class _Derived, typename... _Types>
 OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const Struct<_Types...> &_value) {
 	return _output.template writeValue<EmptyDeployment, _Types...>(_value);
+}
+
+template<class _Derived, class _PolymorphicStruct>
+OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output,	const std::shared_ptr<_PolymorphicStruct> &_value) {
+	return _output.template writeValue<EmptyDeployment>(_value);
 }
 
 template<class _Derived, typename... _Types>

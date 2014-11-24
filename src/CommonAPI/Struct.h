@@ -14,6 +14,8 @@
 #include <iostream>
 #include <tuple>
 
+#include <CommonAPI/types.h>
+
 namespace CommonAPI {
 
 template<class _Derived>
@@ -159,6 +161,21 @@ struct Struct {
 	std::tuple<_Types...> members_;
 };
 
+/*
+ * Polymorphic structs are mapped to an interface that is derived from the base class
+ * PolymorphicStruct and contain their parameter in a Struct.
+ */
+struct PolymorphicStruct {
+	template<class _Input, class _Deployment>
+	void readValue(InputStream<_Input> &_input, const _Deployment *_depl) {};
+
+	template<class _Output, class _Deployment>
+	void writeValue(OutputStream<_Output> &_output, const _Deployment *_depl) {};
+
+	virtual const Serial getSerial() const = 0;
+
+
+};
 
 } /* namespace CommonAPI */
 
