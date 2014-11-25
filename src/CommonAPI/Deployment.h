@@ -17,8 +17,8 @@ namespace CommonAPI {
 
 template<typename... _Types>
 struct Deployment {
-	Deployment(_Types... _t) : members_(_t...) {};
-	std::tuple<_Types...> members_;
+	Deployment(_Types... _t) : values_(_t...) {};
+	std::tuple<_Types...> values_;
 };
 
 typedef Deployment<> EmptyDeployment;
