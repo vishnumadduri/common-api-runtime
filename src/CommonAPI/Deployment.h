@@ -14,13 +14,39 @@
 #include <tuple>
 
 namespace CommonAPI {
-
+/*
+ * Binding-specific deployment structures should inherit
+ * this struct and add the specific deployment parameters.
+ * The "values_"-tuple contains the deployments for nested
+ * elements in structures or arrays.
+ *
+ * Thus, a deployment struct for a structure containing
+ * an UInt16 and a String value:
+ *
+ * struct SampleUInt16Deployment : CommonAPI::Deployment<> {
+ * 		bool isBigEndian;
+ * };
+ *
+ * struct SampleStringDeployment : CommonAPI::Deployment<> {
+ * 		Encoding encoding;
+ * };
+ *
+ * struct SampleStructDeployment
+ * 			: CommonAPI::Deployment<
+ * 				SampleUInt16Deployment,
+ * 				SampleStringDeployment
+ * 			  > {
+ * 		Layout layout_;
+ * };
+ */
 template<typename... _Types>
 struct Deployment {
-	Deployment(_Types... _t) : values_(_t...) {};
 	std::tuple<_Types...> values_;
 };
 
+/*
+ * Convenience definition of an empty deployment.
+ */
 typedef Deployment<> EmptyDeployment;
 
 } // namespace CommonAPI

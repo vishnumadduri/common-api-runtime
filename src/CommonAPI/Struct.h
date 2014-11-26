@@ -32,8 +32,8 @@ struct StructReader;
 
 template<
 	int _Index, class _Input,
-    template<class ...> class _V, class... _Values,
-    template <class...> class _D, class _Depl, class... _Depls>
+    template<class...> class _V, class... _Values,
+    template<class...> class _D, class _Depl, class... _Depls>
 struct StructReader<_Index, _Input, _V<_Values...>, _D<_Depl, _Depls...>> {
 	void operator()(InputStream<_Input> &_input,
 					_V<_Values...> &_values,
