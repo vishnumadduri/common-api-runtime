@@ -142,7 +142,7 @@ class Factory {
         std::string serviceName;
         std::string participantId;
         if (!splitValidAddress(serviceAddress, domain, serviceName, participantId)) {
-            return false;
+            return nullptr;
         }
 
         return buildProxy<_ProxyClass, _AttributeExtensions...>(participantId, serviceName, domain);
