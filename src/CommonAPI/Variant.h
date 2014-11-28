@@ -327,7 +327,7 @@ struct ApplyBoolVisitor<Visitor, Variant, _Type, _Types...> {
     }
 };
 
-template<uint8_t size>
+template<uint32_t size>
 struct DeleteVisitor {
 public:
     DeleteVisitor(typename std::aligned_storage<size>::type& storage) :
