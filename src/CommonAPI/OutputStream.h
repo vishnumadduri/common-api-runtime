@@ -201,7 +201,7 @@ inline OutputStream<_Derived>& operator<<(OutputStream<_Derived> &_output, const
 
 template<class _Derived, typename _Type, typename _TypeDepl>
 inline OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const Deployable<_Type, _TypeDepl> &_value) {
-	return _output.template writeValue<EmptyDeployment>(_value.getValue(), _value.getDepl());
+	return _output.template writeValue<_TypeDepl>(_value.getValue(), _value.getDepl());
 }
 
 template<class _Derived>

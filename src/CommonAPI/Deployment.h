@@ -15,32 +15,41 @@
 
 namespace CommonAPI {
 /*
- * Binding-specific deployment structures should inherit
- * this struct and add the specific deployment parameters.
- * The "values_"-tuple contains the deployments for nested
- * elements in structures or arrays.
+ * The binding-specific deployment parameters should be
+ * defined like this:
  *
- * Thus, a deployment struct for a structure containing
- * an UInt16 and a String value:
- *
- * struct SampleUInt16Deployment : CommonAPI::Deployment<> {
- * 		bool isBigEndian;
+ * struct BindingUInt16Deployment : CommonAPI::Deployment<> {
+ * 		// Binding-specific bool deployment parameters
  * };
  *
- * struct SampleStringDeployment : CommonAPI::Deployment<> {
- * 		Encoding encoding;
+ * struct BindingStringDeployment : CommonAPI::Deployment<> {
+ * 		// Binding-specific String deployment parameters
  * };
  *
- * struct SampleStructDeployment
- * 			: CommonAPI::Deployment<
- * 				SampleUInt16Deployment,
- * 				SampleStringDeployment
- * 			  > {
- * 		Layout layout_;
+ * template<typename... _Types>
+ * struct BindingStructDeployment
+ * 			: CommonAPI::Deployment<_Types...> {
+ * 		BindingStructDeployment(<SPECIFIC PARAMETERS>, _Types... t)
+ * 			: CommonAPI::Deployment<_Types...>(t),
+ * 			  <SPECIFIC INITIALIZERS> {};
+ *
+ * 		// Binding-specific struct deployment parameters
  * };
+ *
+ * The generated code needs to use these definitions to
+ * provide the deployment informations for the actual data.
+ * E.g., for struct consisting of a boolean and a string
+ * value, it needs to generate:
+ *
+ * CommonAPI::BindingStructDeployment<
+ *     CommonAPI::BindingBoolDeployment,
+ *     CommonAPI::BindingStringDeployment
+ *  > itsDeployment(<PARAMS);
  */
 template<typename... _Types>
 struct Deployment {
+	Deployment(_Types... _values) : values_(_values...) {};
+
 	std::tuple<_Types...> values_;
 };
 

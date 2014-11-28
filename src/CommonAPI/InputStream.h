@@ -228,7 +228,7 @@ InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::unordered_
 
 template<class _Derived, typename _Type, typename _TypeDeployment>
 InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Deployable<_Type, _TypeDeployment> &_value) {
-	return _input.template readValue<EmptyDeployment>(_value.getValue(), _value.getDepl());
+	return _input.template readValue<_TypeDeployment>(_value.getValue(), _value.getDepl());
 }
 
 } // namespace CommonAPI
