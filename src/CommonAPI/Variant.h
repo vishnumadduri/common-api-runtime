@@ -9,6 +9,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
+#include "Deployable.h"
+
 #ifndef COMMONAPI_SERIALIZABLE_VARIANT_H_
 #define COMMONAPI_SERIALIZABLE_VARIANT_H_
 

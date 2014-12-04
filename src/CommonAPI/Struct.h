@@ -14,9 +14,9 @@
 #include <iostream>
 #include <tuple>
 
-#include <CommonAPI/types.h>
-
 namespace CommonAPI {
+
+typedef uint32_t Serial;
 
 template<class _Derived>
 class InputStream;

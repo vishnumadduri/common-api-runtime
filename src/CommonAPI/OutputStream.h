@@ -18,16 +18,9 @@
 #include "Deployment.h"
 #include "Struct.h"
 #include "Variant.h"
-#include "types.h"
+#include "Version.h"
 
-#include <iostream>
-#include <cstdint>
-#include <functional>
-#include <memory>
-#include <string>
 #include <unordered_map>
-#include <vector>
-#include <type_traits>
 
 namespace CommonAPI {
 
@@ -211,7 +204,7 @@ inline OutputStream<_Derived>& operator<<(OutputStream<_Derived> &_output, const
 
 template<class _Derived, typename... _Types>
 OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const Struct<_Types...> &_value) {
-	return _output.template writeValue<EmptyDeployment, _Types...>(_value);
+	return _output.template writeValue<EmptyDeployment>(_value);
 }
 
 template<class _Derived, class _PolymorphicStruct>
@@ -221,7 +214,7 @@ OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output,	const std::s
 
 template<class _Derived, typename... _Types>
 OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const Variant<_Types...> &_value) {
-	return _output.template writeValue<EmptyDeployment, _Types...>(_value);
+	return _output.template writeValue<EmptyDeployment>(_value);
 }
 
 template<class _Derived, typename _ElementType>

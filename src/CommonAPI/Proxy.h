@@ -12,17 +12,17 @@
 #ifndef COMMONAPI_PROXY_H_
 #define COMMONAPI_PROXY_H_
 
-#include "Attribute.h"
-
 #include <cstdint>
 #include <memory>
 #include <type_traits>
+
+#include "Attribute.h"
+#include "Version.h"
 
 namespace CommonAPI {
 
 typedef Event<AvailabilityStatus> ProxyStatusEvent;
 typedef ReadonlyAttribute<Version> InterfaceVersionAttribute;
-
 
 class Proxy {
  public:

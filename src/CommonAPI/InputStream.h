@@ -13,20 +13,14 @@
 #ifndef COMMONAPI_INPUT_STREAM_H_
 #define COMMONAPI_INPUT_STREAM_H_
 
+#include <unordered_map>
+
 #include "ByteBuffer.h"
 #include "Deployable.h"
 #include "Deployment.h"
 #include "Struct.h"
 #include "Variant.h"
-#include "types.h"
-
-#include <cstdint>
-#include <functional>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <type_traits>
+#include "Version.h"
 
 namespace CommonAPI {
 
@@ -143,6 +137,11 @@ private:
 
 template<class _Derived>
 InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, bool &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
+}
+
+template<class _Derived>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, int8_t &_value) {
 	return _input.template readValue<EmptyDeployment>(_value);
 }
 
