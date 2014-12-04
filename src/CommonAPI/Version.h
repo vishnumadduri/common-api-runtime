@@ -11,6 +11,8 @@
 #ifndef COMMONAPI_VERSION_H_
 #define COMMONAPI_VERSION_H_
 
+#include <cstdint>
+
 namespace CommonAPI {
 
 struct Version {
