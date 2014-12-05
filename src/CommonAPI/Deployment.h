@@ -18,17 +18,17 @@ namespace CommonAPI {
  * The binding-specific deployment parameters should be
  * defined like this:
  *
- * struct BindingUInt16Deployment {
+ * struct BindingUInt16Deployment : CommonAPI::Deployment<> {
  * 		// Binding-specific bool deployment parameters
  * };
  *
- * struct BindingStringDeployment {
+ * struct BindingStringDeployment : CommonAPI::Deployment<> {
  * 		// Binding-specific String deployment parameters
  * };
  *
  * template<typename... _Types>
  * struct BindingStructDeployment
- * 			: CommonAPI::StructDeployment<_Types...> {
+ * 			: CommonAPI::Deployment<_Types...> {
  * 		BindingStructDeployment(<SPECIFIC PARAMETERS>, _Types... t)
  * 			: CommonAPI::Deployment<_Types...>(t),
  * 			  <SPECIFIC INITIALIZERS> {};
@@ -47,33 +47,33 @@ namespace CommonAPI {
  *  > itsDeployment(<PARAMS);
  */
 template<typename... _Types>
-struct StructDeployment {
-	StructDeployment(_Types... _values) : values_(_values...) {}
+struct Deployment {
+	Deployment(_Types... _values) : values_(_values...) {}
 
 	std::tuple<_Types...> values_;
 };
 
 template<typename _ElementDepl>
 struct ArrayDeployment {
-	ArrayDeployment(const _ElementDepl *_element)
+	ArrayDeployment(const _ElementDepl &_element)
 		: element_(_element) {}
 
-	_ElementDepl *element_;
+	_ElementDepl element_;
 };
 
 template<typename _KeyDepl, typename _ValueDepl>
 struct MapDeployment {
-	MapDeployment(const _KeyDepl *_key, const _ValueDepl *_value)
+	MapDeployment(const _KeyDepl &_key, const _ValueDepl &_value)
 		: key_(_key), value_(_value) {}
 
-	_KeyDepl *key_;
-	_ValueDepl *value_;
+	_KeyDepl key_;
+	_ValueDepl value_;
 };
 
 /*
  * Convenience definition of an empty deployment.
  */
-typedef StructDeployment<> EmptyDeployment;
+typedef Deployment<> EmptyDeployment;
 
 } // namespace CommonAPI
 
