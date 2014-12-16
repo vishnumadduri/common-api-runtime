@@ -35,6 +35,10 @@ struct Deployable : DeployableBase
         return (*this);
     }
 
+    operator _Type() const {
+    	return value_;
+    }
+
     const _Type &getValue() const {
     	return value_;
     }
