@@ -64,6 +64,12 @@ enum class CallStatus {
     REMOTE_ERROR
 };
 
+typedef uint32_t CallId;
+
+enum class OperationStatus {
+	PENDING,
+	DONE
+};
 
 struct Version {
     Version() = default;
