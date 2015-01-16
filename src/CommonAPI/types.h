@@ -83,14 +83,14 @@ struct SelectiveBroadcastFunctorHelper {
     typedef std::function<SubscriptionStatus(Args...)> SelectiveBroadcastFunctor;
 };
 
-/*
 typedef std::unordered_set<std::shared_ptr<CommonAPI::ClientId>, SharedPointerClientIdContentHash, SharedPointerClientIdContentEqual> ClientIdList;
+
 template <typename ... Args>
 struct SelectiveBroadcastSubscriptionResult {
     typedef std::tuple<bool, typename CommonAPI::Event<Args...>::Subscription> SubscriptionResult;
 
 };
-*/
+
 template<typename _EnumType>
 class EnumHasher {
 public:
