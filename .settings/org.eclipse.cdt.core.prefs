@@ -6,6 +6,6 @@ environment/project/cdt.managedbuild.config.gnu.so.debug.1706997245/append=true
 environment/project/cdt.managedbuild.config.gnu.so.debug.1706997245/appendContributed=true
 environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/GTEST_ROOT/delimiter=\:
 environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/GTEST_ROOT/operation=replace
-environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/GTEST_ROOT/value=/home/lutz/projects/commonapi/helper/gtest-1.7.0
+environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/GTEST_ROOT/value=/home/lutz/Libraries/gtest-1.7.0
 environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/append=true
 environment/project/cdt.managedbuild.config.gnu.so.debug.2004816766/appendContributed=true
