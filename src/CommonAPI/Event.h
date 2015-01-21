@@ -1,6 +1,7 @@
-/* Copyright (C) 2013 BMW Group
+/* Copyright (C) 2013, 2014 BMW Group
  * Author: Manfred Bathelt (manfred.bathelt@bmw.de)
  * Author: Juergen Gehring (juergen.gehring@bmw.de)
+ * Author: Lutz Bichler (lutz.bichler@bmw.de)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -29,7 +30,7 @@ enum class SubscriptionStatus {
  *
  * Class representing an event
  */
-template<typename ... _Arguments>
+template<typename... _Arguments>
 class Event {
 public:
     typedef std::tuple<_Arguments...> ArgumentsTuple;
@@ -81,8 +82,7 @@ public:
      */
     void unsubscribe(Subscription listenerSubscription);
 
-    virtual ~Event() {
-    }
+    virtual ~Event() {}
 
 protected:
     // Returns false if all subscriptions were cancelled
@@ -106,7 +106,7 @@ protected:
     std::mutex listenerListMutex_;
 };
 
-template<typename ... _Arguments>
+template<typename... _Arguments>
 class Event<_Arguments...>::CancellableListenerWrapper {
 public:
     CancellableListenerWrapper(Listener&& listener) :
@@ -177,10 +177,10 @@ SubscriptionStatus Event<_Arguments...>::notifyListeners(const _Arguments&... ev
     }
 
     const bool lEmpty = listenersList_.empty();
-
     listenerListMutex_.unlock();
 
-    return lEmpty ? SubscriptionStatus::CANCEL : SubscriptionStatus::RETAIN;
+    return (lEmpty ? SubscriptionStatus::CANCEL
+    			   : SubscriptionStatus::RETAIN);
 }
 
 template<typename ... _Arguments>

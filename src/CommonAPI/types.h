@@ -19,6 +19,7 @@
 #include <tuple>
 #include "ContainerUtils.h"
 #include "Event.h"
+#include "Version.h"
 
 #if  __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
 #  define COMMONAPI_DEPRECATED __attribute__ ((__deprecated__))
@@ -64,18 +65,6 @@ enum class CallStatus {
     REMOTE_ERROR
 };
 
-
-struct Version {
-    Version() = default;
-
-    Version(const uint32_t& majorValue, const uint32_t& minorValue):
-        Major(majorValue),
-        Minor(minorValue) {}
-
-    uint32_t Major;
-    uint32_t Minor;
-};
-
 /**
  * \brief Identifies a client sending a call to a stub.
  *
@@ -94,8 +83,8 @@ struct SelectiveBroadcastFunctorHelper {
     typedef std::function<SubscriptionStatus(Args...)> SelectiveBroadcastFunctor;
 };
 
-
 typedef std::unordered_set<std::shared_ptr<CommonAPI::ClientId>, SharedPointerClientIdContentHash, SharedPointerClientIdContentEqual> ClientIdList;
+
 template <typename ... Args>
 struct SelectiveBroadcastSubscriptionResult {
     typedef std::tuple<bool, typename CommonAPI::Event<Args...>::Subscription> SubscriptionResult;
@@ -108,8 +97,10 @@ public:
     size_t operator()(const _EnumType& testEnum) const {
         return static_cast<int32_t>(testEnum);
     }
-
 };
+
+// Type identifier for polymorphic structs
+typedef uint32_t Serial;
 
 } // namespace CommonAPI
 
