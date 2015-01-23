@@ -65,19 +65,19 @@ struct VariantDeployment : Deployment<_Types...> {
 
 template<typename _ElementDepl>
 struct ArrayDeployment {
-	ArrayDeployment(const _ElementDepl &_elementDepl)
+	ArrayDeployment(const _ElementDepl *_elementDepl)
 		: elementDepl_(_elementDepl) {}
 
-	_ElementDepl elementDepl_;
+	_ElementDepl *elementDepl_;
 };
 
 template<typename _KeyDepl, typename _ValueDepl>
 struct MapDeployment {
-	MapDeployment(const _KeyDepl &_key, const _ValueDepl &_value)
+	MapDeployment(const _KeyDepl *_key, const _ValueDepl *_value)
 		: key_(_key), value_(_value) {}
 
-	_KeyDepl key_;
-	_ValueDepl value_;
+	_KeyDepl *key_;
+	_ValueDepl *value_;
 };
 
 /*
