@@ -53,12 +53,22 @@ struct Deployment {
 	std::tuple<_Types...> values_;
 };
 
+template<typename _TypeDepl, typename... _Types>
+struct VariantDeployment : Deployment<_Types...> {
+	VariantDeployment(_TypeDepl *_typeDepl, _Types... _values)
+		: Deployment<_Types...>(_values...),
+		  typeDepl_(_typeDepl) {
+	}
+
+	_TypeDepl *typeDepl_;
+};
+
 template<typename _ElementDepl>
 struct ArrayDeployment {
-	ArrayDeployment(const _ElementDepl &_element)
-		: element_(_element) {}
+	ArrayDeployment(const _ElementDepl &_elementDepl)
+		: elementDepl_(_elementDepl) {}
 
-	_ElementDepl element_;
+	_ElementDepl elementDepl_;
 };
 
 template<typename _KeyDepl, typename _ValueDepl>

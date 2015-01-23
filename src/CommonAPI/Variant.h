@@ -214,7 +214,7 @@ private:
     friend struct TypeEqualsVisitor;
     template<typename ... _FriendTypes>
     friend struct PartialEqualsVisitor;
-    template<class _Derived, class _Deployment, typename ... _FriendTypes>
+    template<class _Derived, typename ... _FriendTypes>
     friend struct InputStreamReadVisitor;
     template<class Variant, typename ... _FTypes>
     friend struct ApplyVoidIndexVisitor;
@@ -329,6 +329,52 @@ struct ApplyBoolVisitor<Visitor, Variant, _Type, _Types...> {
     }
 };
 
+template<class _Visitor, class _Variant, class _Deployment, typename ... _Types>
+struct ApplyStreamVisitor;
+
+template<class _Visitor, class _Variant, class _Deployment>
+struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment> {
+    static const uint8_t index = 0;
+
+    static
+    void visit(_Visitor &, _Variant &, const _Deployment *) {
+        //won't be called
+        assert(false);
+    }
+
+    static
+    void visit(_Visitor &, const _Variant &, const _Deployment *) {
+        //won't be called
+        assert(false);
+    }
+};
+
+template<class _Visitor, class _Variant, class _Deployment, typename _Type, typename ... _Types>
+struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Type, _Types...> {
+    static const uint8_t index
+    	= ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Types...>::index + 1;
+
+    static void visit(_Visitor &_visitor, _Variant &_variant, const _Deployment *_depl) {
+        if (_variant.getValueType() == index) {
+        	_visitor(_variant.template get<_Type>(), &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+        } else {
+            ApplyStreamVisitor<
+            	_Visitor, _Variant, _Deployment, _Types...
+            >::visit(_visitor, _variant, _depl);
+        }
+    }
+
+    static void visit(_Visitor &_visitor, const _Variant &_variant, const _Deployment *_depl) {
+        if (_variant.getValueType() == index) {
+            _visitor(_variant.template get<_Type>(), &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+        } else {
+            ApplyStreamVisitor<
+            	_Visitor, _Variant, _Deployment, _Types...
+            >::visit(_visitor, _variant, _depl);
+        }
+    }
+};
+
 template<uint32_t size>
 struct DeleteVisitor {
 public:
@@ -345,43 +391,40 @@ private:
     typename std::aligned_storage<size>::type& storage_;
 };
 
-template<class _Derived, class _Deployment>
+template<class _Derived>
 struct OutputStreamWriteVisitor {
 public:
-    OutputStreamWriteVisitor(OutputStream<_Derived> &_output, const _Deployment *_depl)
-		: output_(_output), depl_(_depl) {
+    OutputStreamWriteVisitor(OutputStream<_Derived> &_output)
+		: output_(_output) {
     }
 
-    template<typename _Type>
-    void operator()(const _Type& value) const {
-        Deployable<_Type, _Deployment> itsValue(value, depl_);
+    template<typename _Type, typename _Deployment = EmptyDeployment>
+    void operator()(const _Type &_value, const _Deployment *_depl = nullptr) const {
+        Deployable<_Type, _Deployment> itsValue(_value, _depl);
         output_ << itsValue;
     }
 
 private:
     OutputStream<_Derived> &output_;
-    const _Deployment *depl_;
 };
 
-
-template<class _Derived, class _Deployment, typename ... _Types>
+template<class _Derived, typename ... _Types>
 struct InputStreamReadVisitor {
 public:
-    InputStreamReadVisitor(InputStream<_Derived> &_input, Variant<_Types...> &lhs, const _Deployment *_depl)
-		: input_(_input), lhs_(lhs), depl_(_depl) {
+    InputStreamReadVisitor(InputStream<_Derived> &_input, Variant<_Types...> &_target)
+		: input_(_input), target_(_target) {
     }
 
-    template<typename _Type>
-    void operator()(const _Type&) {
-        Deployable<_Type, _Deployment> itsValue(depl_);
+    template<typename _Type, typename _Deployment = EmptyDeployment>
+    void operator()(const _Type &_value, const _Deployment *_depl = nullptr) {
+        Deployable<_Type, _Deployment> itsValue(_depl);
         input_ >> itsValue;
-        lhs_.Variant<_Types...>::template set<_Type>(std::move(itsValue.getValue()), false);
+        target_.Variant<_Types...>::template set<_Type>(std::move(itsValue.getValue()), false);
     }
 
 private:
     InputStream<_Derived> &input_;
-    Variant<_Types...> &lhs_;
-    const _Deployment *depl_;
+    Variant<_Types...> &target_;
 };
 
 template<class _Derived>
