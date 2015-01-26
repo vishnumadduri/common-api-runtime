@@ -1,6 +1,7 @@
-/* Copyright (C) 2013 BMW Group
+/* Copyright (C) 2013-2015 BMW Group
  * Author: Manfred Bathelt (manfred.bathelt@bmw.de)
  * Author: Juergen Gehring (juergen.gehring@bmw.de)
+ * Author: Lutz Bichler (lutz.bichler@bmw.de)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -30,7 +31,7 @@ class InputStream;
 template<class _Derived>
 class OutputStream;
 
-template<typename ... _Types>
+template<typename... _Types>
 struct MaxSize;
 
 template<>
@@ -38,7 +39,7 @@ struct MaxSize<> {
     static const unsigned int value = 0;
 };
 
-template<typename _Type, typename ... _Types>
+template<typename _Type, typename... _Types>
 struct MaxSize<_Type, _Types...> {
     static const unsigned int current_type_size = sizeof(_Type);
     static const unsigned int next_type_size = MaxSize<_Types...>::value;
@@ -47,10 +48,10 @@ struct MaxSize<_Type, _Types...> {
                                     current_type_size : next_type_size;
 };
 
-template<typename _SearchType, typename ... _RestTypes>
+template<typename _SearchType, typename... _RestTypes>
 struct VariantTypeSelector;
 
-template<typename _SearchType, typename ... _RestTypes>
+template<typename _SearchType, typename... _RestTypes>
 struct VariantTypeSelector<_SearchType, _SearchType, _RestTypes...> {
     typedef _SearchType type;
 };
@@ -60,7 +61,7 @@ struct VariantTypeSelector<_SearchType, _SearchType, _RestTypes...> {
  *
  * A templated generic variant class which provides type safe access and operators
  */
-template<typename ... _Types>
+template<typename... _Types>
 class Variant {
 private:
     typedef std::tuple_size<std::tuple<_Types...>> TypesTupleSize;
@@ -82,18 +83,18 @@ public:
      *
      * Copy constructor. Must have identical templates.
      *
-     * @param fromVariant Variant to copy
+     * @param _source Variant to copy
      */
-    Variant(const Variant& fromVariant);
+    Variant(const Variant &_source);
 
     /**
      * \brief Copy constructor. Must have identical templates.
      *
      * Copy constructor. Must have identical templates.
      *
-     * @param fromVariant Variant to copy
+     * @param _source Variant to copy
      */
-    Variant(Variant&& fromVariant);
+    Variant(Variant &&_source);
 
     ~Variant();
 
@@ -102,46 +103,46 @@ public:
       *
       * Assignment of another variant. Must have identical templates.
       *
-      * @param rhs Variant to assign
+      * @param _source Variant to assign
       */
-    Variant& operator=(const Variant& rhs);
+    Variant &operator=(const Variant &_source);
     /**
      * \brief Assignment of another variant. Must have identical templates.
      *
      * Assignment of another variant. Must have identical templates.
      *
-     * @param rhs Variant to assign
+     * @param _source Variant to assign
      */
-    Variant& operator=(Variant&& rhs);
+    Variant &operator=(Variant &&_source);
 
     /**
      * \brief Assignment of a contained type. Must be one of the valid templated types.
      *
      * Assignment of a contained type. Must be one of the valid templated types.
      *
-     * @param value Value to assign
+     * @param _value Value to assign
      */
     template<typename _Type>
     typename std::enable_if<!std::is_same<_Type, Variant<_Types...>>::value, Variant<_Types...>&>::type
-    operator=(const _Type& value);
+    operator=(const _Type &_value);
 
     /**
      * \brief Equality of another variant. Must have identical template list and content.
      *
      * Equality of another variant. Must have identical template list and content.
      *
-     * @param rhs Variant to compare
+     * @param _other Variant to compare
      */
-    bool operator==(const Variant<_Types...>& rhs) const;
+    bool operator==(const Variant<_Types...> &_other) const;
 
     /**
       * \brief Not-Equality of another variant. Must have identical template list and content.
       *
       * Not-Equality of another variant. Must have identical template list and content.
       *
-      * @param rhs Variant to compare
+      * @param _other Variant to compare
       */
-    bool operator!=(const Variant<_Types...>& rhs) const;
+    bool operator!=(const Variant<_Types...> &_other) const;
 
     /**
       * \brief Testif the contained type is the same as the template on this method.
@@ -150,7 +151,7 @@ public:
       *
       * @return Is same type
       */
-    template <typename _Type>
+    template<typename _Type>
     const bool isType() const;
 
     /**
@@ -158,34 +159,34 @@ public:
      *
      * Construct variant with content type set to value.
      *
-     * @param value Value to place
+     * @param _value Value to place
      */
-    template <typename _Type>
-    Variant(const _Type& value,
-                    typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
-                    typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
-                    typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
+    template<typename _Type>
+    Variant(const _Type &_value,
+            typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
+            typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
+            typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
 
     /**
      * \brief Construct variant with content type set to value.
      *
      * Construct variant with content type set to value.
      *
-     * @param value Value to place
+     * @param _value Value to place
      */
-    template <typename _Type>
-    Variant(_Type && value,
-                    typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
-                    typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
-                    typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
+    template<typename _Type>
+    Variant(_Type &&_value,
+            typename std::enable_if<!std::is_const<_Type>::value>::type* = 0,
+            typename std::enable_if<!std::is_reference<_Type>::value>::type* = 0,
+            typename std::enable_if<!std::is_same<_Type, Variant>::value>::type* = 0);
 
     /**
      * \brief Get value of variant, template to content type. Throws exception if type is not contained.
      *
      * Get value of variant, template to content type. Throws exception if type is not contained.
      */
-    template <typename _Type>
-    const _Type& get() const;
+    template<typename _Type>
+    const _Type &get() const;
 
     /**
      * \brief Get index in template list of type actually contained, starting at 1 at the end of the template list
@@ -199,12 +200,11 @@ public:
     }
 
 private:
+    template<typename _Type>
+    void set(const _Type &_value, const bool clear);
 
-    template<typename _U>
-    void set( const _U& value, const bool clear);
-
-    template<typename _U>
-    void set( _U&& value, const bool clear);
+    template<typename _Type>
+    void set(_Type &&_value, const bool clear);
 
     template<typename _FriendType>
     friend struct TypeWriter;
@@ -214,174 +214,219 @@ private:
     friend struct TypeEqualsVisitor;
     template<typename ... _FriendTypes>
     friend struct PartialEqualsVisitor;
-    template<class _Derived, class _Deployment, typename ... _FriendTypes>
+    template<class _Derived, typename ... _FriendTypes>
     friend struct InputStreamReadVisitor;
     template<class Variant, typename ... _FTypes>
     friend struct ApplyVoidIndexVisitor;
 
 public:
     inline bool hasValue() const {
-        return valueType_ < TypesTupleSize::value;
+        return (valueType_ < TypesTupleSize::value);
     }
     typename std::aligned_storage<maxSize>::type valueStorage_;
 
     uint8_t valueType_;
 };
 
-template<class Variant, typename ... _Types>
+template<class _Variant, typename... _Types>
 struct ApplyVoidIndexVisitor;
 
-template<class Variant>
-struct ApplyVoidIndexVisitor<Variant> {
+template<class _Variant>
+struct ApplyVoidIndexVisitor<_Variant> {
     static const uint8_t index = 0;
 
     static
-    void visit(Variant&, uint8_t&) {
-        //won't be called
+    void visit(_Variant &, uint8_t &) {
         assert(false);
     }
 };
 
-template<class Variant, typename _Type, typename ... _Types>
-struct ApplyVoidIndexVisitor<Variant, _Type, _Types...> {
-    static const uint8_t index = ApplyVoidIndexVisitor<Variant,
-                    _Types...>::index + 1;
+template<class _Variant, typename _Type, typename... _Types>
+struct ApplyVoidIndexVisitor<_Variant, _Type, _Types...> {
+    static const uint8_t index
+    	= ApplyVoidIndexVisitor<_Variant, _Types...>::index + 1;
 
-    static void visit(Variant& var, uint8_t& ind) {
-        if (ind == index) {
-            new (&var.valueStorage_) _Type();
-            var.valueType_ = index;
+    static void visit(_Variant &_variant, uint8_t &_index) {
+        if (index == _index) {
+            new (&_variant.valueStorage_) _Type();
+            _variant.valueType_ = index;
         } else {
-            ApplyVoidIndexVisitor<Variant, _Types...>::visit(var, ind);
+            ApplyVoidIndexVisitor<
+            	_Variant, _Types...
+            >::visit(_variant, _index);
         }
     }
 };
 
-template<class Visitor, class Variant, typename ... _Types>
+template<class _Visitor, class _Variant, typename... _Types>
 struct ApplyVoidVisitor;
 
-template<class Visitor, class Variant>
-struct ApplyVoidVisitor<Visitor, Variant> {
+template<class _Visitor, class _Variant>
+struct ApplyVoidVisitor<_Visitor, _Variant> {
     static const uint8_t index = 0;
 
     static
-    void visit(Visitor&, Variant&) {
-        //won't be called
+    void visit(_Visitor &, _Variant &) {
         assert(false);
     }
 
     static
-    void visit(Visitor&, const Variant&) {
-        //won't be called
+    void visit(_Visitor &, const _Variant &) {
         assert(false);
     }
 };
 
-template<class Visitor, class Variant, typename _Type, typename ... _Types>
-struct ApplyVoidVisitor<Visitor, Variant, _Type, _Types...> {
-    static const uint8_t index = ApplyVoidVisitor<Visitor, Variant,
-                    _Types...>::index + 1;
+template<class _Visitor, class _Variant, typename _Type, typename ... _Types>
+struct ApplyVoidVisitor<_Visitor, _Variant, _Type, _Types...> {
+    static const uint8_t index
+    	= ApplyVoidVisitor<_Visitor, _Variant, _Types...>::index + 1;
 
-    static void visit(Visitor& visitor, Variant& var) {
-        if (var.getValueType() == index) {
-            visitor(var.template get<_Type>());
+    static void visit(_Visitor &_visitor, _Variant &_variant) {
+        if (_variant.getValueType() == index) {
+            _visitor(_variant.template get<_Type>());
         } else {
-            ApplyVoidVisitor<Visitor, Variant, _Types...>::visit(visitor, var);
+            ApplyVoidVisitor<
+            	_Visitor, _Variant, _Types...
+            >::visit(_visitor, _variant);
         }
     }
 
-    static void visit(Visitor& visitor, const Variant& var) {
-        if (var.getValueType() == index) {
-            visitor(var.template get<_Type>());
+    static void visit(_Visitor &_visitor, const _Variant &_variant) {
+        if (_variant.getValueType() == index) {
+            _visitor(_variant.template get<_Type>());
         } else {
-            ApplyVoidVisitor<Visitor, Variant, _Types...>::visit(visitor, var);
+            ApplyVoidVisitor<
+            	_Visitor, _Variant, _Types...
+            >::visit(_visitor, _variant);
         }
     }
 };
 
-template<class Visitor, class Variant, typename ... _Types>
-struct ApplyBoolVisitor
-;
+template<class _Visitor, class _Variant, typename ... _Types>
+struct ApplyBoolVisitor;
 
-template<class Visitor, class Variant>
-struct ApplyBoolVisitor<Visitor, Variant> {
+template<class _Visitor, class _Variant>
+struct ApplyBoolVisitor<_Visitor, _Variant> {
     static const uint8_t index = 0;
 
-    static bool visit(Visitor&, Variant&) {
-        //won't be called
+    static bool visit(_Visitor &, _Variant &) {
         assert(false);
         return false;
     }
 };
 
-template<class Visitor, class Variant, typename _Type, typename ... _Types>
-struct ApplyBoolVisitor<Visitor, Variant, _Type, _Types...> {
-    static const uint8_t index = ApplyBoolVisitor<Visitor, Variant,
-                    _Types...>::index + 1;
+template<class _Visitor, class _Variant, typename _Type, typename ... _Types>
+struct ApplyBoolVisitor<_Visitor, _Variant, _Type, _Types...> {
+    static const uint8_t index
+    	= ApplyBoolVisitor<_Visitor, _Variant, _Types...>::index + 1;
 
-    static bool visit(Visitor& visitor, Variant& var) {
-        if (var.getValueType() == index) {
-            return visitor(var.template get<_Type>());
+    static bool visit(_Visitor &_visitor, _Variant &_variant) {
+        if (_variant.getValueType() == index) {
+            return _visitor(_variant.template get<_Type>());
         } else {
-            return ApplyBoolVisitor<Visitor, Variant, _Types...>::visit(visitor,
-                            var);
+            return ApplyBoolVisitor<
+            			_Visitor, _Variant, _Types...
+            	   >::visit(_visitor, _variant);
         }
     }
 };
 
-template<uint32_t size>
+template<class _Visitor, class _Variant, class _Deployment, typename ... _Types>
+struct ApplyStreamVisitor;
+
+template<class _Visitor, class _Variant, class _Deployment>
+struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment> {
+    static const uint8_t index = 0;
+
+    static
+    void visit(_Visitor &, _Variant &, const _Deployment *) {
+        assert(false);
+    }
+
+    static
+    void visit(_Visitor &, const _Variant &, const _Deployment *) {
+        assert(false);
+    }
+};
+
+template<class _Visitor, class _Variant, class _Deployment, typename _Type, typename ... _Types>
+struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Type, _Types...> {
+    static const uint8_t index
+    	= ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Types...>::index + 1;
+
+    static void visit(_Visitor &_visitor, _Variant &_variant, const _Deployment *_depl) {
+        if (_variant.getValueType() == index) {
+        	_visitor(_variant.template get<_Type>(),
+        			 &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+        } else {
+            ApplyStreamVisitor<
+            	_Visitor, _Variant, _Deployment, _Types...
+            >::visit(_visitor, _variant, _depl);
+        }
+    }
+
+    static void visit(_Visitor &_visitor, const _Variant &_variant, const _Deployment *_depl) {
+        if (_variant.getValueType() == index) {
+            _visitor(_variant.template get<_Type>(),
+            		 &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+        } else {
+            ApplyStreamVisitor<
+            	_Visitor, _Variant, _Deployment, _Types...
+            >::visit(_visitor, _variant, _depl);
+        }
+    }
+};
+
+template<uint32_t _Size>
 struct DeleteVisitor {
 public:
-    DeleteVisitor(typename std::aligned_storage<size>::type& storage) :
-                    storage_(storage) {
+    DeleteVisitor(typename std::aligned_storage<_Size>::type &_storage)
+		: storage_(_storage) {
     }
 
     template<typename _Type>
-    void operator()(const _Type&) const {
+    void operator()(const _Type &) const {
         (reinterpret_cast<const _Type *>(&storage_))->~_Type();
     }
 
 private:
-    typename std::aligned_storage<size>::type& storage_;
+    typename std::aligned_storage<_Size>::type &storage_;
 };
 
-template<class _Derived, class _Deployment>
+template<class _Derived>
 struct OutputStreamWriteVisitor {
 public:
-    OutputStreamWriteVisitor(OutputStream<_Derived> &_output, const _Deployment *_depl)
-		: output_(_output), depl_(_depl) {
+    OutputStreamWriteVisitor(OutputStream<_Derived> &_output)
+		: output_(_output) {
     }
 
-    template<typename _Type>
-    void operator()(const _Type& value) const {
-        Deployable<_Type, _Deployment> itsValue(value, depl_);
+    template<typename _Type, typename _Deployment = EmptyDeployment>
+    void operator()(const _Type &_value, const _Deployment *_depl = nullptr) const {
+        Deployable<_Type, _Deployment> itsValue(_value, _depl);
         output_ << itsValue;
     }
 
 private:
     OutputStream<_Derived> &output_;
-    const _Deployment *depl_;
 };
 
-
-template<class _Derived, class _Deployment, typename ... _Types>
+template<class _Derived, typename ... _Types>
 struct InputStreamReadVisitor {
 public:
-    InputStreamReadVisitor(InputStream<_Derived> &_input, Variant<_Types...> &lhs, const _Deployment *_depl)
-		: input_(_input), lhs_(lhs), depl_(_depl) {
+    InputStreamReadVisitor(InputStream<_Derived> &_input, Variant<_Types...> &_target)
+		: input_(_input), target_(_target) {
     }
 
-    template<typename _Type>
-    void operator()(const _Type&) {
-        Deployable<_Type, _Deployment> itsValue(depl_);
+    template<typename _Type, typename _Deployment = EmptyDeployment>
+    void operator()(const _Type &_value, const _Deployment *_depl = nullptr) {
+        Deployable<_Type, _Deployment> itsValue(_depl);
         input_ >> itsValue;
-        lhs_.Variant<_Types...>::template set<_Type>(std::move(itsValue.getValue()), false);
+        target_.Variant<_Types...>::template set<_Type>(std::move(itsValue.getValue()), false);
     }
 
 private:
     InputStream<_Derived> &input_;
-    Variant<_Types...> &lhs_;
-    const _Deployment *depl_;
+    Variant<_Types...> &target_;
 };
 
 template<class _Derived>
@@ -404,122 +449,113 @@ template<typename _Type>
 struct TypeEqualsVisitor
 {
 public:
-    TypeEqualsVisitor(const _Type& rhs): rhs_(rhs) {
+    TypeEqualsVisitor(const _Type &_me)
+		: me_(_me) {
     }
 
-    bool operator()(const _Type& lhs) const {
-        return lhs == rhs_;
+    bool operator()(const _Type &_other) const {
+        return (me_ == _other);
     }
 
-    template<typename _U>
-    bool operator()(const _U&) const {
+    template<typename _OtherType>
+    bool operator()(const _OtherType &) const {
         return false;
     }
 
 private:
-    const _Type& rhs_;
+    const _Type& me_;
 };
 
 template<typename ... _Types>
 struct PartialEqualsVisitor
 {
 public:
-    PartialEqualsVisitor(const Variant<_Types...>& lhs) :
-                    lhs_(lhs) {
+    PartialEqualsVisitor(const Variant<_Types...> &_me)
+		: me_(_me) {
     }
 
     template<typename _Type>
-    bool
-    operator()(const _Type& rhs) const
-                      {
-        TypeEqualsVisitor<_Type> visitor(rhs);
-        return ApplyBoolVisitor<TypeEqualsVisitor<_Type>, const Variant<_Types...>, _Types...>::visit(visitor, lhs_);
+    bool operator()(const _Type &_other) const {
+        TypeEqualsVisitor<_Type> visitor(_other);
+        return ApplyBoolVisitor<
+        			TypeEqualsVisitor<_Type>, const Variant<_Types...>, _Types...
+        	   >::visit(visitor, me_);
     }
 
 private:
-    const Variant<_Types...>& lhs_;
+    const Variant<_Types...> &me_;
 };
 
 template<typename ... _Types>
 struct AssignmentVisitor {
 public:
-    AssignmentVisitor(Variant<_Types...>& lhs, const bool clear = true) :
-                    lhs_(lhs), clear_(clear) {
+    AssignmentVisitor(Variant<_Types...> &_me, const bool _clear = true)
+		: me_(_me), clear_(_clear) {
     }
 
     template<typename _Type>
-    void operator()(const _Type& value) const {
-        lhs_.Variant<_Types...>::template set<_Type>(value, clear_);
+    void operator()(const _Type &_value) const {
+        me_.Variant<_Types...>::template set<_Type>(_value, clear_);
     }
 
     template<typename _Type>
-    void operator()(_Type& value) const {
-        lhs_.Variant<_Types...>::template set<_Type>(value, clear_);
+    void operator()(_Type &_value) const {
+        me_.Variant<_Types...>::template set<_Type>(_value, clear_);
     }
 
 private:
-    Variant<_Types...>& lhs_;
+    Variant<_Types...> &me_;
     const bool clear_;
 };
 
-template<typename ... _Types>
+template<typename... _Types>
 struct TypeSelector;
 
-template<typename _U>
-struct TypeSelector<_U> {
+template<typename _Type>
+struct TypeSelector<_Type> {
 };
 
-//_U == _Type
-template<typename _Type, typename ... _Types>
+template<typename _Type, typename... _Types>
 struct TypeSelector<_Type, _Type, _Types...> {
     typedef _Type type;
 };
 
-//_U& == _Type
-template<typename _Type, typename ... _Types>
-struct TypeSelector<_Type, _Type&, _Types...> {
+template<typename _Type, typename... _Types>
+struct TypeSelector<_Type, _Type &, _Types...> {
     typedef _Type& type;
 };
 
-//_U == _Type&
-template<typename _Type, typename ... _Types>
-struct TypeSelector<_Type&, _Type, _Types...> {
+template<typename _Type, typename... _Types>
+struct TypeSelector<_Type &, _Type, _Types...> {
     typedef _Type type;
 };
 
-//const _U& == _Type
-template<typename _Type, typename ... _Types>
-struct TypeSelector<_Type, const _Type&, _Types...> {
-    typedef const _Type& type;
+template<typename _Type, typename... _Types>
+struct TypeSelector<_Type, const _Type &, _Types...> {
+    typedef const _Type &type;
 };
 
-//_U == const _Type&
-template<typename _Type, typename ... _Types>
+template<typename _Type, typename... _Types>
 struct TypeSelector<const _Type&, _Type, _Types...> {
     typedef _Type type;
 };
 
-//_U == X*
-//_Type == const X*
-template<typename _Type, typename ... _Types>
+template<typename _Type, typename... _Types>
 struct TypeSelector<_Type*, const _Type*, _Types...> {
-    typedef const _Type* type;
+    typedef const _Type *type;
 };
 
-//_U == X&
-//_Type == const X&
-template<typename _Type, typename ... _Types>
-struct TypeSelector<_Type&, const _Type&, _Types...> {
-    typedef const _Type& type;
+template<typename _Type, typename... _Types>
+struct TypeSelector<_Type &, const _Type &, _Types...> {
+    typedef const _Type &type;
 };
 
-//_U != _Type, let's try to find _U among _Types
-template<typename _U, typename _Type, typename ... _Types>
+template<typename _U, typename _Type, typename... _Types>
 struct TypeSelector<_U, _Type, _Types...> {
     typedef typename TypeSelector<_U, _Types...>::type type;
 };
 
-template<typename ... _Types>
+template<typename... _Types>
 struct TypeIndex;
 
 template<>
@@ -537,8 +573,7 @@ struct TypeIndex<_Type, _Types...> {
     static const uint8_t index = TypeIndex<_Types...>::index + 1;
 
     template<typename _U>
-    static uint8_t get(
-                       typename std::enable_if<std::is_same<_Type, _U>::value>::type* = 0) {
+    static uint8_t get(typename std::enable_if<std::is_same<_Type, _U>::value>::type* = 0) {
         return index;
     }
 
@@ -548,53 +583,62 @@ struct TypeIndex<_Type, _Types...> {
     }
 };
 
-template<typename ... _Types>
-Variant<_Types...>::Variant() :
-                valueType_(TypesTupleSize::value) {
+template<typename... _Types>
+Variant<_Types...>::Variant()
+	: valueType_(TypesTupleSize::value) {
     ApplyVoidIndexVisitor<Variant<_Types...>, _Types...>::visit(*this, valueType_);
 }
 
-template<typename ... _Types>
-Variant<_Types...>::Variant(const Variant& fromVariant) {
+template<typename... _Types>
+Variant<_Types...>::Variant(const Variant &_source) {
     AssignmentVisitor<_Types...> visitor(*this, false);
-    ApplyVoidVisitor<AssignmentVisitor<_Types...> , Variant<_Types...>, _Types...>::visit(visitor, fromVariant);
+    ApplyVoidVisitor<
+    	AssignmentVisitor<_Types...> , Variant<_Types...>, _Types...
+    >::visit(visitor, _source);
 }
 
-template<typename ... _Types>
-Variant<_Types...>::Variant(Variant&& fromVariant)
+template<typename... _Types>
+Variant<_Types...>::Variant(Variant &&_source)
 {
     AssignmentVisitor<_Types...> visitor(*this, false);
-    ApplyVoidVisitor<AssignmentVisitor<_Types...> , Variant<_Types...>, _Types...>::visit(visitor, fromVariant);
+    ApplyVoidVisitor<
+    	AssignmentVisitor<_Types...> , Variant<_Types...>, _Types...
+    >::visit(visitor, _source);
 }
 
-template<typename ... _Types>
+template<typename... _Types>
 Variant<_Types...>::~Variant() {
     if (hasValue()) {
         DeleteVisitor<maxSize> visitor(valueStorage_);
-        ApplyVoidVisitor<DeleteVisitor<maxSize>, Variant<_Types...>, _Types...>::visit(visitor, *this);
+        ApplyVoidVisitor<
+        	DeleteVisitor<maxSize>, Variant<_Types...>, _Types...
+        >::visit(visitor, *this);
     }
 }
 
-template<typename ... _Types>
-Variant<_Types...>& Variant<_Types...>::operator=(const Variant<_Types...>& rhs) {
+template<typename... _Types>
+Variant<_Types...>& Variant<_Types...>::operator=(const Variant<_Types...> &_source) {
     AssignmentVisitor<_Types...> visitor(*this, hasValue());
-    ApplyVoidVisitor<AssignmentVisitor<_Types...>, Variant<_Types...>, _Types...>::visit(
-                    visitor, rhs);
+    ApplyVoidVisitor<
+    	AssignmentVisitor<_Types...>, Variant<_Types...>, _Types...
+    >::visit(visitor, _source);
     return *this;
 }
 
-template<typename ... _Types>
-Variant<_Types...>& Variant<_Types...>::operator=(Variant<_Types...>&& rhs) {
+template<typename... _Types>
+Variant<_Types...>& Variant<_Types...>::operator=(Variant<_Types...> &&_source) {
     AssignmentVisitor<_Types...> visitor(*this, hasValue());
-    ApplyVoidVisitor<AssignmentVisitor<_Types...>, Variant<_Types...>, _Types...>::visit(visitor, rhs);
+    ApplyVoidVisitor<
+    	AssignmentVisitor<_Types...>, Variant<_Types...>, _Types...
+    >::visit(visitor, _source);
     return *this;
 }
 
 template<typename ... _Types>
 template<typename _Type>
 typename std::enable_if<!std::is_same<_Type, Variant<_Types...>>::value, Variant<_Types...>&>::type
-Variant<_Types...>::operator=(const _Type& value) {
-    set<typename TypeSelector<_Type, _Types...>::type>(value, hasValue());
+Variant<_Types...>::operator=(const _Type &_value) {
+    set<typename TypeSelector<_Type, _Types...>::type>(_value, hasValue());
     return *this;
 }
 
@@ -602,8 +646,8 @@ template<typename ... _Types>
 template<typename _Type>
 const bool Variant<_Types...>::isType() const {
     typedef typename TypeSelector<_Type, _Types...>::type selected_type_t;
-    uint8_t cType = TypeIndex<_Types...>::template get<selected_type_t>();
-    if (cType == valueType_) {
+    uint8_t itsType = TypeIndex<_Types...>::template get<selected_type_t>();
+    if (itsType == valueType_) {
         return true;
     } else {
         return false;
@@ -612,20 +656,20 @@ const bool Variant<_Types...>::isType() const {
 
 template<typename ... _Types>
 template<typename _Type>
-Variant<_Types...>::Variant(const _Type& value,
+Variant<_Types...>::Variant(const _Type &_value,
                             typename std::enable_if<!std::is_const<_Type>::value>::type*,
                             typename std::enable_if<!std::is_reference<_Type>::value>::type*,
                             typename std::enable_if<!std::is_same<_Type, Variant<_Types...>>::value>::type*) {
-    set<typename TypeSelector<_Type, _Types...>::type>(value, false);
+    set<typename TypeSelector<_Type, _Types...>::type>(_value, false);
 }
 
 template<typename ... _Types>
 template<typename _Type>
-Variant<_Types...>::Variant(_Type && value,
+Variant<_Types...>::Variant(_Type &&_value,
 typename std::enable_if<!std::is_const<_Type>::value>::type*,
 typename std::enable_if<!std::is_reference<_Type>::value>::type*,
 typename std::enable_if<!std::is_same<_Type, Variant<_Types...>>::value>::type*) {
-    set<typename TypeSelector<_Type, _Types...>::type>(std::move(value), false);
+    set<typename TypeSelector<_Type, _Types...>::type>(std::move(_value), false);
 }
 
 
@@ -633,8 +677,8 @@ template<typename ... _Types>
 template<typename _Type>
 const _Type & Variant<_Types...>::get() const {
     typedef typename TypeSelector<_Type, _Types...>::type selected_type_t;
-    uint8_t cType = TypeIndex<_Types...>::template get<selected_type_t>();
-    if (cType == valueType_) {
+    uint8_t itsType = TypeIndex<_Types...>::template get<selected_type_t>();
+    if (itsType == valueType_) {
         return *(reinterpret_cast<const _Type *>(&valueStorage_));
     } else {
 #ifdef __EXCEPTIONS
@@ -650,27 +694,31 @@ const _Type & Variant<_Types...>::get() const {
 
 template<typename ... _Types>
 template<typename _U>
-void Variant<_Types...>::set(const _U& value, const bool clear) {
+void Variant<_Types...>::set(const _U &_value, const bool _clear) {
     typedef typename TypeSelector<_U, _Types...>::type selected_type_t;
 
-    if (clear) {
+    if (_clear) {
 		DeleteVisitor<maxSize> visitor(valueStorage_);
-        ApplyVoidVisitor<DeleteVisitor<maxSize>, Variant<_Types...>, _Types...>::visit(visitor, *this);
+        ApplyVoidVisitor<
+        	DeleteVisitor<maxSize>, Variant<_Types...>, _Types...
+        >::visit(visitor, *this);
     }
-    new (&valueStorage_) selected_type_t(std::move(value));
+    new (&valueStorage_) selected_type_t(std::move(_value));
     valueType_ = TypeIndex<_Types...>::template get<selected_type_t>();
 }
 
 template<typename ... _Types>
 template<typename _U>
-void Variant<_Types...>::set(_U&& value, const bool clear) {
+void Variant<_Types...>::set(_U &&_value, const bool _clear) {
     typedef typename TypeSelector<_U, _Types...>::type selected_type_t;
 
-    selected_type_t&& any_container_value = std::move(value);
-    if(clear)
+    selected_type_t&& any_container_value = std::move(_value);
+    if(_clear)
     {
 		DeleteVisitor<maxSize> visitor(valueStorage_);
-        ApplyVoidVisitor<DeleteVisitor<maxSize>, Variant<_Types...>, _Types...>::visit(visitor, *this);
+        ApplyVoidVisitor<
+        	DeleteVisitor<maxSize>, Variant<_Types...>, _Types...
+        >::visit(visitor, *this);
     } else {
         new (&valueStorage_) selected_type_t(std::move(any_container_value));
     }
@@ -679,18 +727,18 @@ void Variant<_Types...>::set(_U&& value, const bool clear) {
 }
 
 template<typename ... _Types>
-bool Variant<_Types...>::operator==(const Variant<_Types...>& rhs) const
-                {
+bool Variant<_Types...>::operator==(const Variant<_Types...> &_other) const
+{
     PartialEqualsVisitor<_Types...> visitor(*this);
-    return ApplyBoolVisitor<PartialEqualsVisitor<_Types...>, const Variant<_Types...>, _Types...>::visit(
-                    visitor,
-                    rhs);
+    return ApplyBoolVisitor<
+    			PartialEqualsVisitor<_Types...>, const Variant<_Types...>, _Types...
+    	   >::visit(visitor, _other);
 }
 
 template<typename ... _Types>
-bool Variant<_Types...>::operator!=(const Variant<_Types...>& rhs) const
-                {
-    return !(*this == rhs);
+bool Variant<_Types...>::operator!=(const Variant<_Types...> &_other) const
+{
+    return !(*this == _other);
 }
 
 } // namespace CommonAPI
