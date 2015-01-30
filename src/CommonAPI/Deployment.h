@@ -75,6 +75,12 @@ struct MapDeployment {
  */
 typedef Deployment<> EmptyDeployment;
 
+/*
+ * The general purpose empty deployment. Use this whenever
+ * you need to provide a reference to an empty deployment.
+ */
+extern EmptyDeployment empty;
+
 } // namespace CommonAPI
 
 #endif // COMMONAPI_DEPLOYABLE_H_
