@@ -9,8 +9,8 @@ SET( LIB_PATCH_VERSION 1 ) # used in e.g. sub cmake file, commonapi.spec.in
 
 # version of CommonAPI
 SET( ${PROJECT_NAME}_MAJOR_VERSION 2 )
-SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
-SET( ${PROJECT_NAME}_PATCH_LEVEL 6 ) 
+SET( ${PROJECT_NAME}_MINOR_VERSION 9 )
+SET( ${PROJECT_NAME}_PATCH_LEVEL 0 ) 
 
 message("Project name: ${PROJECT_NAME}")
 

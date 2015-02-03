@@ -15,7 +15,7 @@
 
 #include "Struct.h"
 #include "Variant.h"
-#include "types.h"
+#include "Types.h"
 
 namespace CommonAPI {
 

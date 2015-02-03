@@ -17,10 +17,9 @@ namespace CommonAPI {
 
 struct Version {
     Version() = default;
-
-    Version(const uint32_t &majorValue, const uint32_t &minorValue):
-        Major(majorValue),
-        Minor(minorValue) {}
+    Version(const uint32_t &majorValue, const uint32_t &minorValue)
+    	: Major(majorValue), Minor(minorValue) {
+    }
 
     uint32_t Major;
     uint32_t Minor;

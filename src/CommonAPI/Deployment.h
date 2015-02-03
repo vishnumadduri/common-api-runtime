@@ -73,7 +73,7 @@ struct ArrayDeployment {
 
 template<typename _KeyDepl, typename _ValueDepl>
 struct MapDeployment {
-	MapDeployment(const _KeyDepl *_key, const _ValueDepl *_value)
+	MapDeployment(_KeyDepl *_key, _ValueDepl *_value)
 		: key_(_key), value_(_value) {}
 
 	_KeyDepl *key_;

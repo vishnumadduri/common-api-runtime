@@ -12,7 +12,7 @@
 #ifndef COMMON_API_DBUS_ATTRIBUTE_EXTENSION_H_
 #define COMMON_API_DBUS_ATTRIBUTE_EXTENSION_H_
 
-#include "types.h"
+#include "Types.h"
 #include "Event.h"
 
 #include <cstdint>

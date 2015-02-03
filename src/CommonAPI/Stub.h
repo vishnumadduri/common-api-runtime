@@ -18,15 +18,12 @@
 
 namespace CommonAPI {
 
+class Address;
+
 class StubAdapter {
 public:
     virtual ~StubAdapter() {
     }
-
-    virtual const std::string getAddress() const = 0;
-    virtual const std::string& getDomain() const = 0;
-    virtual const std::string& getServiceId() const = 0;
-    virtual const std::string& getInstanceId() const = 0;
 };
 
 class StubBase {
