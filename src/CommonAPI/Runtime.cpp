@@ -9,13 +9,11 @@
 #include <sys/stat.h>
 
 #include <algorithm>
-#include <fstream>
-#include <sstream>
 
-#include "Factory.h"
-#include "Logger.h"
-#include "Runtime.h"
-#include "Utils.h"
+#include <CommonAPI/Factory.h>
+#include <CommonAPI/IniFileReader.h>
+#include <CommonAPI/Logger.h>
+#include <CommonAPI/Runtime.h>
 
 namespace CommonAPI {
 
@@ -33,20 +31,20 @@ Runtime::~Runtime() {
 }
 
 bool
-Runtime::registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory) {
-	Logger::log("Registering factory for IPC=", _ipc);
-	// TODO: add a lock
+Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _factory) {
+	Logger::log("Registering factory for binding=", _binding);
 	bool isRegistered(false);
-	auto foundFactory = factories_.find(_ipc);
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	auto foundFactory = factories_.find(_binding);
 	if (foundFactory == factories_.end()) {
-		factories_[_ipc] = _factory;
+		factories_[_binding] = _factory;
 		isRegistered = true;
 	}
 	return isRegistered;
 }
 
 bool
-Runtime::unregisterFactory(const std::string &_ipc) {
+Runtime::unregisterFactory(const std::string &_binding) {
 	return false;
 }
 
@@ -65,11 +63,11 @@ void Runtime::init() {
 	(void)readConfiguration();
 
 	// Determine default ipc & shared library folder
-	const char *ipc = getenv("COMMONAPI_DEFAULT_IPC");
-	if (ipc)
-		defaultIpc_ = ipc;
+	const char *binding = getenv("COMMONAPI_DEFAULT_BINDING");
+	if (binding)
+		defaultBinding_ = binding;
 	else
-		defaultIpc_ = COMMONAPI_DEFAULT_IPC;
+		defaultBinding_ = COMMONAPI_DEFAULT_BINDING;
 
 	const char *folder = getenv("COMMONAPI_DEFAULT_FOLDER");
 	if (folder)
@@ -78,9 +76,9 @@ void Runtime::init() {
 		defaultFolder_ = COMMONAPI_DEFAULT_FOLDER;
 
 	// Log settings
-	Logger::log("Using default IPC=", defaultIpc_);
-	Logger::log("Using default shared library folder=", defaultFolder_);
-	Logger::log("Using default configuration file=", defaultConfig_);
+	Logger::log("Using default binding \'", defaultBinding_, "\'");
+	Logger::log("Using default shared library folder \'", defaultFolder_, "\'");
+	Logger::log("Using default configuration file \'", defaultConfig_, "\'");
 }
 
 bool
@@ -98,46 +96,37 @@ Runtime::readConfiguration() {
 		}
 	}
 
-	std::ifstream configStream(config);
-	if (configStream.is_open()) {
-		Logger::log("Loading configuration from ", config);
+	IniFileReader reader;
+	if (!reader.load(config))
+		return false;
 
-		enum { DEFAULT, PROXY, STUB, UNKNOWN } loadType(UNKNOWN);
-		while (!configStream.eof()) {
-			std::string line;
-			std::getline(configStream, line);
-			trim(line);
+	std::shared_ptr<IniFileReader::Section> section
+		= reader.getSection("default");
+	if (section) {
+		std::string binding = section->getValue("binding");
+		if ("" != binding)
+			defaultBinding_ = binding;
 
-			if (line == "[default]") {
-				loadType = DEFAULT;
-			} else if (line == "[proxy]") {
-				loadType = PROXY;
-			} else if (line == "[stub]") {
-				loadType = STUB;
-			} else { // data
-				if (loadType != UNKNOWN) {
-					std::size_t pos = line.find('=');
-					if (pos != line.npos) {
-						std::string key = line.substr(0, pos);
-						std::string value = line.substr(pos+1);
-
-						if (loadType == DEFAULT) {
-							if (key == "ipc") defaultIpc_ = value;
-							else if (key == "folder") defaultFolder_ = value;
-						} else if (loadType == PROXY) {
-							libraries_[key][true] = value;
-						} else {
-							libraries_[key][false] = value;
-						}
-					}
-				}
-			}
-		}
-	} else {
-		Logger::log("No configuration available. Using defaults.");
+		std::string folder = section->getValue("folder");
+		if ("" != folder)
+			defaultFolder_ = folder;
 	}
 
-	return false;
+	section = reader.getSection("proxy");
+	if (section) {
+		for (auto m : section->getMappings()) {
+			libraries_[m.first][true] = m.second;
+		}
+	}
+
+	section = reader.getSection("stub");
+	if (section) {
+		for (auto m : section->getMappings()) {
+			libraries_[m.first][false] = m.second;
+		}
+	}
+
+	return true;
 }
 
 std::shared_ptr<Proxy>

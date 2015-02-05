@@ -13,11 +13,12 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <set>
 
 namespace CommonAPI {
 
-const char *COMMONAPI_DEFAULT_IPC = "dbus";
+const char *COMMONAPI_DEFAULT_BINDING = "dbus";
 const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
 const char *COMMONAPI_DEFAULT_CONFIG = "/etc/commonapi.cfg";
 
@@ -93,9 +94,11 @@ private:
 	std::map<std::string, std::map<bool, std::string>> libraries_;
 	std::set<std::string> loadedLibraries_; // Library name
 
-	std::string defaultIpc_;
+	std::string defaultBinding_;
 	std::string defaultFolder_;
 	std::string defaultConfig_;
+
+	std::mutex factoriesMutex_;
 };
 
 } // namespace CommonAPI
