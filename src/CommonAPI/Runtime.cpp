@@ -54,10 +54,13 @@ Runtime::unregisterFactory(const std::string &_binding) {
 void Runtime::init() {
 	// Determine default configuration file
 	const char *config = getenv("COMMONAPI_DEFAULT_CONFIG");
-	if (config)
+	if (config) {
 		defaultConfig_ = config;
-	else
-		defaultConfig_ = COMMONAPI_DEFAULT_CONFIG;
+	} else {
+		defaultConfig_ = COMMONAPI_DEFAULT_CONFIG_FOLDER;
+		defaultConfig_ += "/";
+		defaultConfig_ += COMMONAPI_DEFAULT_CONFIG_FILE;
+	}
 
 	// TODO: evaluate return parameter and decide what to do
 	(void)readConfiguration();
@@ -88,7 +91,8 @@ Runtime::readConfiguration() {
 	char currentDirectory[MAX_PATH_LEN];
 	if (getcwd(currentDirectory, MAX_PATH_LEN)) {
 		config = currentDirectory;
-		config += "/commonapi.cfg";
+		config += "/";
+		config += COMMONAPI_DEFAULT_CONFIG_FILE;
 
 		struct stat s;
 		if (stat(config.c_str(), &s) != 0) {

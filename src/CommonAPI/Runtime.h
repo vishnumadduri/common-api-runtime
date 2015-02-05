@@ -20,7 +20,8 @@ namespace CommonAPI {
 
 const char *COMMONAPI_DEFAULT_BINDING = "dbus";
 const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
-const char *COMMONAPI_DEFAULT_CONFIG = "/etc/commonapi.cfg";
+const char *COMMONAPI_DEFAULT_CONFIG_FILE = "commonapi.ini";
+const char *COMMONAPI_DEFAULT_CONFIG_FOLDER = "/etc";
 
 class Factory;
 class MainLoopContext;

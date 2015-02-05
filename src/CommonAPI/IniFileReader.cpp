@@ -13,7 +13,7 @@
 
 namespace CommonAPI {
 
-const std::map<std::string, std::string>
+const std::map<std::string, std::string> &
 IniFileReader::Section::getMappings() const {
 	return mappings_;
 }
@@ -92,6 +92,11 @@ IniFileReader::load(const std::string &_path) {
 		}
 	}
 	return true;
+}
+
+const std::map<std::string, std::shared_ptr<IniFileReader::Section>> &
+IniFileReader::getSections() const {
+	return sections_;
 }
 
 std::shared_ptr<IniFileReader::Section>

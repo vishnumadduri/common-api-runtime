@@ -17,7 +17,7 @@ class IniFileReader {
 public:
 	class Section {
 	public:
-		const std::map<std::string, std::string> getMappings() const;
+		const std::map<std::string, std::string> &getMappings() const;
 		std::string getValue(const std::string &_key) const;
 	private:
 		std::map<std::string, std::string> mappings_;
@@ -27,6 +27,7 @@ public:
 
 	bool load(const std::string &_path);
 
+	const std::map<std::string, std::shared_ptr<Section>> &getSections() const;
 	std::shared_ptr<Section> getSection(const std::string &_name) const;
 
 private:
