@@ -1,4 +1,4 @@
-/* Copyright (C) 2013, 2014 BMW Group
+/* Copyright (C) 2013-2015 BMW Group
  * Author: Manfred Bathelt (manfred.bathelt@bmw.de)
  * Author: Juergen Gehring (juergen.gehring@bmw.de)
  * Author: Lutz Bichler (lutz.bichler@bmw.de)
@@ -14,16 +14,12 @@
 #define COMMONAPI_EVENT_H_
 
 #include <functional>
-#include <list>
-#include <tuple>
 #include <mutex>
+#include <map>
+#include <set>
+#include <tuple>
 
 namespace CommonAPI {
-
-enum class SubscriptionStatus {
-    RETAIN,
-    CANCEL
-};
 
 /**
  * \brief Class representing an event
@@ -35,11 +31,14 @@ class Event {
 public:
     typedef std::tuple<_Arguments...> ArgumentsTuple;
     typedef std::function<void(const _Arguments&...)> Listener;
-    typedef std::function<SubscriptionStatus(const _Arguments&...)> CancellableListener;
-    typedef std::list<CancellableListener> ListenersList;
-    typedef typename ListenersList::iterator Subscription;
+    typedef uint32_t Subscription;
+    typedef std::set<Subscription> SubscriptionsSet;
+    typedef std::map<Subscription, Listener> ListenersMap;
 
-    class CancellableListenerWrapper;
+    /**
+     * \brief Constructor
+     */
+    Event() : nextSubscription_(0) {};
 
     /**
      * \brief Subscribe a listener to this event
@@ -52,24 +51,9 @@ public:
      * beginning and react to events appropriatly for each.
      *
      * @param listener A listener to be added
-     * @return A token identifying this subscription
+     * @return key of the new subscription
      */
-    virtual Subscription subscribe(Listener listener);
-
-    /**
-     * \brief Subscribe a cancellable listener to this event
-     *
-     * Subscribe a cancellable listener to this event
-     * ATTENTION: You should not build new proxies or register services in callbacks
-     * from events. This can cause a deadlock or assert. Instead, you should set a
-     * trigger for your application to do this on the next iteration of your event loop
-     * if needed. The preferred solution is to build all proxies you need at the
-     * beginning and react to events appropriatly for each.
-     *
-     * @param listener A cancellable listener to be added
-     * @return A token identifying this subscription
-     */
-    Subscription subscribeCancellableListener(CancellableListener listener);
+    Subscription subscribe(Listener listener);
 
     /**
      * \brief Remove a listener from this event
@@ -78,114 +62,96 @@ public:
      * Note: Do not call this inside a listener notification callback it will deadlock! Use cancellable listeners instead.
      *
      * @param listenerSubscription A listener token to be removed
-     * @return true, if the removed subscription was the last one
      */
-    void unsubscribe(Subscription listenerSubscription);
+    void unsubscribe(Subscription subscription);
 
     virtual ~Event() {}
 
 protected:
-    // Returns false if all subscriptions were cancelled
-    // Does not send *Removed events!
-    SubscriptionStatus notifyListeners(const _Arguments&... eventArguments);
+    void notifyListeners(const _Arguments&... eventArguments);
 
-    // Events sent during subscribe()
-    virtual void onFirstListenerAdded(const CancellableListener& listener) {
-    }
-    virtual void onListenerAdded(const CancellableListener& listener) {
-    }
+    virtual void onFirstListenerAdded(const Listener& listener) {}
+    virtual void onListenerAdded(const Listener& listener) {}
 
-    // Events sent during unsubscribe()
-    virtual void onListenerRemoved(const CancellableListener& listener) { }
-    virtual void onLastListenerRemoved(const CancellableListener& listener) { }
-
-    inline bool hasListeners() const;
+    virtual void onListenerRemoved(const Listener& listener) {}
+    virtual void onLastListenerRemoved(const Listener& listener) {}
 
 //private:
-    ListenersList listenersList_;
-    std::mutex listenerListMutex_;
-};
+    ListenersMap subscriptions_;
+    Subscription nextSubscription_;
 
-template<typename... _Arguments>
-class Event<_Arguments...>::CancellableListenerWrapper {
-public:
-    CancellableListenerWrapper(Listener&& listener) :
-                    listener_(std::move(listener)) {
-    }
+    ListenersMap pendingSubscriptions_;
+    SubscriptionsSet pendingUnsubscriptions_;
 
-    SubscriptionStatus operator()(const _Arguments&... eventArguments) {
-        listener_(eventArguments...);
-        return SubscriptionStatus::RETAIN;
-    }
-
-private:
-    Listener listener_;
+    std::mutex notificationMutex_;
+    std::mutex subscriptionMutex_;
 };
 
 template<typename ... _Arguments>
 typename Event<_Arguments...>::Subscription Event<_Arguments...>::subscribe(Listener listener) {
-    return subscribeCancellableListener(CancellableListenerWrapper(std::move(listener)));
+	Subscription subscription;
+	bool isFirstListener;
+
+	subscriptionMutex_.lock();
+	subscription = nextSubscription_++;
+	// TODO?: check for key/subscription overrun
+	pendingSubscriptions_[subscription] = std::move(listener);
+	isFirstListener = (0 == subscriptions_.size());
+	subscriptionMutex_.unlock();
+
+	if (isFirstListener)
+		onFirstListenerAdded(listener);
+	onListenerAdded(listener);
+
+	return subscription;
 }
 
 template<typename ... _Arguments>
-typename Event<_Arguments...>::Subscription Event<_Arguments...>::subscribeCancellableListener(CancellableListener listener) {
-    listenerListMutex_.lock();
-    const bool firstListenerAdded = listenersList_.empty();
+void Event<_Arguments...>::unsubscribe(Subscription subscription) {
+	bool isLastListener(false);
 
-    listenersList_.emplace_front(std::move(listener));
-    Subscription listenerSubscription = listenersList_.begin();
-    listenerListMutex_.unlock();
+	subscriptionMutex_.lock();
+	auto listener = subscriptions_.find(subscription);
+	if (subscriptions_.end() != listener
+			&& pendingUnsubscriptions_.end() == pendingUnsubscriptions_.find(subscription)) {
+		if (0 == pendingSubscriptions_.erase(subscription)) {
+			pendingUnsubscriptions_.insert(subscription);
+			isLastListener = (1 == subscriptions_.size());
+		} else {
+			isLastListener = (0 == subscriptions_.size());
+		}
+	}
+	subscriptionMutex_.unlock();
 
-    if (firstListenerAdded) {
-        onFirstListenerAdded(*listenerSubscription);
+	onListenerRemoved(listener->second);
+	if (isLastListener)
+		onLastListenerRemoved(listener->second);
+}
+
+template<typename ... _Arguments>
+void Event<_Arguments...>::notifyListeners(const _Arguments&... eventArguments) {
+	subscriptionMutex_.lock();
+	notificationMutex_.lock();
+	for (auto iterator = pendingUnsubscriptions_.begin();
+		 iterator != pendingUnsubscriptions_.end();
+		 iterator++) {
+		subscriptions_.erase(*iterator);
+	}
+	pendingUnsubscriptions_.clear();
+
+	for (auto iterator = pendingSubscriptions_.begin();
+		 iterator != pendingSubscriptions_.end();
+		 iterator++) {
+		subscriptions_.insert(*iterator);
+	}
+	pendingSubscriptions_.clear();
+
+	subscriptionMutex_.unlock();
+	for (auto iterator = subscriptions_.begin(); iterator != subscriptions_.end(); iterator++) {
+        iterator->second(eventArguments...);
     }
 
-    onListenerAdded(*listenerSubscription);
-
-    return listenerSubscription;
-}
-
-template<typename ... _Arguments>
-void Event<_Arguments...>::unsubscribe(Subscription listenerSubscription) {
-    const CancellableListener cancellableListener = *listenerSubscription;
-
-    listenerListMutex_.lock();
-    listenersList_.erase(listenerSubscription);
-    const bool lastListenerRemoved = listenersList_.empty();
-    listenerListMutex_.unlock();
-
-    onListenerRemoved(cancellableListener);
-
-    if (lastListenerRemoved) {
-        onLastListenerRemoved(cancellableListener);
-    }
-}
-
-template<typename ... _Arguments>
-SubscriptionStatus Event<_Arguments...>::notifyListeners(const _Arguments&... eventArguments) {
-    listenerListMutex_.lock();
-    for (auto iterator = listenersList_.begin(); iterator != listenersList_.end();) {
-        const CancellableListener& cancellableListener = *iterator;
-        const SubscriptionStatus listenerSubscriptionStatus = cancellableListener(eventArguments...);
-
-        if (listenerSubscriptionStatus == SubscriptionStatus::CANCEL) {
-            auto listenerIterator = iterator;
-            iterator++;
-            listenersList_.erase(listenerIterator);
-        } else
-            iterator++;
-    }
-
-    const bool lEmpty = listenersList_.empty();
-    listenerListMutex_.unlock();
-
-    return (lEmpty ? SubscriptionStatus::CANCEL
-    			   : SubscriptionStatus::RETAIN);
-}
-
-template<typename ... _Arguments>
-bool Event<_Arguments...>::hasListeners() const {
-    return !listenersList_.empty();
+    notificationMutex_.unlock();
 }
 
 } // namespace CommonAPI

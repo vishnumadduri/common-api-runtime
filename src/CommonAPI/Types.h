@@ -80,16 +80,14 @@ public:
 
 template <typename ... Args>
 struct SelectiveBroadcastFunctorHelper {
-    typedef std::function<SubscriptionStatus(Args...)> SelectiveBroadcastFunctor;
+    typedef std::function<void(Args...)> SelectiveBroadcastFunctor;
 };
 
-typedef std::unordered_set<std::shared_ptr<CommonAPI::ClientId>, SharedPointerClientIdContentHash, SharedPointerClientIdContentEqual> ClientIdList;
-
-template <typename ... Args>
-struct SelectiveBroadcastSubscriptionResult {
-    typedef std::tuple<bool, typename CommonAPI::Event<Args...>::Subscription> SubscriptionResult;
-
-};
+typedef std::unordered_set<
+	std::shared_ptr<CommonAPI::ClientId>,
+	SharedPointerClientIdContentHash,
+	SharedPointerClientIdContentEqual
+> ClientIdList;
 
 template<typename _EnumType>
 class EnumHasher {
