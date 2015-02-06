@@ -65,6 +65,13 @@ enum class CallStatus {
     REMOTE_ERROR
 };
 
+typedef uint32_t CallId;
+
+enum class OperationStatus {
+	PENDING,
+	DONE
+};
+
 /**
  * \brief Identifies a client sending a call to a stub.
  *
