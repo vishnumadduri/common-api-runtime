@@ -28,6 +28,13 @@ class MainLoopContext;
 class Proxy;
 class StubBase;
 
+template<template<typename ...> class _ProxyType, template<typename> class _AttributeExtension>
+struct DefaultAttributeProxyFactoryHelper;
+
+template<template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
+std::shared_ptr<typename DefaultAttributeProxyFactoryHelper<_ProxyClass, _AttributeExtension>::class_t> createProxyWithDefaultAttributeExtension(
+			Factory* specificFactory, const std::string& participantId, const std::string& domain);
+
 class Runtime {
 public:
 	static std::shared_ptr<Runtime> get();
