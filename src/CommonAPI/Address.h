@@ -14,7 +14,8 @@ namespace CommonAPI {
 
 class Address {
 public:
-	Address(const std::string &_address = "");
+	Address() = default;
+	Address(const std::string &_address);
 	Address(const std::string &_domain,
 			const std::string &_interface,
 			const std::string &_instance);

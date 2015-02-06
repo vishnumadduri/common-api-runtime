@@ -95,7 +95,7 @@ typename Event<_Arguments...>::Subscription Event<_Arguments...>::subscribe(List
 	subscriptionMutex_.lock();
 	subscription = nextSubscription_++;
 	// TODO?: check for key/subscription overrun
-	pendingSubscriptions_[subscription] = std::move(listener);
+	listener = pendingSubscriptions_[subscription] = std::move(listener);
 	isFirstListener = (0 == subscriptions_.size());
 	subscriptionMutex_.unlock();
 
