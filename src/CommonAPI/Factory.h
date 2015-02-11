@@ -20,6 +20,8 @@ public:
     typedef std::function<void(std::vector<std::string> &)> AvailableInstancesCbk_t;
     typedef std::function<void(bool)> InstanceAliveCbk_t;
 
+    virtual ~Factory() {};
+
 	virtual std::shared_ptr<Proxy> createProxy(const std::string &_domain,
 									   	   	   const std::string &_interface,
 									   	   	   const std::string &_instance,

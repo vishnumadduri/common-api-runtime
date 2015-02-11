@@ -11,6 +11,7 @@
 #endif
 
 #include "Deployable.h"
+#include "Deployment.h"
 
 #ifndef COMMONAPI_SERIALIZABLE_VARIANT_H_
 #define COMMONAPI_SERIALIZABLE_VARIANT_H_

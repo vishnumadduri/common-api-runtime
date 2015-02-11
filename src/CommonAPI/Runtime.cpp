@@ -138,6 +138,15 @@ Runtime::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
 		std::shared_ptr<MainLoopContext> _context) {
 
+	// Check whether we already know how to create such proxies...
+	for (auto factory : factories_) {
+		std::shared_ptr<Proxy> proxy
+			= factory.second->createProxy(_domain, _interface, _instance, _context);
+		if (proxy)
+			return proxy;
+	}
+
+	// .. it seems do not, lets try to load a library that does...
 	std::string library = getLibrary(_domain, _interface, _instance, true);
 	if (loadLibrary(library)) {
 		for (auto factory : factories_) {
@@ -154,10 +163,21 @@ Runtime::createProxy(
 bool
 Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
 				  	  std::shared_ptr<StubBase> _stub, std::shared_ptr<MainLoopContext> _context) {
+
+	bool isRegistered(false);
+
+	for (auto factory : factories_) {
+		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
+		if (isRegistered)
+			return true;
+	}
+
 	std::string library = getLibrary(_domain, _interface, _instance, false);
 	if (loadLibrary(library)) {
 		for (auto factory : factories_) {
-			return factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
+			isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
+			if (isRegistered)
+				return true;
 		}
 	}
 	return false;

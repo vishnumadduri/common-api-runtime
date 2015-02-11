@@ -22,14 +22,12 @@ class Address;
 
 class StubAdapter {
 public:
-    virtual ~StubAdapter() {
-    }
+    virtual ~StubAdapter() {}
 };
 
 class StubBase {
 public:
-    virtual ~StubBase() {
-    }
+    virtual ~StubBase() {}
 };
 
 template<typename _StubAdapter, typename _StubRemoteEventHandler>
@@ -39,8 +37,7 @@ public:
     typedef _StubAdapter StubAdapterType;
     typedef _StubRemoteEventHandler RemoteEventHandlerType;
 
-    virtual ~Stub() {
-    }
+    virtual ~Stub() {}
 
     virtual _StubRemoteEventHandler* initStubAdapter(const std::shared_ptr<_StubAdapter>& stubAdapter) = 0;
     virtual const std::shared_ptr<_StubAdapter> getStubAdapter() {

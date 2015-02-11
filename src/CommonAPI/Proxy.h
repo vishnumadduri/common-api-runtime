@@ -28,7 +28,7 @@ typedef ReadonlyAttribute<Version> InterfaceVersionAttribute;
 
 class Proxy {
 public:
-	virtual ~Proxy() { }
+	virtual ~Proxy() {}
 
  	const Address &getAddress() const;
 

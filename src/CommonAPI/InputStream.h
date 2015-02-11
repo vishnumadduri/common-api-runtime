@@ -27,8 +27,6 @@ namespace CommonAPI {
 template<class _Derived>
 class InputStream {
 public:
-    virtual ~InputStream() {}
-
     template<class _Deployment>
     InputStream &readValue(bool &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);

@@ -22,8 +22,7 @@ public:
     typedef typename Event<_Arguments...>::Listener Listener;
     typedef typename Event<_Arguments...>::Subscription Subscription;
 
-    virtual ~SelectiveEvent() {
-    }
+    virtual ~SelectiveEvent() {}
 
     Subscription subscribe(Listener listener) {
         // just delegate
