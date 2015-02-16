@@ -71,6 +71,7 @@ IniFileReader::load(const std::string &_path) {
 				std::size_t pos = line.find('=');
 				if (pos != line.npos) {
 					std::string key = line.substr(0, pos);
+					trim(key);
 					if (currentSection->mappings_.end()
 						!= currentSection->mappings_.find(key)) {
 						Logger::log("Double definition for key \'",
@@ -82,6 +83,7 @@ IniFileReader::load(const std::string &_path) {
 									")");
 					} else {
 						std::string value = line.substr(pos+1);
+						trim(value);
 						currentSection->mappings_[key] = value;
 					}
 				} else if (line.size() > 0) {
