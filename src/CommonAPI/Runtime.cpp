@@ -22,7 +22,9 @@ std::shared_ptr<Runtime> Runtime::get() {
 	return theRuntime;
 }
 
-Runtime::Runtime() {
+Runtime::Runtime()
+	: defaultBinding_(COMMONAPI_DEFAULT_BINDING),
+	  defaultFolder_(COMMONAPI_DEFAULT_FOLDER) {
 	init();
 }
 
@@ -53,7 +55,7 @@ Runtime::unregisterFactory(const std::string &_binding) {
  */
 void Runtime::init() {
 	// Determine default configuration file
-	const char *config = getenv("COMMONAPI_DEFAULT_CONFIG");
+	const char *config = getenv("COMMONAPI_CONFIG");
 	if (config) {
 		defaultConfig_ = config;
 	} else {
@@ -69,14 +71,10 @@ void Runtime::init() {
 	const char *binding = getenv("COMMONAPI_DEFAULT_BINDING");
 	if (binding)
 		defaultBinding_ = binding;
-	else
-		defaultBinding_ = COMMONAPI_DEFAULT_BINDING;
 
 	const char *folder = getenv("COMMONAPI_DEFAULT_FOLDER");
 	if (folder)
 		defaultFolder_ = folder;
-	else
-		defaultFolder_ = COMMONAPI_DEFAULT_FOLDER;
 
 	// Log settings
 	Logger::log("Using default binding \'", defaultBinding_, "\'");
@@ -119,6 +117,7 @@ Runtime::readConfiguration() {
 	section = reader.getSection("proxy");
 	if (section) {
 		for (auto m : section->getMappings()) {
+			Logger::log("Adding proxy mapping: ", m.first, " --> ", m.second);
 			libraries_[m.first][true] = m.second;
 		}
 	}
@@ -126,6 +125,7 @@ Runtime::readConfiguration() {
 	section = reader.getSection("stub");
 	if (section) {
 		for (auto m : section->getMappings()) {
+			Logger::log("Adding stub mapping: ", m.first, " --> ", m.second);
 			libraries_[m.first][false] = m.second;
 		}
 	}
@@ -191,6 +191,9 @@ Runtime::getLibrary(
 	std::string library;
 
 	std::string address = _domain + ":" + _interface + ":" + _instance;
+
+	Logger::log("Loading proxy library for ", address);
+
 	auto libraryIterator = libraries_.find(address);
 	if (libraryIterator != libraries_.end()) {
 		auto addressIterator = libraryIterator->second.find(_isProxy);
