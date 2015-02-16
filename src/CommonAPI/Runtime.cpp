@@ -10,10 +10,10 @@
 
 #include <algorithm>
 
-#include <CommonAPI/Factory.h>
-#include <CommonAPI/IniFileReader.h>
-#include <CommonAPI/Logger.h>
-#include <CommonAPI/Runtime.h>
+#include <CommonAPI/Factory.hpp>
+#include <CommonAPI/IniFileReader.hpp>
+#include <CommonAPI/Logger.hpp>
+#include <CommonAPI/Runtime.hpp>
 
 namespace CommonAPI {
 

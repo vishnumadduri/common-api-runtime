@@ -8,8 +8,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_STRUCT_H_
-#define COMMONAPI_STRUCT_H_
+#ifndef COMMONAPI_STRUCT_HPP_
+#define COMMONAPI_STRUCT_HPP_
 
 #include <iostream>
 #include <tuple>
@@ -172,4 +172,4 @@ struct PolymorphicStruct {
 
 } /* namespace CommonAPI */
 
-#endif /* COMMONAPI_STRUCT_H_ */
+#endif // COMMONAPI_STRUCT_HPP_

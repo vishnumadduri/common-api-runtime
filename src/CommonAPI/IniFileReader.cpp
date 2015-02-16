@@ -7,9 +7,9 @@
 #include <fstream>
 #include <sstream>
 
-#include <CommonAPI/IniFileReader.h>
-#include <CommonAPI/Logger.h>
-#include <CommonAPI/Utils.h>
+#include <CommonAPI/IniFileReader.hpp>
+#include <CommonAPI/Logger.hpp>
+#include <CommonAPI/Utils.hpp>
 
 namespace CommonAPI {
 

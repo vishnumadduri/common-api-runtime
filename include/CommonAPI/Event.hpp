@@ -10,8 +10,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_EVENT_H_
-#define COMMONAPI_EVENT_H_
+#ifndef COMMONAPI_EVENT_HPP_
+#define COMMONAPI_EVENT_HPP_
 
 #include <functional>
 #include <mutex>
@@ -156,4 +156,4 @@ void Event<_Arguments...>::notifyListeners(const _Arguments&... eventArguments) 
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_EVENT_H_
+#endif // COMMONAPI_EVENT_HPP_

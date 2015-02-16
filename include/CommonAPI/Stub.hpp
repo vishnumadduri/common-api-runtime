@@ -9,8 +9,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_STUB_H_
-#define COMMONAPI_STUB_H_
+#ifndef COMMONAPI_STUB_HPP_
+#define COMMONAPI_STUB_HPP_
 
 #include <memory>
 #include <string>
@@ -55,4 +55,4 @@ enum SelectiveBroadcastSubscriptionEvent {
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_STUB_H_
+#endif // COMMONAPI_STUB_HPP_

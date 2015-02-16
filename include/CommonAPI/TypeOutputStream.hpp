@@ -8,14 +8,14 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_TYPE_OUTPUT_STREAM_H_
-#define COMMONAPI_TYPE_OUTPUT_STREAM_H_
+#ifndef COMMONAPI_TYPEOUTPUTSTREAM_HPP_
+#define COMMONAPI_TYPEOUTPUTSTREAM_HPP_
 
 #include <unordered_map>
 
-#include "Struct.h"
-#include "Variant.h"
-#include "Types.h"
+#include <CommonAPI/Struct.hpp>
+#include <CommonAPI/Variant.hpp>
+#include <CommonAPI/Types.hpp>
 
 namespace CommonAPI {
 
@@ -187,6 +187,6 @@ TypeOutputStream<_Derived> &operator<<(TypeOutputStream<_Derived> &_output,
 	return _output.writeType(_value);
 }
 
-} /* namespace CommonAPI */
+} // namespace CommonAPI
 
-#endif /* COMMONAPI_TYPE_OUTPUT_STREAM_H_ */
+#endif // COMMONAPI_TYPEOUTPUTSTREAM_HPP_

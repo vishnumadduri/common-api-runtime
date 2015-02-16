@@ -9,8 +9,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef FUNCTIONALHASH_H_
-#define FUNCTIONALHASH_H_
+#ifndef COMMONAPI_CONTAINERUTILS_HPP_
+#define COMMONAPI_CONTAINERUTILS_HPP_
 
 #include <functional>
 #include <memory>
@@ -30,4 +30,4 @@ struct SharedPointerClientIdContentEqual : public std::binary_function<std::shar
 }  // namespace std
 
 
-#endif /* FUNCTIONALHASH_H_ */
+#endif /* COMMONAPI_CONTAINERUTILS_HPP_ */

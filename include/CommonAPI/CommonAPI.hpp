@@ -6,19 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef COMMONAPI_H_
-#define COMMONAPI_H_
+#ifndef COMMONAPI_HPP_
+#define COMMONAPI_HPP_
 
 #ifndef COMMONAPI_INTERNAL_COMPILATION
 #define COMMONAPI_INTERNAL_COMPILATION
 #endif
 
-#include "Address.h"
-#include "AttributeExtension.h"
-#include "ByteBuffer.h"
-#include "Runtime.h"
-#include "Types.h"
+#include "Address.hpp"
+#include "AttributeExtension.hpp"
+#include "ByteBuffer.hpp"
+#include "Runtime.hpp"
+#include "Types.hpp"
 
 #undef COMMONAPI_INTERNAL_COMPILATION
 
-#endif /* COMMONAPI_H_ */
+#endif /* COMMONAPI_HPP_ */

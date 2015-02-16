@@ -9,11 +9,10 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_MAIN_LOOP_CONTEXT_H_
-#define COMMONAPI_MAIN_LOOP_CONTEXT_H_
+#ifndef COMMONAPI_MAINLOOPCONTEXT_HPP_
+#define COMMONAPI_MAINLOOPCONTEXT_HPP_
 
-
-#include <stdint.h>
+#include <cstdint>
 
 #ifdef WIN32
 #include <WinSock2.h>
@@ -291,4 +290,4 @@ class MainLoopContext {
 } // namespace CommonAPI
 
 
-#endif /* MAIN_LOOP_CONTEXT_H_ */
+#endif /* COMMONAPI_MAINLOOPCONTEXT_HPP_ */

@@ -6,7 +6,7 @@
 
 #include <sstream>
 
-#include <CommonAPI/Address.h>
+#include <CommonAPI/Address.hpp>
 
 namespace CommonAPI {
 

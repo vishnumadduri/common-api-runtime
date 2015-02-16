@@ -10,11 +10,11 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#include "Deployable.h"
-#include "Deployment.h"
+#include <CommonAPI/Deployable.h>
+#include <CommonAPI/Deployment.h>
 
-#ifndef COMMONAPI_SERIALIZABLE_VARIANT_H_
-#define COMMONAPI_SERIALIZABLE_VARIANT_H_
+#ifndef COMMONAPI_VARIANT_HPP_
+#define COMMONAPI_VARIANT_HPP_
 
 #include <memory>
 #include <cstdint>
@@ -744,4 +744,4 @@ bool Variant<_Types...>::operator!=(const Variant<_Types...> &_other) const
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_SERIALIZABLE_VARIANT_H_
+#endif // COMMONAPI_VARIANT_HPP_

@@ -9,10 +9,10 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_SELECTIVE_EVENT_H_
-#define COMMONAPI_SELECTIVE_EVENT_H_
+#ifndef COMMONAPI_SELECTIVEEVENT_HPP_
+#define COMMONAPI_SELECTIVEEVENT_HPP_
 
-#include "Event.h"
+#include <CommonAPI/Event.hpp>
 
 namespace CommonAPI {
 
@@ -49,4 +49,4 @@ public:
 
 } // namespace CommonAPI
 
-#endif
+#endif // COMMONAPI_SELECTIVEEVENT_HPP_

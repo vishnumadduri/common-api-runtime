@@ -4,8 +4,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef COMMONAPI_ADDRESS_H_
-#define COMMONAPI_ADDRESS_H_
+#ifndef COMMONAPI_ADDRESS_HPP_
+#define COMMONAPI_ADDRESS_HPP_
 
 #include <iostream>
 #include <string>
@@ -46,4 +46,4 @@ friend std::ostream &operator<<(std::ostream &_out, const Address &_address);
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_ADDRESS_H_
+#endif // COMMONAPI_ADDRESS_HPP_

@@ -8,8 +8,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_RUNTIME_CONTEXT_H_
-#define COMMONAPI_RUNTIME_CONTEXT_H_
+#ifndef COMMONAPI_RUNTIME_HPP_
+#define COMMONAPI_RUNTIME_HPP_
 
 #include <map>
 #include <memory>
@@ -112,4 +112,4 @@ private:
 } // namespace CommonAPI
 
 
-#endif /* COMMONAPI_RUNTIME_H_ */
+#endif // COMMONAPI_RUNTIME_HPP_

@@ -8,8 +8,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_DEPLOYMENT_H_
-#define COMMONAPI_DEPLOYMENT_H_
+#ifndef COMMONAPI_DEPLOYMENT_HPP_
+#define COMMONAPI_DEPLOYMENT_HPP_
 
 #include <tuple>
 
@@ -83,4 +83,4 @@ extern EmptyDeployment empty;
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_DEPLOYABLE_H_
+#endif // COMMONAPI_DEPLOYABLE_HPP_

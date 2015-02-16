@@ -10,16 +10,16 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_ATTRIBUTE_H_
-#define COMMONAPI_ATTRIBUTE_H_
-
-#include "Types.h"
-#include "Event.h"
+#ifndef COMMONAPI_ATTRIBUTE_HPP_
+#define COMMONAPI_ATTRIBUTE_HPP_
 
 #include <cstdint>
 #include <functional>
 #include <future>
 #include <memory>
+
+#include <CommonAPI/Event.hpp>
+#include <CommonAPI/Types.hpp>
 
 namespace CommonAPI {
 
@@ -135,4 +135,4 @@ struct WINDummyAttribute {
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_ATTRIBUTE_H_
+#endif // COMMONAPI_ATTRIBUTE_HPP_

@@ -4,8 +4,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef COMMONAPI_INIFILEREADER_H_
-#define COMMONAPI_INIFILEREADER_H_
+#ifndef COMMONAPI_INIFILEREADER_HPP_
+#define COMMONAPI_INIFILEREADER_HPP_
 
 #include <map>
 #include <memory>
@@ -36,4 +36,4 @@ private:
 
 } /* CommonAPI */
 
-#endif /* COMMONAPI_INIFILEREADER_H_ */
+#endif /* COMMONAPI_INIFILEREADER_HPP_ */

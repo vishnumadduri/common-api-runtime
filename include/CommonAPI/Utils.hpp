@@ -4,8 +4,8 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-#ifndef COMMONAPI_UTILS_H_
-#define COMMONAPI_UTILS_H_
+#ifndef COMMONAPI_UTILS_HPP_
+#define COMMONAPI_UTILS_HPP_
 
 #ifndef WIN32
 #include <dirent.h>
@@ -227,4 +227,4 @@ void findAndLoadGenericLibraries(const std::string& requestedMiddlewareName, con
 } //namespace CommonAPI
 
 
-#endif /* COMMONAPI_UTILS_H_ */
+#endif /* COMMONAPI_UTILS_HPP_ */

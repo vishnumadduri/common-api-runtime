@@ -10,17 +10,17 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_INPUT_STREAM_H_
-#define COMMONAPI_INPUT_STREAM_H_
+#ifndef COMMONAPI_INPUT_STREAM_HPP_
+#define COMMONAPI_INPUT_STREAM_HPP_
 
 #include <unordered_map>
 
-#include "ByteBuffer.h"
-#include "Deployable.h"
-#include "Deployment.h"
-#include "Struct.h"
-#include "Variant.h"
-#include "Version.h"
+#include <CommonAPI/ByteBuffer.hpp>
+#include <CommonAPI/Deployable.hpp>
+#include <CommonAPI/Deployment.hpp>
+#include <CommonAPI/Struct.hpp>
+#include <CommonAPI/Variant.hpp>
+#include <CommonAPI/Version.hpp>
 
 namespace CommonAPI {
 
@@ -230,4 +230,4 @@ InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Deployable<_Typ
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_INPUT_STREAM_H_
+#endif // COMMONAPI_INPUT_STREAM_HPP_

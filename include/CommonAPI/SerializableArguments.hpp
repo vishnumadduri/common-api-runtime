@@ -10,11 +10,11 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_SERIALIZABLE_ARGUMENTS_H_
-#define COMMONAPI_SERIALIZABLE_ARGUMENTS_H_
+#ifndef COMMONAPI_SERIALIZABLEARGUMENTS_HPP_
+#define COMMONAPI_SERIALIZABLEARGUMENTS_HPP_
 
-#include "InputStream.h"
-#include "OutputStream.h"
+#include <CommonAPI/InputStream.hpp>
+#include <CommonAPI/OutputStream.hpp>
 
 namespace CommonAPI {
 
@@ -62,4 +62,4 @@ struct SerializableArguments<_In, _Out, _ArgumentType, _Rest...> {
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_SERIALIZABLE_ARGUMENTS_H_
+#endif // COMMONAPI_SERIALIZABLE_ARGUMENTS_HPP_

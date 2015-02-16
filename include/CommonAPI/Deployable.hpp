@@ -9,8 +9,8 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_DEPLOYABLE_H_
-#define COMMONAPI_DEPLOYABLE_H_
+#ifndef COMMONAPI_DEPLOYABLE_HPP_
+#define COMMONAPI_DEPLOYABLE_HPP_
 
 namespace CommonAPI {
 
@@ -58,4 +58,4 @@ struct Deployable : DeployableBase
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_DEPLOYABLE_H_
+#endif // COMMONAPI_DEPLOYABLE_HPP_

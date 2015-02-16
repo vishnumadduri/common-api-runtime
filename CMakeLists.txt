@@ -80,7 +80,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_CO
 message("Compiler options: ${CMAKE_CXX_FLAGS}") 
 
 include_directories(
-    src
+    include
 )
 
 ADD_SUBDIRECTORY( src/CommonAPI )
@@ -106,7 +106,7 @@ export(PACKAGE CommonAPI)
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
 
 # ... for the build tree
-set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src" )
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include" )
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonAPIConfig.cmake.in
   "${PROJECT_BINARY_DIR}/CommonAPIConfig.cmake" @ONLY)
 

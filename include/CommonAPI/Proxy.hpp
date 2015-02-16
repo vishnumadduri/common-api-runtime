@@ -10,16 +10,16 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_PROXY_H_
-#define COMMONAPI_PROXY_H_
+#ifndef COMMONAPI_PROXY_HPP_
+#define COMMONAPI_PROXY_HPP_
 
 #include <cstdint>
 #include <memory>
 #include <type_traits>
 
-#include <CommonAPI/Address.h>
-#include <CommonAPI/Attribute.h>
-#include <CommonAPI/Version.h>
+#include <CommonAPI/Address.hpp>
+#include <CommonAPI/Attribute.hpp>
+#include <CommonAPI/Version.hpp>
 
 namespace CommonAPI {
 
@@ -46,4 +46,4 @@ protected:
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_PROXY_H_
+#endif // COMMONAPI_PROXY_HPP_

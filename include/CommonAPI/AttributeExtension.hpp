@@ -9,16 +9,15 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMON_API_DBUS_ATTRIBUTE_EXTENSION_H_
-#define COMMON_API_DBUS_ATTRIBUTE_EXTENSION_H_
-
-#include "Types.h"
-#include "Event.h"
+#ifndef COMMON_API_DBUS_ATTRIBUTE_EXTENSION_HPP_
+#define COMMON_API_DBUS_ATTRIBUTE_EXTENSION_HPP_
 
 #include <cstdint>
 #include <functional>
 #include <memory>
 
+#include <CommonAPI/Event.h>
+#include <CommonAPI/Types.h>
 
 namespace CommonAPI {
 
@@ -53,4 +52,4 @@ public:
 
 } // namespace CommonAPI
 
-#endif // COMMON_API_DBUS_ATTRIBUTE_EXTENSION_H_
+#endif // COMMON_API_DBUS_ATTRIBUTE_EXTENSION_HPP_

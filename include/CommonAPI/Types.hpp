@@ -9,17 +9,18 @@
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#ifndef COMMONAPI_TYPES_H_
-#define COMMONAPI_TYPES_H_
+#ifndef COMMONAPI_TYPES_HPP_
+#define COMMONAPI_TYPES_HPP_
 
 #include <cstdint>
 #include <functional>
 #include <unordered_set>
 #include <memory>
 #include <tuple>
-#include "ContainerUtils.h"
-#include "Event.h"
-#include "Version.h"
+
+#include <CommonAPI/ContainerUtils.hpp>
+#include <CommonAPI/Event.hpp>
+#include <CommonAPI/Version.hpp>
 
 #if  __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
 #  define COMMONAPI_DEPRECATED __attribute__ ((__deprecated__))
@@ -109,4 +110,4 @@ typedef uint32_t Serial;
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_TYPES_H_
+#endif // COMMONAPI_TYPES_HPP_
