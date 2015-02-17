@@ -1,8 +1,8 @@
-/* Copyright (C) 2015 BMW Group
- * Author: Lutz Bichler (lutz.bichler@bmw.de)
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// Copyright (C) 2015 BMW Group
+// Author: Lutz Bichler (lutz.bichler@bmw.de)
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef COMMONAPI_INIFILEREADER_HPP_
 #define COMMONAPI_INIFILEREADER_HPP_
@@ -34,6 +34,6 @@ private:
 	std::map<std::string, std::shared_ptr<Section>> sections_;
 };
 
-} /* CommonAPI */
+} // namespace CommonAPI
 
-#endif /* COMMONAPI_INIFILEREADER_HPP_ */
+#endif // COMMONAPI_INIFILEREADER_HPP_

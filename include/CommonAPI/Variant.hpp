@@ -1,28 +1,28 @@
-/* Copyright (C) 2013-2015 BMW Group
- * Author: Manfred Bathelt (manfred.bathelt@bmw.de)
- * Author: Juergen Gehring (juergen.gehring@bmw.de)
- * Author: Lutz Bichler (lutz.bichler@bmw.de)
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// Copyright (C) 2014, 2015 BMW Group
+// Author: Manfred Bathelt (manfred.bathelt@bmw.de)
+// Author: Juergen Gehring (juergen.gehring@bmw.de)
+// Author: Lutz Bichler (lutz.bichler@bmw.de)
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include <cassert>
+#include <cstdint>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <tuple>
+#include <type_traits>
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
 #endif
 
-#include <CommonAPI/Deployable.h>
-#include <CommonAPI/Deployment.h>
+#include <CommonAPI/Deployable.hpp>
+#include <CommonAPI/Deployment.hpp>
 
 #ifndef COMMONAPI_VARIANT_HPP_
 #define COMMONAPI_VARIANT_HPP_
-
-#include <memory>
-#include <cstdint>
-#include <iostream>
-#include <string>
-#include <tuple>
-#include <type_traits>
-#include <cassert>
 
 namespace CommonAPI {
 

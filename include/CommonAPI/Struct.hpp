@@ -1,8 +1,8 @@
-/* Copyright (C) 2014 BMW Group
- * Author: Lutz Bichler (lutz.bichler@bmw.de)
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+// Copyright (C) 2014 BMW Group
+// Author: Lutz Bichler (lutz.bichler@bmw.de)
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
@@ -152,24 +152,20 @@ struct StructTypeWriter<0, _TypeOutput, _V<_Values...>> {
 	}
 };
 
-/*
- * Structures are mapped to a (generated) struct which inherits from CommonAPI::Struct.
- * CommonAPI::Struct holds the structured data in a tuple. The generated class provides
- * getter- and setter-methods for the structure members.
- */
+// Structures are mapped to a (generated) struct which inherits from CommonAPI::Struct.
+// CommonAPI::Struct holds the structured data in a tuple. The generated class provides
+// getter- and setter-methods for the structure members.
 template<typename... _Types>
 struct Struct {
 	std::tuple<_Types...> values_;
 };
 
-/*
- * Polymorphic structs are mapped to an interface that is derived from the base class
- * PolymorphicStruct and contain their parameter in a Struct.
- */
+// Polymorphic structs are mapped to an interface that is derived from the base class
+// PolymorphicStruct and contain their parameter in a Struct.
 struct PolymorphicStruct {
 	virtual const Serial getSerial() const = 0;
 };
 
-} /* namespace CommonAPI */
+} // namespace CommonAPI
 
 #endif // COMMONAPI_STRUCT_HPP_
