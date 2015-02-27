@@ -39,7 +39,7 @@ struct StructReader<_Index, _Input, _V<_Values...>, _D<_Depls...>> {
 					_V<_Values...> &_values,
 					const _D<_Depls...> *_depls) {
 		StructReader<_Index-1, _Input, _V<_Values...>, _D<_Depls...>>{}(_input, _values, _depls);
-		_input.template readValue<>(std::get<_Index>(_values.values_), &std::get<_Index>(_depls->values_));
+		_input.template readValue<>(std::get<_Index>(_values.values_), std::get<_Index>(_depls->values_));
 	}
 };
 
@@ -63,7 +63,7 @@ struct StructReader<0, _Input, _V<_Values...>, _D<_Depls...>> {
 	void operator()(InputStream<_Input> &_input,
 					_V<_Values...> &_values,
 					const _D<_Depls...> *_depls) {
-		_input.template readValue<>(std::get<0>(_values.values_), &std::get<0>(_depls->values_));
+		_input.template readValue<>(std::get<0>(_values.values_), std::get<0>(_depls->values_));
 	}
 };
 
@@ -91,7 +91,7 @@ struct StructWriter<_Index, _Output, _V<_Values...>, _D<_Depls...>> {
 					const _V<_Values...> &_values,
 					const _D<_Depls...> *_depls) {
 		StructWriter<_Index-1, _Output, _V<_Values...>, _D<_Depls...>>{}(_output, _values, _depls);
-		_output.template writeValue<>(std::get<_Index>(_values.values_), &std::get<_Index>(_depls->values_));
+		_output.template writeValue<>(std::get<_Index>(_values.values_), std::get<_Index>(_depls->values_));
 	}
 };
 
@@ -115,7 +115,7 @@ struct StructWriter<0, _Output, _V<_Values...>, _D<_Depls...>> {
 	void operator()(OutputStream<_Output> &_output,
 					const _V<_Values...> &_values,
 					const _D<_Depls...> *_depls) {
-		_output.template writeValue<>(std::get<0>(_values.values_), &std::get<0>(_depls->values_));
+		_output.template writeValue<>(std::get<0>(_values.values_), std::get<0>(_depls->values_));
 	}
 };
 

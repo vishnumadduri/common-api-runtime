@@ -358,7 +358,7 @@ struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Type, _Types...> {
     static void visit(_Visitor &_visitor, _Variant &_variant, const _Deployment *_depl) {
         if (_variant.getValueType() == index) {
         	_visitor(_variant.template get<_Type>(),
-        			 &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+        			 std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
         } else {
             ApplyStreamVisitor<
             	_Visitor, _Variant, _Deployment, _Types...
@@ -369,7 +369,7 @@ struct ApplyStreamVisitor<_Visitor, _Variant, _Deployment, _Type, _Types...> {
     static void visit(_Visitor &_visitor, const _Variant &_variant, const _Deployment *_depl) {
         if (_variant.getValueType() == index) {
             _visitor(_variant.template get<_Type>(),
-            		 &std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
+            		 std::get<std::tuple_size<decltype(_depl->values_)>::value-index>(_depl->values_));
         } else {
             ApplyStreamVisitor<
             	_Visitor, _Variant, _Deployment, _Types...

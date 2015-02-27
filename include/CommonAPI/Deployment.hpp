@@ -46,9 +46,9 @@ namespace CommonAPI {
 //  > itsDeployment(<PARAMS);
 template<typename... _Types>
 struct Deployment {
-	Deployment(_Types... _values) : values_(_values...) {}
+	Deployment(_Types*... _values) : values_(_values...) {}
 
-	std::tuple<_Types...> values_;
+	std::tuple<_Types*...> values_;
 };
 
 template<typename _ElementDepl>
@@ -70,10 +70,6 @@ struct MapDeployment {
 
 // Convenience definition of an empty deployment.
 typedef Deployment<> EmptyDeployment;
-
-// The general purpose empty deployment. Use this whenever
-// you need to provide a reference to an empty deployment.
-extern EmptyDeployment empty;
 
 } // namespace CommonAPI
 
