@@ -17,6 +17,11 @@
 
 namespace CommonAPI {
 
+const char *COMMONAPI_DEFAULT_BINDING = "dbus";
+const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
+const char *COMMONAPI_DEFAULT_CONFIG_FILE = "commonapi.ini";
+const char *COMMONAPI_DEFAULT_CONFIG_FOLDER = "/etc";
+
 std::shared_ptr<Runtime> Runtime::get() {
 	static std::shared_ptr<Runtime> theRuntime = std::make_shared<Runtime>();
 	return theRuntime;
