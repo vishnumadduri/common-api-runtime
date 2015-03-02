@@ -34,9 +34,20 @@ Address::~Address() {
 
 bool
 Address::operator<(const Address &_other) const {
-	return (domain_ < _other.domain_ ||
-			interface_ < _other.interface_ ||
-			instance_ < _other.instance_);
+	if (domain_ < _other.domain_)
+		return true;
+
+	if (domain_ == _other.domain_) {
+		if (interface_ < _other.interface_)
+			return true;
+
+		if (interface_ == _other.interface_) {
+			if (instance_ < _other.instance_)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 std::string
