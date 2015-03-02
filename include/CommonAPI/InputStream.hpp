@@ -18,6 +18,7 @@
 #include <CommonAPI/ByteBuffer.hpp>
 #include <CommonAPI/Deployable.hpp>
 #include <CommonAPI/Deployment.hpp>
+#include <CommonAPI/Enumeration.hpp>
 #include <CommonAPI/Struct.hpp>
 #include <CommonAPI/Variant.hpp>
 #include <CommonAPI/Version.hpp>
@@ -84,6 +85,11 @@ public:
 
     template<class _Deployment>
     InputStream &readValue(std::string &_value, const _Deployment *_depl = nullptr) {
+    	return get()->readValue(_value, _depl);
+    }
+
+    template<class _Deployment, typename _Base>
+    InputStream &readValue(Enumeration<_Base> &_value, const _Deployment *_depl = nullptr) {
     	return get()->readValue(_value, _depl);
     }
 
@@ -195,6 +201,11 @@ InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, std::string &_v
 
 template<class _Derived>
 InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Version &_value) {
+	return _input.template readValue<EmptyDeployment>(_value);
+}
+
+template<class _Derived, typename _Base>
+InputStream<_Derived> &operator>>(InputStream<_Derived> &_input, Enumeration<_Base> &_value) {
 	return _input.template readValue<EmptyDeployment>(_value);
 }
 

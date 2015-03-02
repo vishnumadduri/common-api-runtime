@@ -18,6 +18,7 @@
 #include <CommonAPI/ByteBuffer.hpp>
 #include <CommonAPI/Deployable.hpp>
 #include <CommonAPI/Deployment.hpp>
+#include <CommonAPI/Enumeration.hpp>
 #include <CommonAPI/Struct.hpp>
 #include <CommonAPI/Variant.hpp>
 #include <CommonAPI/Version.hpp>
@@ -91,6 +92,11 @@ public:
     OutputStream &writeValue(const Version &_value, const _Deployment *_depl = nullptr) {
     	return get()->writeValue(_value, _depl);
     }
+
+	template<class _Deployment, typename _Base>
+	OutputStream &writeValue(const Enumeration<_Base> &_value, const _Deployment *_depl = nullptr) {
+		return get()->writeValue(_value, _depl);
+	}
 
     template<class _Deployment, typename... _Types>
     OutputStream &writeValue(const Struct<_Types...> &_value, const _Deployment *_depl = nullptr) {
@@ -200,6 +206,11 @@ inline OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const
 template<class _Derived>
 inline OutputStream<_Derived>& operator<<(OutputStream<_Derived> &_output, const Version &_value) {
     return _output.template writeValue<EmptyDeployment>(_value);
+}
+
+template<class _Derived, typename _Base>
+OutputStream<_Derived> &operator<<(OutputStream<_Derived> &_output, const Enumeration<_Base> &_value) {
+	return _output.template writeValue<EmptyDeployment>(_value);
 }
 
 template<class _Derived, typename... _Types>
