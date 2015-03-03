@@ -69,7 +69,7 @@ struct MapDeployment {
 };
 
 // Convenience definition of an empty deployment.
-typedef Deployment<> EmptyDeployment;
+struct EmptyDeployment {};
 
 // The general purpose empty deployment. Use this whenever
 // you need to provide a reference to an empty deployment.

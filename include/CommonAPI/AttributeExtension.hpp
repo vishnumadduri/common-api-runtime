@@ -19,6 +19,10 @@
 #include <CommonAPI/Event.hpp>
 #include <CommonAPI/Types.hpp>
 
+#ifdef WIN32
+#include "Attribute.hpp"
+#endif
+
 namespace CommonAPI {
 
 template<typename _AttributeType>
@@ -43,9 +47,6 @@ class WINDummyAttributeExtension : public CommonAPI::AttributeExtension<_Attribu
     WINDummyAttribute dummyAttribute;
 public:
     WINDummyAttributeExtension() {};
-    WINDummyAttributeExtension(Proxy& proxy) :
-    AttributeExtension<_AttributeType>(dummyAttribute) {}
-
     ~WINDummyAttributeExtension() {}
 };
 #endif

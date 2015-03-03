@@ -18,10 +18,10 @@
 
 namespace CommonAPI {
 
-const char *COMMONAPI_DEFAULT_BINDING = "dbus";
-const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
-const char *COMMONAPI_DEFAULT_CONFIG_FILE = "commonapi.ini";
-const char *COMMONAPI_DEFAULT_CONFIG_FOLDER = "/etc";
+extern const char *COMMONAPI_DEFAULT_BINDING;
+extern const char *COMMONAPI_DEFAULT_FOLDER;
+extern const char *COMMONAPI_DEFAULT_CONFIG_FILE;
+extern const char *COMMONAPI_DEFAULT_CONFIG_FOLDER;
 
 class Factory;
 class MainLoopContext;
@@ -44,11 +44,7 @@ public:
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
     std::shared_ptr<
-        _ProxyClass<
-#ifdef WIN32
-        CommonAPI::WINDummyAttributeExtension<WINDummyAttribute>,
-#endif
-        _AttributeExtensions...>
+        _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
                const std::string &_instance,
@@ -59,11 +55,7 @@ public:
 
         if (abstractProxy) {
             auto returnProxy = std::make_shared<
-                _ProxyClass<
-#ifdef WIN32
-                CommonAPI::WINDummyAttributeExtension<WINDummyAttribute>,
-#endif
-                _AttributeExtensions...>
+                _ProxyClass<_AttributeExtensions...>
             >(abstractProxy);
 
             return returnProxy;
