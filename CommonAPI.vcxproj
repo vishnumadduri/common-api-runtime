@@ -41,7 +41,6 @@
   <ItemGroup>
     <ClCompile Include="src\CommonAPI\Address.cpp" />
     <ClCompile Include="src\CommonAPI\ContainerUtils.cpp" />
-    <ClCompile Include="src\CommonAPI\Deployment.cpp" />
     <ClCompile Include="src\CommonAPI\IniFileReader.cpp" />
     <ClCompile Include="src\CommonAPI\MainLoopContext.cpp" />
     <ClCompile Include="src\CommonAPI\Proxy.cpp" />
@@ -91,7 +90,7 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MinimalRebuild>false</MinimalRebuild>
-      <AdditionalIncludeDirectories>C:\CommonAPI\pre_3_0_CommonAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
