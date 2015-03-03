@@ -39,11 +39,7 @@ public:
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
     std::shared_ptr<
-        _ProxyClass<
-#ifdef WIN32
-        CommonAPI::WINDummyAttributeExtension<WINDummyAttribute>,
-#endif
-        _AttributeExtensions...>
+        _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
                const std::string &_instance,
@@ -54,11 +50,7 @@ public:
 
         if (abstractProxy) {
             auto returnProxy = std::make_shared<
-                _ProxyClass<
-#ifdef WIN32
-                CommonAPI::WINDummyAttributeExtension<WINDummyAttribute>,
-#endif
-                _AttributeExtensions...>
+                _ProxyClass<_AttributeExtensions...>
             >(abstractProxy);
 
             return returnProxy;

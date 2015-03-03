@@ -68,7 +68,6 @@ struct MapDeployment {
 template<typename... _Types>
 struct Deployment {
 	Deployment(_Types*... _values) : values_(_values...) {}
-
 	std::tuple<_Types*...> values_;
 };
 

@@ -4,8 +4,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#ifdef WIN32
+#include <Windows.h>
+#else
 #include <dlfcn.h>
 #include <unistd.h>
+#endif
+
 #include <sys/stat.h>
 
 #include <algorithm>
@@ -92,7 +97,11 @@ Runtime::readConfiguration() {
 #define MAX_PATH_LEN 255
 	std::string config;
 	char currentDirectory[MAX_PATH_LEN];
+#ifdef WIN32
+	if (GetCurrentDirectory(MAX_PATH_LEN, currentDirectory)) {
+#else
 	if (getcwd(currentDirectory, MAX_PATH_LEN)) {
+#endif
 		config = currentDirectory;
 		config += "/";
 		config += COMMONAPI_DEFAULT_CONFIG_FILE;
@@ -227,13 +236,24 @@ Runtime::loadLibrary(const std::string &_library) {
 
 	bool isLoaded(true);
 	if (loadedLibraries_.end() == loadedLibraries_.find(itsLibrary)) {
-		if (dlopen(itsLibrary.c_str(), RTLD_LAZY | RTLD_GLOBAL) != 0) {
+		#ifdef WIN32
+		if (LoadLibrary(itsLibrary.c_str()) != 0) {
 			loadedLibraries_.insert(itsLibrary);
 			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
 		} else {
+			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", GetLastError(), ")");
+			isLoaded = false;
+		}
+		#else
+		if (dlopen(itsLibrary.c_str(), RTLD_LAZY | RTLD_GLOBAL) != 0) {
+			loadedLibraries_.insert(itsLibrary);
+			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
+		}
+		else {
 			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", dlerror(), ")");
 			isLoaded = false;
 		}
+		#endif
 	}
 	return isLoaded;
 }

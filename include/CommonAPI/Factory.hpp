@@ -9,6 +9,10 @@
 #include <memory>
 #include <vector>
 
+#ifdef WIN32
+#include <functional>
+#endif
+
 namespace CommonAPI {
 
 class MainLoopContext;
