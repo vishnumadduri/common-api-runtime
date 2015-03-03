@@ -44,12 +44,8 @@ namespace CommonAPI {
 //     CommonAPI::BindingBoolDeployment,
 //     CommonAPI::BindingStringDeployment
 //  > itsDeployment(<PARAMS);
-template<typename... _Types>
-struct Deployment {
-	Deployment(_Types*... _values) : values_(_values...) {}
 
-	std::tuple<_Types*...> values_;
-};
+struct EmptyDeployment {};
 
 template<typename _ElementDepl>
 struct ArrayDeployment {
@@ -68,8 +64,13 @@ struct MapDeployment {
 	const _ValueDepl *value_;
 };
 
-// Convenience definition of an empty deployment.
-typedef Deployment<> EmptyDeployment;
+// The following shall be used as a base for structure/variant deployments.
+template<typename... _Types>
+struct Deployment {
+	Deployment(_Types*... _values) : values_(_values...) {}
+
+	std::tuple<_Types*...> values_;
+};
 
 } // namespace CommonAPI
 
