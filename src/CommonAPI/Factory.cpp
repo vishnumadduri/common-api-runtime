@@ -8,6 +8,6 @@
 
 namespace CommonAPI {
 
-const uint8_t COMMONAPI_DEFAULT_CONNECTION_ID = 0;
+const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID = "DEFAULT_CONNECTION";
 
 } //Namespace CommonAPI

@@ -67,7 +67,7 @@ enum class CallStatus {
 };
 
 typedef uint32_t CallId;
-typedef uint8_t ConnectionId;
+typedef std::string ConnectionId;
 
 /**
  * \brief Identifies a client sending a call to a stub.

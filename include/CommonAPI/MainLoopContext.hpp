@@ -189,12 +189,17 @@ typedef WakeupListenerList::iterator WakeupListenerSubscription;
  *
  */
 class MainLoopContext {
- public:
-    MainLoopContext() {}
+public:
+    MainLoopContext(const std::string &_name = "COMMONAPI_DEFAULT_MAINLOOP_CONTEXT")
+		: name_(_name){
+    }
+
     MainLoopContext(const MainLoopContext&) = delete;
     MainLoopContext& operator=(const MainLoopContext&) = delete;
     MainLoopContext(MainLoopContext&&) = delete;
     MainLoopContext& operator=(MainLoopContext&&) = delete;
+
+    const std::string &getName() const;
 
     /**
      * \brief Registers for all DispatchSources that are added or removed.
@@ -284,6 +289,8 @@ class MainLoopContext {
     WatchListenerList watchListeners_;
     TimeoutSourceListenerList timeoutSourceListeners_;
     WakeupListenerList wakeupListeners_;
+
+    std::string name_;
 };
 
 } // namespace CommonAPI

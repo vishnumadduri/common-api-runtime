@@ -17,7 +17,7 @@
 
 namespace CommonAPI {
 
-extern const uint8_t COMMONAPI_DEFAULT_CONNECTION_ID;
+extern const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID;
 
 class MainLoopContext;
 class Proxy;

@@ -13,6 +13,10 @@ int64_t getCurrentTimeInMs() {
    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 }
 
+const std::string &MainLoopContext::getName() const {
+	return name_;
+}
+
 DispatchSourceListenerSubscription MainLoopContext::subscribeForDispatchSources(DispatchSourceAddedCallback dispatchAddedCallback, DispatchSourceRemovedCallback dispatchRemovedCallback) {
     dispatchSourceListeners_.emplace_front(dispatchAddedCallback, dispatchRemovedCallback);
     return dispatchSourceListeners_.begin();
