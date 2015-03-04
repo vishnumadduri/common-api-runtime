@@ -160,7 +160,7 @@ Runtime::createProxy(
 			return proxy;
 	}
 
-	// .. it seems do not, lets try to load a library that does...
+	// ...it seems do not, lets try to load a library that does...
 	std::string library = getLibrary(_domain, _interface, _instance, true);
 	if (loadLibrary(library)) {
 		for (auto factory : factories_) {
@@ -172,6 +172,56 @@ Runtime::createProxy(
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<Proxy>
+Runtime::createProxy(
+		const std::string &_domain, const std::string &_interface, const std::string &_instance,
+		const ConnectionId _connectionId) {
+
+	// Check whether we already know how to create such proxies...
+	for (auto factory : factories_) {
+		std::shared_ptr<Proxy> proxy
+			= factory.second->createProxy(_domain, _interface, _instance, _connectionId);
+		if (proxy)
+			return proxy;
+	}
+
+	// ...it seems do not, lets try to load a library that does...
+	std::string library = getLibrary(_domain, _interface, _instance, true);
+	if (loadLibrary(library)) {
+		for (auto factory : factories_) {
+			std::shared_ptr<Proxy> proxy
+				= factory.second->createProxy(_domain, _interface, _instance, _connectionId);
+			if (proxy)
+				return proxy;
+		}
+	}
+
+	return nullptr;
+}
+
+bool
+Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
+				  	  std::shared_ptr<StubBase> _stub, const ConnectionId _connectionId) {
+
+	bool isRegistered(false);
+
+	for (auto factory : factories_) {
+		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
+		if (isRegistered)
+			return true;
+	}
+
+	std::string library = getLibrary(_domain, _interface, _instance, false);
+	if (loadLibrary(library)) {
+		for (auto factory : factories_) {
+			isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
+			if (isRegistered)
+				return true;
+		}
+	}
+	return false;
 }
 
 bool

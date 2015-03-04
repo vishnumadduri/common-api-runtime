@@ -13,7 +13,11 @@
 #include <functional>
 #endif
 
+#include <CommonAPI/Types.hpp>
+
 namespace CommonAPI {
+
+extern const uint8_t COMMONAPI_DEFAULT_CONNECTION_ID;
 
 class MainLoopContext;
 class Proxy;
@@ -29,7 +33,18 @@ public:
 	virtual std::shared_ptr<Proxy> createProxy(const std::string &_domain,
 									   	   	   const std::string &_interface,
 									   	   	   const std::string &_instance,
+									   	   	   const ConnectionId _connectionId) = 0;
+
+	virtual std::shared_ptr<Proxy> createProxy(const std::string &_domain,
+									   	   	   const std::string &_interface,
+									   	   	   const std::string &_instance,
 									   	   	   std::shared_ptr<MainLoopContext> mainLoopContext) = 0;
+
+	virtual bool registerStub(const std::string &_domain,
+						   	  const std::string &_interface,
+							  const std::string &_instance,
+						 	  std::shared_ptr<StubBase> _stub,
+						 	  const ConnectionId _connectionId) = 0;
 
 	virtual bool registerStub(const std::string &_domain,
 						   	  const std::string &_interface,

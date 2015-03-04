@@ -67,11 +67,7 @@ enum class CallStatus {
 };
 
 typedef uint32_t CallId;
-
-enum class OperationStatus {
-	PENDING,
-	DONE
-};
+typedef uint8_t ConnectionId;
 
 /**
  * \brief Identifies a client sending a call to a stub.
