@@ -177,7 +177,7 @@ Runtime::createProxy(
 std::shared_ptr<Proxy>
 Runtime::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
-		const ConnectionId _connectionId) {
+		const ConnectionId &_connectionId) {
 
 	// Check whether we already know how to create such proxies...
 	for (auto factory : factories_) {
@@ -203,7 +203,7 @@ Runtime::createProxy(
 
 bool
 Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
-				  	  std::shared_ptr<StubBase> _stub, const ConnectionId _connectionId) {
+				  	  std::shared_ptr<StubBase> _stub, const ConnectionId &_connectionId) {
 
 	bool isRegistered(false);
 

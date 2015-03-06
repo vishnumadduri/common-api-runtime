@@ -22,14 +22,17 @@ namespace CommonAPI {
 
 class MainLoopContext;
 class Proxy;
+class ProxyManager;
 class StubBase;
 
 template<template<typename ...> class _ProxyType, template<typename> class _AttributeExtension>
 struct DefaultAttributeProxyFactoryHelper;
 
 template<template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
-std::shared_ptr<typename DefaultAttributeProxyFactoryHelper<_ProxyClass, _AttributeExtension>::class_t> createProxyWithDefaultAttributeExtension(
-			Factory* specificFactory, const std::string& participantId, const std::string& domain);
+std::shared_ptr<
+	typename DefaultAttributeProxyFactoryHelper<_ProxyClass, _AttributeExtension>::class_t
+> createProxyWithDefaultAttributeExtension(
+	const std::string &_participant, const std::string &_domain);
 
 class Runtime {
 public:
@@ -44,7 +47,7 @@ public:
     >
     buildProxy(const std::string &_domain,
                const std::string &_instance,
-               const ConnectionId _connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+               const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
 
         std::shared_ptr<Proxy> abstractProxy
         	= createProxy(_domain, _ProxyClass<_AttributeExtensions...>::getInterface(), _instance, _connectionId);
@@ -88,7 +91,7 @@ public:
 	bool registerService(const std::string &_domain,
 						 const std::string &_instance,
 						 std::shared_ptr<_Stub> _service,
-						 const ConnectionId _connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+						 const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
 		return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _connectionId);
 	}
 
@@ -109,12 +112,12 @@ private:
 	bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
 
 	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
-									   const ConnectionId);
+									   const ConnectionId &);
 	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
 									   std::shared_ptr<MainLoopContext>);
 
 	bool registerStub(const std::string &, const std::string &, const std::string &,
-						  std::shared_ptr<StubBase>, const ConnectionId);
+						  std::shared_ptr<StubBase>, const ConnectionId &);
 	bool registerStub(const std::string &, const std::string &, const std::string &,
 					  std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
 
@@ -131,6 +134,9 @@ private:
 	std::string defaultConfig_;
 
 	std::mutex factoriesMutex_;
+
+
+friend class ProxyManager;
 };
 
 } // namespace CommonAPI

@@ -68,6 +68,7 @@ enum class CallStatus {
 
 typedef uint32_t CallId;
 typedef std::string ConnectionId;
+extern const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID;
 
 /**
  * \brief Identifies a client sending a call to a stub.

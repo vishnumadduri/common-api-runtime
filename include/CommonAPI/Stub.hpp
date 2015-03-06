@@ -16,13 +16,18 @@
 #include <string>
 #include <type_traits>
 
-namespace CommonAPI {
+#include <CommonAPI/Address.hpp>
+#include <CommonAPI/Types.hpp>
 
-class Address;
+namespace CommonAPI {
 
 class StubAdapter {
 public:
     virtual ~StubAdapter() {}
+    inline const Address &getAddress() const { return address_; }
+
+protected:
+    Address address_;
 };
 
 class StubBase {
@@ -39,10 +44,9 @@ public:
 
     virtual ~Stub() {}
 
-    virtual _StubRemoteEventHandler* initStubAdapter(const std::shared_ptr<_StubAdapter>& stubAdapter) = 0;
-    virtual const std::shared_ptr<_StubAdapter> getStubAdapter() {
-        return stubAdapter_;
-    }
+    virtual _StubRemoteEventHandler* initStubAdapter(const std::shared_ptr<_StubAdapter> &_stubAdapter) = 0;
+
+    inline const std::shared_ptr<_StubAdapter> getStubAdapter() const { return stubAdapter_; }
 
 protected:
     std::shared_ptr<_StubAdapter> stubAdapter_;
