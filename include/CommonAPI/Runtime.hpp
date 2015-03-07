@@ -26,13 +26,13 @@ class ProxyManager;
 class StubBase;
 
 template<template<typename ...> class _ProxyType, template<typename> class _AttributeExtension>
-struct DefaultAttributeProxyFactoryHelper;
+struct DefaultAttributeProxyHelper;
 
 template<template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
 std::shared_ptr<
-	typename DefaultAttributeProxyFactoryHelper<_ProxyClass, _AttributeExtension>::class_t
+	typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t
 > createProxyWithDefaultAttributeExtension(
-	const std::string &_participant, const std::string &_domain);
+	const std::string &_domain, const std::string &_instance);
 
 class Runtime {
 public:
@@ -48,16 +48,14 @@ public:
     buildProxy(const std::string &_domain,
                const std::string &_instance,
                const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+        std::shared_ptr<Proxy> proxy
+        	= createProxy(_domain,
+        				  _ProxyClass<_AttributeExtensions...>::getInterface(),
+						  _instance,
+						  _connectionId);
 
-        std::shared_ptr<Proxy> abstractProxy
-        	= createProxy(_domain, _ProxyClass<_AttributeExtensions...>::getInterface(), _instance, _connectionId);
-
-        if (abstractProxy) {
-            auto returnProxy = std::make_shared<
-                _ProxyClass<_AttributeExtensions...>
-            >(abstractProxy);
-
-            return returnProxy;
+        if (proxy) {
+            return std::make_shared<_ProxyClass<_AttributeExtensions...>>(proxy);
         }
         else {
             return nullptr;
@@ -71,20 +69,49 @@ public:
     buildProxy(const std::string &_domain,
                const std::string &_instance,
                std::shared_ptr<MainLoopContext> _context) {
-
-        std::shared_ptr<Proxy> abstractProxy
-        	= createProxy(_domain, _ProxyClass<_AttributeExtensions...>::getInterface(), _instance, _context);
-
-        if (abstractProxy) {
-            auto returnProxy = std::make_shared<
-                _ProxyClass<_AttributeExtensions...>
-            >(abstractProxy);
-
-            return returnProxy;
+        std::shared_ptr<Proxy> proxy
+			= createProxy(_domain,
+        				  _ProxyClass<_AttributeExtensions...>::getInterface(),
+						  _instance,
+						  _context);
+        if (proxy) {
+            return std::make_shared<_ProxyClass<_AttributeExtensions...>>(proxy);
         }
         else {
             return nullptr;
         }
+    }
+
+    template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
+    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+    buildProxyWithDefaultAttributeExtension(const std::string &_domain,
+                                            const std::string &_instance,
+                                            const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+        std::shared_ptr<Proxy> proxy
+			= createProxy(_domain,
+        	 		      DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t::getInterface(),
+        				  _instance,
+						  _connectionId);
+        if (proxy) {
+            return std::make_shared<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>(proxy);
+        }
+        return nullptr;
+    }
+
+    template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
+    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+    buildProxyWithDefaultAttributeExtension(const std::string &_domain,
+                                            const std::string &_instance,
+                                            std::shared_ptr<MainLoopContext> _context) {
+        std::shared_ptr<Proxy> proxy
+			= createProxy(_domain,
+        	 		      DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t::getInterface(),
+        				  _instance,
+						  _context);
+        if (proxy) {
+            return std::make_shared<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>(proxy);
+        }
+        return nullptr;
     }
 
     template<typename _Stub>

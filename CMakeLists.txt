@@ -3,13 +3,13 @@ cmake_minimum_required (VERSION 2.8.1)
 PROJECT(libcommonapi)
 
 # version of library
-SET( LIB_MAJOR_VERSION 2 ) # used in e.g. sub cmake file, commonapi.spec.in
-SET( LIB_MINOR_VERSION 9 ) # used in e.g. sub cmake file, commonapi.spec.in
+SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
+SET( LIB_MINOR_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
 SET( LIB_PATCH_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
 
 # version of CommonAPI
-SET( ${PROJECT_NAME}_MAJOR_VERSION 2 )
-SET( ${PROJECT_NAME}_MINOR_VERSION 9 )
+SET( ${PROJECT_NAME}_MAJOR_VERSION 3 )
+SET( ${PROJECT_NAME}_MINOR_VERSION 0 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 ) 
 
 message("Project name: ${PROJECT_NAME}")
