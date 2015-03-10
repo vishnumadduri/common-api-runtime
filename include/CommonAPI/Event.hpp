@@ -123,9 +123,11 @@ void Event<_Arguments...>::unsubscribe(Subscription subscription) {
 	}
 	subscriptionMutex_.unlock();
 
-	onListenerRemoved(listener->second);
-	if (isLastListener)
-		onLastListenerRemoved(listener->second);
+	if (subscriptions_.end() != listener) {
+		onListenerRemoved(listener->second);
+		if (isLastListener)
+			onLastListenerRemoved(listener->second);
+	}
 }
 
 template<typename ... _Arguments>
