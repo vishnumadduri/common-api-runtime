@@ -33,7 +33,7 @@ class ReadonlyAttribute {
  public:
 	typedef _ValueType ValueType;
 
-	typedef std::function<void(const CallStatus&, _ValueType)> AttributeAsyncCallback;
+	typedef std::function<void(const CallStatus &, _ValueType)> AttributeAsyncCallback;
 
 	virtual ~ReadonlyAttribute() { }
 
