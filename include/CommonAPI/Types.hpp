@@ -108,3 +108,7 @@ typedef uint32_t Serial;
 } // namespace CommonAPI
 
 #endif // COMMONAPI_TYPES_HPP_
+
+#if defined(COMMONAPI_TYPES_LOCAL_INCLUDE)
+#include COMMONAPI_TYPES_LOCAL_INCLUDE
+#endif

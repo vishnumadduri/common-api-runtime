@@ -26,7 +26,9 @@
 
 #ifdef WIN32
 #include <xfunctional>
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN // this prevents windows.h from including winsock.h, which causes duplicate definitions with winsock2.h
+#endif
 #include <windows.h>
 #else
 #include <unistd.h>
