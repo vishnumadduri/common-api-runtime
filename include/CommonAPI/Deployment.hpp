@@ -5,7 +5,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
-#error "Only <CommonAPI/CommonAPI.h> can be included directly, this file may disappear or change contents."
+#error "Only <CommonAPI/CommonAPI.hpp> can be included directly, this file may disappear or change contents."
 #endif
 
 #ifndef COMMONAPI_DEPLOYMENT_HPP_

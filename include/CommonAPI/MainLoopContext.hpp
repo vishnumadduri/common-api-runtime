@@ -29,6 +29,7 @@
 #include <chrono>
 #include <list>
 #include <functional>
+#include <string>
 
 namespace CommonAPI {
 
