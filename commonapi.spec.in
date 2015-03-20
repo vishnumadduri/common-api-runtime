@@ -77,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/IniFileReader.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/InputStream.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Logger.hpp
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/MainLoopContext.h
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/MainLoopContext.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/OutputStream.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Proxy.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ProxyManager.hpp
