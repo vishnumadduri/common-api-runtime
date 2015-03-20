@@ -2,22 +2,19 @@ cmake_minimum_required (VERSION 2.8.1)
 
 PROJECT(libcommonapi)
 
-# version of library
-SET( LIB_MAJOR_VERSION 3 ) # used in e.g. sub cmake file, commonapi.spec.in
-SET( LIB_MINOR_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
-SET( LIB_PATCH_VERSION 0 ) # used in e.g. sub cmake file, commonapi.spec.in
-
 # version of CommonAPI
-SET( ${PROJECT_NAME}_MAJOR_VERSION 3 )
-SET( ${PROJECT_NAME}_MINOR_VERSION 0 )
-SET( ${PROJECT_NAME}_PATCH_LEVEL 0 ) 
+SET( LIBCOMMONAPI_MAJOR_VERSION 3 )
+SET( LIBCOMMONAPI_MINOR_VERSION 0 )
+SET( LIBCOMMONAPI_PATCH_VERSION 0 )
 
-message("Project name: ${PROJECT_NAME}")
+message(STATUS "Project name: ${PROJECT_NAME}")
 
-set(COMPONENT_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}.${${PROJECT_NAME}_PATCH_LEVEL})
-set(COMMONAPI_API_HEADER_VERSION ${${PROJECT_NAME}_MAJOR_VERSION}.${${PROJECT_NAME}_MINOR_VERSION}) # used in e.g. CommonAPI.pc.in, *.cmake.in
+set(COMPONENT_VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION})
+set(COMMONAPI_API_HEADER_VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}) # used in *.cmake.in
 
-SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in e.g. CommonAPI.pc.in, *.cmake.in
+SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in *.cmake.in
+
+set(GTEST_ROOT "n/a" CACHE STRING "Path to root folder of googletest. Must be set for building the tests.")
 
 # OS, pthread
 set(DL_LIBRARY "")
@@ -33,17 +30,20 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 if ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
   SET(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
-message("CMAKE_INSTALL_PREFIX set to: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "CMAKE_INSTALL_PREFIX set to: ${CMAKE_INSTALL_PREFIX}")
 
 # create the commandline variables:
 OPTION(BUILD_SHARED_LIBS "Set to OFF to build static libraries" ON )
-message("BUILD_SHARED_LIBS is set to value: ${BUILD_SHARED_LIBS}")
+message(STATUS "BUILD_SHARED_LIBS is set to value: ${BUILD_SHARED_LIBS}")
 SET(RPM_PACKAGE_VERSION "r0" CACHE STRING "rpm packet version") # used in e.g. commonapi.spec.in
 
 if(NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
        "Choose the type of build, options are: Debug Release." FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
+
+set(CMAKE_BUILD_TYPE_FOR_SPEC_IN "")
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_FOR_SPEC_IN)
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -63,13 +63,12 @@ foreach(p LIB INCLUDE CMAKE)
   endif()
 endforeach()
 
-
-message("RPM packet version set to ${RPM_PACKAGE_VERSION}")
+message(STATUS "RPM packet version set to ${RPM_PACKAGE_VERSION}")
 ##################### RPM CONFIG ########################
 SET( LICENSE "MPLv2" )
 #########################################################
 
-message("Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 ##############################################################################
 
@@ -77,19 +76,57 @@ message("Build type: ${CMAKE_BUILD_TYPE}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
 
-message("Compiler options: ${CMAKE_CXX_FLAGS}") 
+message(STATUS "Compiler options: ${CMAKE_CXX_FLAGS}") 
 
 include_directories(
     include
 )
 
-ADD_SUBDIRECTORY( src/CommonAPI )
+file(GLOB CAPI_SRCS "src/CommonAPI/*.cpp")
+add_library(CommonAPI ${CAPI_SRCS})
+target_link_libraries(CommonAPI ${DL_LIBRARY})
+set_target_properties(CommonAPI PROPERTIES VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION} SOVERSION ${LIBCOMMONAPI_MAJOR_VERSION} LINKER_LANGUAGE C)
 
 ##############################################################################
-
 # configure files
 
 CONFIGURE_FILE(commonapi.spec.in commonapi.spec)
+
+##############################################################################
+# installing files
+
+# install CommonAPI library
+install(TARGETS CommonAPI EXPORT CommonAPITargets LIBRARY DESTINATION ${INSTALL_LIB_DIR} ARCHIVE DESTINATION ${INSTALL_LIB_DIR})	
+
+# install CommonAPI header files
+install(FILES include/CommonAPI/Address.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+install(FILES include/CommonAPI/Attribute.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/AttributeExtension.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/ByteBuffer.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/CommonAPI.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/ContainerUtils.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Deployable.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Deployment.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Enumeration.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Event.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Factory.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/IniFileReader.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+install(FILES include/CommonAPI/InputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+install(FILES include/CommonAPI/Logger.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/MainLoopContext.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/OutputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Proxy.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/ProxyManager.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Runtime.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/SelectiveEvent.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/SerializableArguments.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Struct.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Stub.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+install(FILES include/CommonAPI/TypeOutputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Types.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Utils.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
+install(FILES include/CommonAPI/Variant.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+install(FILES include/CommonAPI/Version.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
 
 ##############################################################################
 # exporting, configuring and installing of cmake files
@@ -138,7 +175,7 @@ add_custom_target(maintainer-clean COMMAND rm -rf *)
 FIND_PACKAGE(Doxygen)
 FIND_PROGRAM(ASCIIDOC_PATH asciidoc)
 if (NOT DOXYGEN_FOUND)
-    message("Doxygen is not installed. Documentation can not be built.")
+    message(STATUS "Doxygen is not installed. Documentation can not be built.")
 else()
     # set configuration variables for doxygen.in
     set(PROJECT "GENIVI IPC Common API C++")
@@ -164,9 +201,9 @@ else()
     add_dependencies(doc doxygen-doc)
 
     if ("${ASCIIDOC_PATH}" STREQUAL "ASCIIDOC_PATH-NOTFOUND")
-        message("asciidoc is not installed. Readme can not be built.")
+        message(STATUS "asciidoc is not installed. Readme can not be built.")
     else()
-        message("asciidoc found")
+        message(STATUS "asciidoc found")
         add_custom_command(TARGET doc
                            POST_BUILD
                            COMMAND asciidoc
@@ -185,13 +222,13 @@ endif()
 # google test
 
 # check for set environment variable
-if(DEFINED ENV{GTEST_ROOT})
-    message("GTEST_ROOT is set. gtest found in $ENV{GTEST_ROOT}")
-else()
-    message("GTEST_ROOT is not defined. For building the tests environment variable
-             GTEST_ROOT have to be defined. Tests can not be built.")
+if(${GTEST_ROOT} STREQUAL "n/a")
+    message(STATUS "GTEST_ROOT is not defined. For building the tests environment variable
+             GTEST_ROOT has to be defined. Tests can not be built.")
     # early exit
     return()  # test can not be build -> make commands build_tests and check are not available
+else()
+    message(STATUS "GTEST_ROOT is set. gtest root path set to ${GTEST_ROOT}")
 endif()
 
 # build google test as static library (always) -> therefore deactivate BUILD_SHARED_LIBS in case it is active
@@ -200,7 +237,7 @@ if ("${BUILD_SHARED_LIBS}" STREQUAL "ON")
     set(BUILD_SHARED_LIBS OFF)
     set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 1)
 endif()
-add_subdirectory($ENV{GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+add_subdirectory(${GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
 if ("${BUILD_SHARED_LIBS_AUTOMATIC_OFF}" STREQUAL "1")
     set(BUILD_SHARED_LIBS ON)
     set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
