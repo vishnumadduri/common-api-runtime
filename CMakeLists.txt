@@ -16,12 +16,10 @@ SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in *.cmake.in
 
 set(GTEST_ROOT "n/a" CACHE STRING "Path to root folder of googletest. Must be set for building the tests.")
 
-# OS, pthread
+# OS
 set(DL_LIBRARY "")
-set(PTHREAD_LIBRARY "")
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(DL_LIBRARY "dl")
-        set(PTHREAD_LIBRARY "pthread")
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 ##############################################################################
@@ -95,38 +93,17 @@ CONFIGURE_FILE(commonapi.spec.in commonapi.spec)
 ##############################################################################
 # installing files
 
-# install CommonAPI library
-install(TARGETS CommonAPI EXPORT CommonAPITargets LIBRARY DESTINATION ${INSTALL_LIB_DIR} ARCHIVE DESTINATION ${INSTALL_LIB_DIR})	
+# for installation of CommonAPI header files
+file (GLOB_RECURSE CommonAPI_INCLUDE_INSTALL_FILES "include/CommonAPI/*.hpp")
+set_target_properties (CommonAPI PROPERTIES PUBLIC_HEADER "${CommonAPI_INCLUDE_INSTALL_FILES}")
 
-# install CommonAPI header files
-install(FILES include/CommonAPI/Address.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
-install(FILES include/CommonAPI/Attribute.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/AttributeExtension.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/ByteBuffer.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/CommonAPI.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/ContainerUtils.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Deployable.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Deployment.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Enumeration.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Event.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Factory.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/IniFileReader.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
-install(FILES include/CommonAPI/InputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
-install(FILES include/CommonAPI/Logger.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/MainLoopContext.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/OutputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Proxy.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/ProxyManager.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Runtime.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/SelectiveEvent.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/SerializableArguments.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Struct.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Stub.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
-install(FILES include/CommonAPI/TypeOutputStream.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Types.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Utils.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)	
-install(FILES include/CommonAPI/Variant.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
-install(FILES include/CommonAPI/Version.hpp DESTINATION ${INSTALL_INCLUDE_DIR}/CommonAPI)
+# install CommonAPI library including headers
+install(TARGETS CommonAPI
+        EXPORT CommonAPITargets
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
+        ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
+        PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/CommonAPI"
+)
 
 ##############################################################################
 # exporting, configuring and installing of cmake files
