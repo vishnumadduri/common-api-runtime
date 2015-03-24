@@ -18,6 +18,7 @@
 #include <memory>
 #include <tuple>
 
+#include <CommonAPI/ByteBuffer.hpp>
 #include <CommonAPI/ContainerUtils.hpp>
 #include <CommonAPI/Event.hpp>
 #include <CommonAPI/Version.hpp>
