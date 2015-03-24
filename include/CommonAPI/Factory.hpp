@@ -50,7 +50,11 @@ public:
 						   	  const std::string &_interface,
 							  const std::string &_instance,
 						 	  std::shared_ptr<StubBase> _stub,
-						 	  std::shared_ptr<MainLoopContext> mainLoopContext) = 0;
+							  std::shared_ptr<MainLoopContext> mainLoopContext) = 0;
+
+	virtual bool unregisterStub(const std::string &_domain, 
+								const std::string &_interface, 
+								const std::string &_instance) = 0;
 };
 
 } // namespace CommonAPI

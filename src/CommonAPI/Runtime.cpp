@@ -247,6 +247,19 @@ Runtime::registerStub(const std::string &_domain, const std::string &_interface,
 	return false;
 }
 
+bool 
+Runtime::unregisterStub(const std::string &_domain, const std::string &_interface, const std::string &_instance) {
+	bool isUnregistered(false);
+
+	for (auto factory : factories_) {
+		isUnregistered = factory.second->unregisterStub(_domain, _interface, _instance);
+		if (isUnregistered)
+			return true;
+	}
+
+	return false;
+}
+
 std::string
 Runtime::getLibrary(
 	const std::string &_domain, const std::string &_interface, const std::string &_instance,
