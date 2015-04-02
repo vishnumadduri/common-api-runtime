@@ -130,6 +130,12 @@ public:
     	return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _context);
     }
 
+	bool unregisterService(const std::string &_domain,
+							const std::string &_interface,
+							const std::string &_instance) {
+		return unregisterStub(_domain, _interface, _instance);
+	}
+
     bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
     bool unregisterFactory(const std::string &_ipc);
 
@@ -144,9 +150,10 @@ private:
 									   std::shared_ptr<MainLoopContext>);
 
 	bool registerStub(const std::string &, const std::string &, const std::string &,
-						  std::shared_ptr<StubBase>, const ConnectionId &);
+							std::shared_ptr<StubBase>, const ConnectionId &);
 	bool registerStub(const std::string &, const std::string &, const std::string &,
-					  std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
+							std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
+	bool unregisterStub(const std::string &, const std::string &, const std::string &);
 
 	std::string getLibrary(const std::string &, const std::string &, const std::string &, bool);
 	bool loadLibrary(const std::string &);

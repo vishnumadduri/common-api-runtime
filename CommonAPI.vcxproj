@@ -11,6 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CommonAPI\Address.cpp" />
+    <ClCompile Include="src\CommonAPI\ContainerUtils.cpp" />
+    <ClCompile Include="src\CommonAPI\IniFileReader.cpp" />
+    <ClCompile Include="src\CommonAPI\MainLoopContext.cpp" />
+    <ClCompile Include="src\CommonAPI\Proxy.cpp" />
+    <ClCompile Include="src\CommonAPI\ProxyManager.cpp" />
+    <ClCompile Include="src\CommonAPI\Runtime.cpp" />
+    <ClCompile Include="src\CommonAPI\Types.cpp" />
+    <ClCompile Include="src\CommonAPI\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\CommonAPI\Address.hpp" />
     <ClInclude Include="include\CommonAPI\Attribute.hpp" />
     <ClInclude Include="include\CommonAPI\AttributeExtension.hpp" />
@@ -19,6 +30,7 @@
     <ClInclude Include="include\CommonAPI\ContainerUtils.hpp" />
     <ClInclude Include="include\CommonAPI\Deployable.hpp" />
     <ClInclude Include="include\CommonAPI\Deployment.hpp" />
+    <ClInclude Include="include\CommonAPI\Enumeration.hpp" />
     <ClInclude Include="include\CommonAPI\Event.hpp" />
     <ClInclude Include="include\CommonAPI\Factory.hpp" />
     <ClInclude Include="include\CommonAPI\IniFileReader.hpp" />
@@ -27,6 +39,7 @@
     <ClInclude Include="include\CommonAPI\MainLoopContext.hpp" />
     <ClInclude Include="include\CommonAPI\OutputStream.hpp" />
     <ClInclude Include="include\CommonAPI\Proxy.hpp" />
+    <ClInclude Include="include\CommonAPI\ProxyManager.hpp" />
     <ClInclude Include="include\CommonAPI\Runtime.hpp" />
     <ClInclude Include="include\CommonAPI\SelectiveEvent.hpp" />
     <ClInclude Include="include\CommonAPI\SerializableArguments.hpp" />
@@ -37,15 +50,6 @@
     <ClInclude Include="include\CommonAPI\Utils.hpp" />
     <ClInclude Include="include\CommonAPI\Variant.hpp" />
     <ClInclude Include="include\CommonAPI\Version.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\CommonAPI\Address.cpp" />
-    <ClCompile Include="src\CommonAPI\ContainerUtils.cpp" />
-    <ClCompile Include="src\CommonAPI\IniFileReader.cpp" />
-    <ClCompile Include="src\CommonAPI\MainLoopContext.cpp" />
-    <ClCompile Include="src\CommonAPI\Proxy.cpp" />
-    <ClCompile Include="src\CommonAPI\Runtime.cpp" />
-    <ClCompile Include="src\CommonAPI\Utils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C18FDEDE-810E-405D-9100-57A1CC5C78A9}</ProjectGuid>
@@ -86,7 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>WIN32;COMMONAPI_INTERNAL_COMPILATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;COMMONAPI_INTERNAL_COMPILATION;__EXCEPTIONS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MinimalRebuild>false</MinimalRebuild>
