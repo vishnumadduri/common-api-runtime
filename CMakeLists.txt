@@ -75,8 +75,15 @@ message("Build type: ${CMAKE_BUILD_TYPE}")
 
 # CommonAPI build section
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
-
+IF(MSVC)
+	message("using MSVC Compiler")
+	add_definitions(-DCOMMONAPI_INTERNAL_COMPILATION)
+	add_compile_options(/EHsc /wd"4996")
+ELSE ()
+	message("not using MSVC Compiler")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
+ENDIF(MSVC)
+ 
 message("Compiler options: ${CMAKE_CXX_FLAGS}") 
 
 include_directories(
