@@ -68,7 +68,12 @@ public:
 		FATAL = 0, ERROR = 1, WARNING = 2, INFO = 3, DEBUG = 4, VERBOSE = 5
 	};
 
-	Logger();
+	Logger() :
+		useConsole_(true),
+		useFile_(false),
+		useDlt_(false),
+		maximumLogLevel_(static_cast<Level>(COMMONAPI_LOGLEVEL)) {
+	}
 
 	template<typename... _LogEntries>
 	static void log(Level _level, _LogEntries... _entries) {
@@ -86,7 +91,7 @@ private:
 
 	void log_intern() {
 		std::cout << std::endl;
-	};
+	}
 
 	template<typename _LogEntry, typename... _MoreLogEntries>
 	void log_intern(_LogEntry _entry, _MoreLogEntries... _moreEntries) {
