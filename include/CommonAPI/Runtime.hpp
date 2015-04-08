@@ -149,26 +149,37 @@ private:
 	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
 									   std::shared_ptr<MainLoopContext>);
 
+	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
+										     const ConnectionId &);
+	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
+										     std::shared_ptr<MainLoopContext>);
+
+
 	bool registerStub(const std::string &, const std::string &, const std::string &,
+					  std::shared_ptr<StubBase>, const ConnectionId &);
+	bool registerStub(const std::string &, const std::string &, const std::string &,
+					  std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
+	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
 							std::shared_ptr<StubBase>, const ConnectionId &);
-	bool registerStub(const std::string &, const std::string &, const std::string &,
+	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
 							std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
+
 	bool unregisterStub(const std::string &, const std::string &, const std::string &);
 
 	std::string getLibrary(const std::string &, const std::string &, const std::string &, bool);
 	bool loadLibrary(const std::string &);
 
 private:
-	std::map<std::string, std::shared_ptr<Factory>> factories_;
-	std::map<std::string, std::map<bool, std::string>> libraries_;
-	std::set<std::string> loadedLibraries_; // Library name
-
 	std::string defaultBinding_;
 	std::string defaultFolder_;
 	std::string defaultConfig_;
 
-	std::mutex factoriesMutex_;
+	std::map<std::string, std::shared_ptr<Factory>> factories_;
+	std::map<std::string, std::map<bool, std::string>> libraries_;
+	std::set<std::string> loadedLibraries_; // Library name
 
+	std::mutex factoriesMutex_;
+	std::mutex loadMutex_;
 
 friend class ProxyManager;
 };

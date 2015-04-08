@@ -57,7 +57,10 @@ Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _
 
 bool
 Runtime::unregisterFactory(const std::string &_binding) {
-	return false;
+	COMMONAPI_DEBUG("Unregistering factory for binding=", _binding);
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	factories_.erase(_binding);
+	return true;
 }
 
 /*
@@ -150,110 +153,74 @@ Runtime::readConfiguration() {
 std::shared_ptr<Proxy>
 Runtime::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
-		std::shared_ptr<MainLoopContext> _context) {
+		const ConnectionId &_connectionId) {
 
 	// Check whether we already know how to create such proxies...
-	for (auto factory : factories_) {
-		std::shared_ptr<Proxy> proxy
-			= factory.second->createProxy(_domain, _interface, _instance, _context);
-		if (proxy)
-			return proxy;
-	}
-
-	// ...it seems do not, lets try to load a library that does...
-	std::string library = getLibrary(_domain, _interface, _instance, true);
-	if (loadLibrary(library)) {
-		for (auto factory : factories_) {
-			std::shared_ptr<Proxy> proxy
-				= factory.second->createProxy(_domain, _interface, _instance, _context);
-			if (proxy)
-				return proxy;
+	std::shared_ptr<Proxy> proxy = createProxyHelper(_domain, _interface, _instance, _connectionId);
+	if (!proxy) {
+		// ...it seems do not, lets try to load a library that does...
+		std::lock_guard<std::mutex> itsGuard(loadMutex_);
+		std::string library = getLibrary(_domain, _interface, _instance, true);
+		if (loadLibrary(library)) {
+			proxy = createProxyHelper(_domain, _interface, _instance, _connectionId);
 		}
 	}
-
-	return nullptr;
+	return proxy;
 }
 
 std::shared_ptr<Proxy>
 Runtime::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
-		const ConnectionId &_connectionId) {
+		std::shared_ptr<MainLoopContext> _context) {
 
 	// Check whether we already know how to create such proxies...
-	for (auto factory : factories_) {
-		std::shared_ptr<Proxy> proxy
-			= factory.second->createProxy(_domain, _interface, _instance, _connectionId);
-		if (proxy)
-			return proxy;
-	}
-
-	// ...it seems do not, lets try to load a library that does...
-	std::string library = getLibrary(_domain, _interface, _instance, true);
-	if (loadLibrary(library)) {
-		for (auto factory : factories_) {
-			std::shared_ptr<Proxy> proxy
-				= factory.second->createProxy(_domain, _interface, _instance, _connectionId);
-			if (proxy)
-				return proxy;
+	std::shared_ptr<Proxy> proxy = createProxyHelper(_domain, _interface, _instance, _context);
+	if (!proxy) {
+		// ...it seems do not, lets try to load a library that does...
+		std::lock_guard<std::mutex> itsGuard(loadMutex_);
+		std::string library = getLibrary(_domain, _interface, _instance, true);
+		if (loadLibrary(library)) {
+			proxy = createProxyHelper(_domain, _interface, _instance, _context);
 		}
 	}
-
-	return nullptr;
+	return proxy;
 }
+
 
 bool
 Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
 				  	  std::shared_ptr<StubBase> _stub, const ConnectionId &_connectionId) {
 
-	bool isRegistered(false);
-
-	for (auto factory : factories_) {
-		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
-		if (isRegistered)
-			return true;
-	}
-
-	std::string library = getLibrary(_domain, _interface, _instance, false);
-	if (loadLibrary(library)) {
-		for (auto factory : factories_) {
-			isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
-			if (isRegistered)
-				return true;
+	bool isRegistered = registerStubHelper(_domain, _interface, _instance, _stub, _connectionId);
+	if (!isRegistered) {
+		std::string library = getLibrary(_domain, _interface, _instance, false);
+		std::lock_guard<std::mutex> itsGuard(loadMutex_);
+		if (loadLibrary(library)) {
+			isRegistered = registerStubHelper(_domain, _interface, _instance, _stub, _connectionId);
 		}
 	}
-	return false;
+	return isRegistered;
 }
 
 bool
 Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
 				  	  std::shared_ptr<StubBase> _stub, std::shared_ptr<MainLoopContext> _context) {
 
-	bool isRegistered(false);
-
-	for (auto factory : factories_) {
-		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
-		if (isRegistered)
-			return true;
-	}
-
-	std::string library = getLibrary(_domain, _interface, _instance, false);
-	if (loadLibrary(library)) {
-		for (auto factory : factories_) {
-			isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
-			if (isRegistered)
-				return true;
+	bool isRegistered = registerStubHelper(_domain, _interface, _instance, _stub, _context);
+	if (!isRegistered) {
+		std::string library = getLibrary(_domain, _interface, _instance, false);
+		std::lock_guard<std::mutex> itsGuard(loadMutex_);
+		if (loadLibrary(library)) {
+			isRegistered = registerStubHelper(_domain, _interface, _instance, _stub, _context);
 		}
 	}
-	return false;
+	return isRegistered;
 }
 
 bool 
 Runtime::unregisterStub(const std::string &_domain, const std::string &_interface, const std::string &_instance) {
-	bool isUnregistered(false);
-
 	for (auto factory : factories_) {
-		isUnregistered = factory.second->unregisterStub(_domain, _interface, _instance);
-		if (isUnregistered)
+		if (factory.second->unregisterStub(_domain, _interface, _instance))
 			return true;
 	}
 
@@ -319,6 +286,54 @@ Runtime::loadLibrary(const std::string &_library) {
 		#endif
 	}
 	return isLoaded;
+}
+
+std::shared_ptr<Proxy>
+Runtime::createProxyHelper(const std::string &_domain, const std::string &_interface, const std::string &_instance,
+						   const std::string &_connectionId) {
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	for (auto factory : factories_) {
+		std::shared_ptr<Proxy> proxy
+			= factory.second->createProxy(_domain, _interface, _instance, _connectionId);
+		if (proxy)
+			return proxy;
+	}
+	return nullptr;
+}
+
+std::shared_ptr<Proxy>
+Runtime::createProxyHelper(const std::string &_domain, const std::string &_interface, const std::string &_instance,
+						   std::shared_ptr<MainLoopContext> _context ) {
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	for (auto factory : factories_) {
+		std::shared_ptr<Proxy> proxy
+			= factory.second->createProxy(_domain, _interface, _instance, _context);
+		if (proxy)
+			return proxy;
+	}
+	return nullptr;
+}
+
+bool
+Runtime::registerStubHelper(const std::string &_domain, const std::string &_interface, const std::string &_instance,
+	  	  	  	  	  	    std::shared_ptr<StubBase> _stub, const std::string &_connectionId) {
+	bool isRegistered(false);
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	for (auto factory : factories_) {
+		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
+	}
+	return isRegistered;
+}
+
+bool
+Runtime::registerStubHelper(const std::string &_domain, const std::string &_interface, const std::string &_instance,
+	  	  	  	  	  	    std::shared_ptr<StubBase> _stub, std::shared_ptr<MainLoopContext> _context) {
+	bool isRegistered(false);
+	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+	for (auto factory : factories_) {
+		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
+	}
+	return isRegistered;
 }
 
 } //Namespace CommonAPI
