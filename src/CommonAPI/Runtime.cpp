@@ -44,7 +44,7 @@ Runtime::~Runtime() {
 
 bool
 Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _factory) {
-	Logger::log("Registering factory for binding=", _binding);
+	COMMONAPI_DEBUG("Registering factory for binding=", _binding);
 	bool isRegistered(false);
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
 	auto foundFactory = factories_.find(_binding);
@@ -87,9 +87,9 @@ void Runtime::init() {
 		defaultFolder_ = folder;
 
 	// Log settings
-	Logger::log("Using default binding \'", defaultBinding_, "\'");
-	Logger::log("Using default shared library folder \'", defaultFolder_, "\'");
-	Logger::log("Using default configuration file \'", defaultConfig_, "\'");
+	COMMONAPI_INFO("Using default binding \'", defaultBinding_, "\'");
+	COMMONAPI_INFO("Using default shared library folder \'", defaultFolder_, "\'");
+	COMMONAPI_INFO("Using default configuration file \'", defaultConfig_, "\'");
 }
 
 bool
@@ -131,7 +131,7 @@ Runtime::readConfiguration() {
 	section = reader.getSection("proxy");
 	if (section) {
 		for (auto m : section->getMappings()) {
-			Logger::log("Adding proxy mapping: ", m.first, " --> ", m.second);
+			COMMONAPI_DEBUG("Adding proxy mapping: ", m.first, " --> ", m.second);
 			libraries_[m.first][true] = m.second;
 		}
 	}
@@ -139,7 +139,7 @@ Runtime::readConfiguration() {
 	section = reader.getSection("stub");
 	if (section) {
 		for (auto m : section->getMappings()) {
-			Logger::log("Adding stub mapping: ", m.first, " --> ", m.second);
+			COMMONAPI_DEBUG("Adding stub mapping: ", m.first, " --> ", m.second);
 			libraries_[m.first][false] = m.second;
 		}
 	}
@@ -269,7 +269,7 @@ Runtime::getLibrary(
 
 	std::string address = _domain + ":" + _interface + ":" + _instance;
 
-	Logger::log("Loading proxy library for ", address);
+	COMMONAPI_DEBUG("Loading proxy library for ", address);
 
 	auto libraryIterator = libraries_.find(address);
 	if (libraryIterator != libraries_.end()) {
@@ -310,10 +310,10 @@ Runtime::loadLibrary(const std::string &_library) {
 		#else
 		if (dlopen(itsLibrary.c_str(), RTLD_LAZY | RTLD_GLOBAL) != 0) {
 			loadedLibraries_.insert(itsLibrary);
-			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
+			COMMONAPI_DEBUG("Loading interface library \"", itsLibrary, "\" succeeded.");
 		}
 		else {
-			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", dlerror(), ")");
+			COMMONAPI_ERROR("Loading interface library \"", itsLibrary, "\" failed (", dlerror(), ")");
 			isLoaded = false;
 		}
 		#endif
