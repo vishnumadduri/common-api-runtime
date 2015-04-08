@@ -31,7 +31,7 @@ bool
 IniFileReader::load(const std::string &_path) {
 	std::ifstream configStream(_path);
 	if (configStream.is_open()) {
-		Logger::log("Loading ini file from ", _path);
+		COMMONAPI_INFO("Loading ini file from ", _path);
 
 		int lineCounter(0);
 		std::string currentSectionName;
@@ -55,17 +55,16 @@ IniFileReader::load(const std::string &_path) {
 							sections_[currentSectionName] = currentSection;
 						}
 					} else {
-						Logger::log("Double definition of section \'",
-									currentSectionName,
-									"\' ignoring definition (line ",
-									lineCounter,
-									")");
+						COMMONAPI_ERROR("Double definition of section \'",
+										currentSectionName,
+										"\' ignoring definition (line ",
+										lineCounter,
+										")");
 						currentSection = nullptr;
 					}
 				} else {
-					// TODO: use error instead of log
-					Logger::log("Missing \']\' in section definition (line ",
-								lineCounter, ")");
+					COMMONAPI_ERROR("Missing \']\' in section definition (line ",
+									lineCounter, ")");
 				}
 			} else if (currentSection) {
 				std::size_t pos = line.find('=');
@@ -74,21 +73,21 @@ IniFileReader::load(const std::string &_path) {
 					trim(key);
 					if (currentSection->mappings_.end()
 						!= currentSection->mappings_.find(key)) {
-						Logger::log("Double definition for key \'",
-									key,
-									"'\' in section \'",
-									currentSectionName,
-									"\' (line ",
-									lineCounter,
-									")");
+						COMMONAPI_ERROR("Double definition for key \'",
+										key,
+										"'\' in section \'",
+										currentSectionName,
+										"\' (line ",
+										lineCounter,
+										")");
 					} else {
 						std::string value = line.substr(pos+1);
 						trim(value);
 						currentSection->mappings_[key] = value;
 					}
 				} else if (line.size() > 0) {
-					Logger::log("Missing \'=\' in key=value definition (line ",
-								lineCounter, ")");
+					COMMONAPI_ERROR("Missing \'=\' in key=value definition (line ",
+									lineCounter, ")");
 				}
 			}
 		}
