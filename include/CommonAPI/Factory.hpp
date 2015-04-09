@@ -17,13 +17,11 @@
 
 namespace CommonAPI {
 
-extern const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID;
-
 class MainLoopContext;
 class Proxy;
 class StubBase;
 
-class Factory {
+class DllExport Factory {
 public:
     typedef std::function<void(std::vector<std::string> &)> AvailableInstancesCbk_t;
     typedef std::function<void(bool)> InstanceAliveCbk_t;

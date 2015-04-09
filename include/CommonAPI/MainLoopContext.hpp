@@ -31,6 +31,8 @@
 #include <functional>
 #include <string>
 
+#include <CommonAPI/DllExportMacro.hpp>
+
 namespace CommonAPI {
 
 enum class DispatchPriority {
@@ -42,7 +44,7 @@ enum class DispatchPriority {
 };
 
 
-int64_t getCurrentTimeInMs();
+int64_t DllExport getCurrentTimeInMs();
 
 
 /**
@@ -189,7 +191,7 @@ typedef WakeupListenerList::iterator WakeupListenerSubscription;
  * Watches, Timeouts and Wakeup-Events that need to be handled by your Main Loop implementation.
  *
  */
-class MainLoopContext {
+class DllExport MainLoopContext {
 public:
     MainLoopContext(const std::string &_name = "COMMONAPI_DEFAULT_MAINLOOP_CONTEXT")
 		: name_(_name){

@@ -11,11 +11,13 @@
 #include <memory>
 #include <string>
 
+#include <CommonAPI/DllExportMacro.hpp>
+
 namespace CommonAPI {
 
-class IniFileReader {
+class DllExport IniFileReader {
 public:
-	class Section {
+	class DllExport Section {
 	public:
 		const std::map<std::string, std::string> &getMappings() const;
 		std::string getValue(const std::string &_key) const;

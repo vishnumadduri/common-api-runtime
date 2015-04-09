@@ -24,6 +24,8 @@
 #include <locale>
 #include <functional>
 
+#include <CommonAPI/DllExportMacro.hpp>
+
 #ifdef WIN32
 #include <xfunctional>
 #ifndef WIN32_LEAN_AND_MEAN
@@ -51,7 +53,7 @@ namespace CommonAPI {
  *
  * @return The name of the currently executing binary.
  */
-std::string getCurrentBinaryFileFQN();
+std::string DllExport getCurrentBinaryFileFQN();
 
 /**
  * \brief Splits a std::string according to the given delim-char.
@@ -65,7 +67,7 @@ std::string getCurrentBinaryFileFQN();
  *
  * @return A reference to the vector you passed in (elems)
  */
-std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems);
+std::vector<std::string> DllExport & split(const std::string& s, char delim, std::vector<std::string>& elems);
 
 /**
  * \brief Splits a std::string according to the given delim-char.
@@ -78,7 +80,7 @@ std::vector<std::string>& split(const std::string& s, char delim, std::vector<st
  *
  * @return A vector containing the splitted string elements.
  */
-std::vector<std::string> split(const std::string& s, char delim);
+std::vector<std::string> DllExport split(const std::string& s, char delim);
 
 inline bool isspace(char c) {
     return std::isspace(c, std::locale());

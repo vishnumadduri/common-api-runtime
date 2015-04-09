@@ -7,7 +7,7 @@
 #include <CommonAPI/Types.hpp>
 
 namespace CommonAPI {
-
-const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID = "";
-
+	ConnectionId getCommonAPIDefaultConnectionID() {
+		return "";
+	}
 } // namespace CommonAPI

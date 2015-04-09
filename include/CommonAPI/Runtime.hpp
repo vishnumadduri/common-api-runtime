@@ -34,7 +34,7 @@ std::shared_ptr<
 > createProxyWithDefaultAttributeExtension(
 	const std::string &_domain, const std::string &_instance);
 
-class Runtime {
+class DllExport Runtime {
 public:
 	static std::shared_ptr<Runtime> get();
 
@@ -47,7 +47,7 @@ public:
     >
     buildProxy(const std::string &_domain,
                const std::string &_instance,
-               const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+               const ConnectionId &_connectionId = getCommonAPIDefaultConnectionID()) {
         std::shared_ptr<Proxy> proxy
         	= createProxy(_domain,
         				  _ProxyClass<_AttributeExtensions...>::getInterface(),
@@ -86,7 +86,7 @@ public:
     std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
-                                            const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+											const ConnectionId &_connectionId = getCommonAPIDefaultConnectionID()) {
         std::shared_ptr<Proxy> proxy
 			= createProxy(_domain,
         	 		      DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t::getInterface(),
@@ -118,7 +118,7 @@ public:
 	bool registerService(const std::string &_domain,
 						 const std::string &_instance,
 						 std::shared_ptr<_Stub> _service,
-						 const ConnectionId &_connectionId = COMMONAPI_DEFAULT_CONNECTION_ID) {
+						 const ConnectionId &_connectionId = getCommonAPIDefaultConnectionID()) {
 		return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _connectionId);
 	}
 

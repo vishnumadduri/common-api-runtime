@@ -42,8 +42,7 @@ Runtime::~Runtime() {
 	// intentionally left empty
 }
 
-bool
-Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _factory) {
+bool Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _factory) {
 	Logger::log("Registering factory for binding=", _binding);
 	bool isRegistered(false);
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
@@ -293,27 +292,35 @@ Runtime::loadLibrary(const std::string &_library) {
 	std::string itsLibrary(_library);
 
 	// TODO: decide whether this really is a good idea...
+	#ifdef WIN32
+	if (itsLibrary.find(".dll") != itsLibrary.length() - 4) {
+		itsLibrary += ".dll";
+		Logger::log("dll");
+	}
+	#else
 	if (itsLibrary.find(".so") != itsLibrary.length() - 3) {
 		itsLibrary += ".so";
+		Logger::log("so");
 	}
+	#endif
 
 	bool isLoaded(true);
 	if (loadedLibraries_.end() == loadedLibraries_.find(itsLibrary)) {
 		#ifdef WIN32
 		if (LoadLibrary(itsLibrary.c_str()) != 0) {
 			loadedLibraries_.insert(itsLibrary);
-			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
+			Logger::log("Loading interface library (dll) \"", itsLibrary, "\" succeeded.");
 		} else {
-			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", GetLastError(), ")");
+			Logger::log("Loading interface library (dll) \"", itsLibrary, "\" failed (", GetLastError(), ")");
 			isLoaded = false;
 		}
 		#else
 		if (dlopen(itsLibrary.c_str(), RTLD_LAZY | RTLD_GLOBAL) != 0) {
 			loadedLibraries_.insert(itsLibrary);
-			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
+			Logger::log("Loading interface library (so) \"", itsLibrary, "\" succeeded.");
 		}
 		else {
-			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", dlerror(), ")");
+			Logger::log("Loading interface library (so) \"", itsLibrary, "\" failed (", dlerror(), ")");
 			isLoaded = false;
 		}
 		#endif

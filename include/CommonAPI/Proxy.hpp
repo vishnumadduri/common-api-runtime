@@ -26,7 +26,7 @@ namespace CommonAPI {
 typedef Event<AvailabilityStatus> ProxyStatusEvent;
 typedef ReadonlyAttribute<Version> InterfaceVersionAttribute;
 
-class Proxy {
+class DllExport Proxy {
 public:
 	virtual ~Proxy() {}
 

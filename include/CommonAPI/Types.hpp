@@ -22,6 +22,7 @@
 #include <CommonAPI/ContainerUtils.hpp>
 #include <CommonAPI/Event.hpp>
 #include <CommonAPI/Version.hpp>
+#include <CommonAPI/DllExportMacro.hpp>
 
 #if  __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
 #  define COMMONAPI_DEPRECATED __attribute__ ((__deprecated__))
@@ -69,7 +70,8 @@ enum class CallStatus {
 
 typedef uint32_t CallId;
 typedef std::string ConnectionId;
-extern const ConnectionId COMMONAPI_DEFAULT_CONNECTION_ID;
+
+ConnectionId DllExport getCommonAPIDefaultConnectionID();
 
 /**
  * \brief Identifies a client sending a call to a stub.
