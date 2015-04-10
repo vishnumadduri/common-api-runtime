@@ -10,11 +10,11 @@
 #include <iostream>
 #include <string>
 
-#include <CommonAPI/DllExportMacro.hpp>
+#include <CommonAPI/Export.hpp>
 
 namespace CommonAPI {
 
-class DllExport Address {
+class COMMONAPI_EXPORT Address {
 public:
 	Address() = default;
 	Address(const std::string &_address);

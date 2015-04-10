@@ -53,8 +53,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_libdir}/libCommonAPI.so.@LIB_MAJOR_VERSION@
-%{_libdir}/libCommonAPI.so.@LIB_MAJOR_VERSION@.@LIB_MINOR_VERSION@.@LIB_PATCH_VERSION@
+%{_libdir}/libCommonAPI.so.@LIBCOMMONAPI_MAJOR_VERSION@
+%{_libdir}/libCommonAPI.so.@LIBCOMMONAPI_MAJOR_VERSION@.@LIBCOMMONAPI_MINOR_VERSION@.@LIBCOMMONAPI_PATCH_VERSION@
 %{_libdir}/libCommonAPI.so
 
 %files staticdev
@@ -63,34 +63,45 @@ rm -rf $RPM_BUILD_ROOT
 %files dev
 %defattr(-,root,root,-)
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Attribute.h 
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/AttributeExtension.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ByteBuffer.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/CommonAPI.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Configuration.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ContainerUtils.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Event.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Factory.h
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Address.hpp 
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Attribute.hpp 
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/AttributeExtension.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ByteBuffer.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/CommonAPI.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ContainerUtils.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Deployable.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Deployment.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Enumeration.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Event.hpp
 %{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Factory.hpp
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/InputStream.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/MainLoopContext.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/MiddlewareInfo.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/OutputStream.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Proxy.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ProxyManager.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Runtime.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SelectiveEvent.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SerializableStruct.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SerializableVariant.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SerializableVariant.hpp
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ServicePublisher.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ServicePublisher.hpp
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Stub.h 
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/types.h
-%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/utils.h
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/IniFileReader.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/InputStream.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Logger.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/MainLoopContext.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/OutputStream.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Proxy.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/ProxyManager.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Runtime.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SelectiveEvent.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/SerializableArguments.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Struct.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Stub.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/TypeOutputStream.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Types.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Utils.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Variant.hpp
+%{_includedir}/CommonAPI-@COMMONAPI_API_HEADER_VERSION@/CommonAPI/Version.hpp
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfig.cmake
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPIConfigVersion.cmake
 %{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets.cmake
+%{_libdir}/cmake/CommonAPI-@COMPONENT_VERSION@/CommonAPITargets-@CMAKE_BUILD_TYPE_FOR_SPEC_IN@.cmake
+
+%changelog dev
+* Fri Mar 20 2015 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@
+- LIB_MAJOR_VERSION changed to LIBCOMMONAPI_MAJOR_VERSION
+- LIB_MINOR_VERSION changed to LIBCOMMONAPI_MINOR_VERSION
+- LIB_PATCH_VERSION changed to LIBCOMMONAPI_PATCH_VERSION
+- files dev reworked
 
 %changelog dev
 * Tue Sep 2 2014 Markus Freutsmiedl <Markus.Freutsmiedl@partner.bmw.de> @GENIVI_PROJECT_VERSION@

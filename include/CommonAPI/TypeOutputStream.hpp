@@ -70,6 +70,12 @@ public:
 		return get()->writeType(_value);
 	}
 
+	template<typename _Type>
+	TypeOutputStream &writeType(const Enumeration<_Type> &_value) {
+		_Type tmpValue;
+		return get()->writeType(tmpValue);
+	}
+
 	template<typename... _Types>
 	TypeOutputStream &writeType(const Struct<_Types...> &_value) {
 		return get()->writeType(_value);

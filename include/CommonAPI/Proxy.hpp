@@ -19,6 +19,7 @@
 
 #include <CommonAPI/Address.hpp>
 #include <CommonAPI/Attribute.hpp>
+#include <CommonAPI/Export.hpp>
 #include <CommonAPI/Version.hpp>
 
 namespace CommonAPI {
@@ -26,7 +27,7 @@ namespace CommonAPI {
 typedef Event<AvailabilityStatus> ProxyStatusEvent;
 typedef ReadonlyAttribute<Version> InterfaceVersionAttribute;
 
-class DllExport Proxy {
+class COMMONAPI_EXPORT Proxy {
 public:
 	virtual ~Proxy() {}
 

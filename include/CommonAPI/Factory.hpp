@@ -6,13 +6,11 @@
 #ifndef COMMONAPI_FACTORY_HPP_
 #define COMMONAPI_FACTORY_HPP_
 
+#include <functional>
 #include <memory>
 #include <vector>
 
-#ifdef WIN32
-#include <functional>
-#endif
-
+#include <CommonAPI/Export.hpp>
 #include <CommonAPI/Types.hpp>
 
 namespace CommonAPI {
@@ -21,7 +19,7 @@ class MainLoopContext;
 class Proxy;
 class StubBase;
 
-class DllExport Factory {
+class COMMONAPI_EXPORT Factory {
 public:
     typedef std::function<void(std::vector<std::string> &)> AvailableInstancesCbk_t;
     typedef std::function<void(bool)> InstanceAliveCbk_t;
