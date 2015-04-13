@@ -23,6 +23,7 @@
 #endif
 
 #ifdef WIN32
+
 #define COMMONAPI_FATAL(...) \
 	do { Logger::log(Logger::Level::LL_FATAL, __VA_ARGS__); } while (false);
 
@@ -60,7 +61,9 @@
 #else
 #define COMMONAPI_VERBOSE(...)
 #endif
-#else
+
+#else // !WIN32
+
 #define COMMONAPI_FATAL(params...) \
 	do { Logger::log(Logger::Level::LL_FATAL, params); } while (false);
 
@@ -98,7 +101,9 @@
 #else
 	#define COMMONAPI_VERBOSE(params...)
 #endif
-#endif
+
+#endif // WIN32
+
 namespace CommonAPI {
 
 class Logger {
