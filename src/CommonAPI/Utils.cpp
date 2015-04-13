@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <functional>
 
 #include <CommonAPI/Utils.hpp>
 

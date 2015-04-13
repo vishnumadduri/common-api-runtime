@@ -22,50 +22,89 @@
 #define COMMONAPI_LOGLEVEL COMMONAPI_LOGLEVEL_INFO
 #endif
 
+#ifdef WIN32
+#define COMMONAPI_FATAL(...) \
+	do { Logger::log(Logger::Level::LL_FATAL, __VA_ARGS__); } while (false);
+
+#if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_ERROR
+#define COMMONAPI_ERROR(...) \
+		do { Logger::log(Logger::Level::LL_ERROR, __VA_ARGS__); } while (false);
+#else
+#define COMMONAPI_ERROR(...)
+#endif
+
+#if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_WARNING
+#define COMMONAPI_WARNING(...) \
+		do { Logger::log(Logger::Level::LL_WARNING, __VA_ARGS__); } while (false);
+#else
+#define COMMONAPI_WARNING(...)
+#endif
+
+#if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_INFO
+#define COMMONAPI_INFO(...) \
+		do { Logger::log(Logger::Level::LL_INFO, __VA_ARGS__); } while (false);
+#else
+#define COMMONAPI_INFO(...)
+#endif
+
+#if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_DEBUG
+#define COMMONAPI_DEBUG(...) \
+		do { Logger::log(Logger::Level::LL_DEBUG, __VA_ARGS__); } while (false);
+#else
+#define COMMONAPI_DEBUG(...)
+#endif
+
+#if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_VERBOSE
+#define COMMONAPI_VERBOSE(...) \
+		do { Logger::log(Logger::Level::LL_VERBOSE, __VA_ARGS__); } while (false);
+#else
+#define COMMONAPI_VERBOSE(...)
+#endif
+#else
 #define COMMONAPI_FATAL(params...) \
-	do { Logger::log(Logger::Level::FATAL, params); } while (false);
+	do { Logger::log(Logger::Level::LL_FATAL, params); } while (false);
 
 #if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_ERROR
 	#define COMMONAPI_ERROR(params...) \
-		do { Logger::log(Logger::Level::ERROR, params); } while (false);
+		do { Logger::log(Logger::Level::LL_ERROR, params); } while (false);
 #else
 	#define COMMONAPI_ERROR(params...)
 #endif
 
 #if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_WARNING
 	#define COMMONAPI_WARNING(params...) \
-		do { Logger::log(Logger::Level::WARNING, params); } while (false);
+		do { Logger::log(Logger::Level::LL_WARNING, params); } while (false);
 #else
 	#define COMMONAPI_WARNING(params...)
 #endif
 
 #if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_INFO
 	#define COMMONAPI_INFO(params...) \
-		do { Logger::log(Logger::Level::INFO, params); } while (false);
+		do { Logger::log(Logger::Level::LL_INFO, params); } while (false);
 #else
 	#define COMMONAPI_INFO(params...)
 #endif
 
 #if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_DEBUG
 	#define COMMONAPI_DEBUG(params...) \
-		do { Logger::log(Logger::Level::DEBUG, params); } while (false);
+		do { Logger::log(Logger::Level::LL_DEBUG, params); } while (false);
 #else
 	#define COMMONAPI_DEBUG(params...)
 #endif
 
 #if COMMONAPI_LOGLEVEL >= COMMONAPI_LOGLEVEL_VERBOSE
 	#define COMMONAPI_VERBOSE(params...) \
-		do { Logger::log(Logger::Level::VERBOSE, params); } while (false);
+		do { Logger::log(Logger::Level::LL_VERBOSE, params); } while (false);
 #else
 	#define COMMONAPI_VERBOSE(params...)
 #endif
-
+#endif
 namespace CommonAPI {
 
 class Logger {
 public:
 	enum class Level : uint8_t {
-		FATAL = 0, ERROR = 1, WARNING = 2, INFO = 3, DEBUG = 4, VERBOSE = 5
+		LL_FATAL = 0, LL_ERROR = 1, LL_WARNING = 2, LL_INFO = 3, LL_DEBUG = 4, LL_VERBOSE = 5
 	};
 
 	Logger() :
@@ -101,17 +140,17 @@ private:
 
 	std::string level_as_string(Level _level) {
 		switch (_level) {
-		case Level::FATAL:
+		case Level::LL_FATAL:
 			return "FATAL";
-		case Level::ERROR:
+		case Level::LL_ERROR:
 			return "ERROR";
-		case Level::WARNING:
+		case Level::LL_WARNING:
 			return "WARNING";
-		case Level::INFO:
+		case Level::LL_INFO:
 			return "INFO";
-		case Level::DEBUG:
+		case Level::LL_DEBUG:
 			return "DEBUG";
-		case Level::VERBOSE:
+		case Level::LL_VERBOSE:
 			return "VERBOSE";
 		default:
 			return "";

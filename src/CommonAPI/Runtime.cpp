@@ -275,9 +275,9 @@ Runtime::loadLibrary(const std::string &_library) {
 		#ifdef WIN32
 		if (LoadLibrary(itsLibrary.c_str()) != 0) {
 			loadedLibraries_.insert(itsLibrary);
-			Logger::log("Loading interface library \"", itsLibrary, "\" succeeded.");
+			COMMONAPI_DEBUG("Loading interface library \"", itsLibrary, "\" succeeded.");
 		} else {
-			Logger::log("Loading interface library \"", itsLibrary, "\" failed (", GetLastError(), ")");
+			COMMONAPI_ERROR("Loading interface library \"", itsLibrary, "\" failed (", GetLastError(), ")");
 			isLoaded = false;
 		}
 		#else
