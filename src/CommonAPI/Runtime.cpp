@@ -27,9 +27,10 @@ const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
 const char *COMMONAPI_DEFAULT_CONFIG_FILE = "commonapi.ini";
 const char *COMMONAPI_DEFAULT_CONFIG_FOLDER = "/etc";
 
+std::shared_ptr<Runtime> Runtime::theRuntime__ = std::make_shared<Runtime>();
+
 std::shared_ptr<Runtime> Runtime::get() {
-	static std::shared_ptr<Runtime> theRuntime = std::make_shared<Runtime>();
-	return theRuntime;
+	return theRuntime__;
 }
 
 Runtime::Runtime()

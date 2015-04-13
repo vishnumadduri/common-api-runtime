@@ -185,6 +185,8 @@ private:
 	std::mutex factoriesMutex_;
 	std::mutex loadMutex_;
 
+	static std::shared_ptr<Runtime> theRuntime__;
+
 friend class ProxyManager;
 };
 
