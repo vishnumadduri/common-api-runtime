@@ -16,6 +16,7 @@
 #include "Address.hpp"
 #include "AttributeExtension.hpp"
 #include "ByteBuffer.hpp"
+#include "MainLoopContext.hpp"
 #include "Runtime.hpp"
 #include "Types.hpp"
 
