@@ -154,7 +154,7 @@ Runtime::readConfiguration() {
 std::shared_ptr<Proxy>
 Runtime::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
-		const ConnectionId &_connectionId) {
+		const ConnectionId_t &_connectionId) {
 
 	// Check whether we already know how to create such proxies...
 	std::shared_ptr<Proxy> proxy = createProxyHelper(_domain, _interface, _instance, _connectionId);
@@ -190,7 +190,7 @@ Runtime::createProxy(
 
 bool
 Runtime::registerStub(const std::string &_domain, const std::string &_interface, const std::string &_instance,
-				  	  std::shared_ptr<StubBase> _stub, const ConnectionId &_connectionId) {
+				  	  std::shared_ptr<StubBase> _stub, const ConnectionId_t &_connectionId) {
 
 	bool isRegistered = registerStubHelper(_domain, _interface, _instance, _stub, _connectionId);
 	if (!isRegistered) {

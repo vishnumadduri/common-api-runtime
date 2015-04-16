@@ -22,7 +22,7 @@
 
 namespace CommonAPI {
 
-static const ConnectionId DEFAULT_CONNECTION_ID = "";
+static const ConnectionId_t DEFAULT_CONNECTION_ID = "";
 
 class MainLoopContext;
 class Proxy;
@@ -51,7 +51,7 @@ public:
     >
     buildProxy(const std::string &_domain,
                const std::string &_instance,
-               const ConnectionId &_connectionId = DEFAULT_CONNECTION_ID) {
+               const ConnectionId_t &_connectionId = DEFAULT_CONNECTION_ID) {
         std::shared_ptr<Proxy> proxy
         	= createProxy(_domain,
         				  _ProxyClass<_AttributeExtensions...>::getInterface(),
@@ -90,7 +90,7 @@ public:
     std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
-											const ConnectionId &_connectionId = DEFAULT_CONNECTION_ID) {
+											const ConnectionId_t &_connectionId = DEFAULT_CONNECTION_ID) {
         std::shared_ptr<Proxy> proxy
 			= createProxy(_domain,
         	 		      DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t::getInterface(),
@@ -122,7 +122,7 @@ public:
 	bool registerService(const std::string &_domain,
 						 const std::string &_instance,
 						 std::shared_ptr<_Stub> _service,
-						 const ConnectionId &_connectionId = DEFAULT_CONNECTION_ID) {
+						 const ConnectionId_t &_connectionId = DEFAULT_CONNECTION_ID) {
 		return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _connectionId);
 	}
 
@@ -149,22 +149,22 @@ private:
 	bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
 
 	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
-									   const ConnectionId &);
+									   const ConnectionId_t &);
 	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
 									   std::shared_ptr<MainLoopContext>);
 
 	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
-										     const ConnectionId &);
+										     const ConnectionId_t &);
 	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
 										     std::shared_ptr<MainLoopContext>);
 
 
 	bool registerStub(const std::string &, const std::string &, const std::string &,
-					  std::shared_ptr<StubBase>, const ConnectionId &);
+					  std::shared_ptr<StubBase>, const ConnectionId_t &);
 	bool registerStub(const std::string &, const std::string &, const std::string &,
 					  std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
 	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
-							std::shared_ptr<StubBase>, const ConnectionId &);
+							std::shared_ptr<StubBase>, const ConnectionId_t &);
 	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
 							std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
 

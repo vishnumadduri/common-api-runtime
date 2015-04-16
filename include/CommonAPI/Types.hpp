@@ -68,8 +68,10 @@ enum class CallStatus {
     REMOTE_ERROR
 };
 
-typedef uint32_t CallId;
-typedef std::string ConnectionId;
+typedef uint32_t CallId_t;
+typedef std::string ConnectionId_t;
+typedef int Timeout_t; // in ms, -1 means "forever"
+typedef uint32_t Sender_t;
 
 /**
  * \brief Identifies a client sending a call to a stub.
@@ -105,6 +107,13 @@ public:
 
 // Type identifier for polymorphic structs
 typedef uint32_t Serial;
+
+// Additional informations per call
+struct CallInfo {
+	Timeout_t timeout_; // Maximum wait time for a response
+	Sender_t sender_; // Identifier of the sending application/component
+};
+
 
 } // namespace CommonAPI
 

@@ -12,7 +12,7 @@ namespace CommonAPI {
 std::shared_ptr<Proxy>
 ProxyManager::createProxy(
 		const std::string &_domain, const std::string &_interface, const std::string &_instance,
-		const ConnectionId &_connection) const {
+		const ConnectionId_t &_connection) const {
 	return Runtime::get()->createProxy(_domain, _interface, _instance, _connection);
 }
 

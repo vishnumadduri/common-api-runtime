@@ -29,7 +29,7 @@ public:
 	virtual std::shared_ptr<Proxy> createProxy(const std::string &_domain,
 									   	   	   const std::string &_interface,
 									   	   	   const std::string &_instance,
-									   	   	   const ConnectionId _connectionId) = 0;
+									   	   	   const ConnectionId_t &_connectionId) = 0;
 
 	virtual std::shared_ptr<Proxy> createProxy(const std::string &_domain,
 									   	   	   const std::string &_interface,
@@ -40,7 +40,7 @@ public:
 						   	  const std::string &_interface,
 							  const std::string &_instance,
 						 	  std::shared_ptr<StubBase> _stub,
-						 	  const ConnectionId _connectionId) = 0;
+						 	  const ConnectionId_t &_connectionId) = 0;
 
 	virtual bool registerStub(const std::string &_domain,
 						   	  const std::string &_interface,

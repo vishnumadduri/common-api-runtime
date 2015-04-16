@@ -38,7 +38,7 @@ public:
 
     virtual const std::string &getDomain() const = 0;
     virtual const std::string &getInterface() const = 0;
-    virtual const ConnectionId &getConnectionId() const = 0;
+    virtual const ConnectionId_t &getConnectionId() const = 0;
 
     virtual void getAvailableInstances(CommonAPI::CallStatus&, std::vector<std::string>& availableInstances) = 0;
 	virtual std::future<CallStatus> getAvailableInstancesAsync(GetAvailableInstancesCallback callback) = 0;
@@ -67,7 +67,7 @@ protected:
     std::shared_ptr<Proxy> createProxy(const std::string &,
     								   const std::string &,
 									   const std::string &,
-									   const ConnectionId &_connection) const;
+									   const ConnectionId_t &_connection) const;
 };
 
 } // namespace CommonAPI
