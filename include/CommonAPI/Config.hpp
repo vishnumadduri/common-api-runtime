@@ -4,26 +4,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef COMMONAPI_CALLINFO_HPP_
-#define COMMONAPI_CALLINFO_HPP_
+#ifndef COMMONAPI_CONFIG_HPP_
+#define COMMONAPI_CONFIG_HPP_
 
-#include <CommonAPI/Config.hpp>
 #include <CommonAPI/Types.hpp>
 
 namespace CommonAPI {
 
-struct COMMONAPI_EXPORT CallInfo {
-	CallInfo()
-		: timeout_(DEFAULT_SEND_TIMEOUT_MS), sender_(0) {
-	}
-	CallInfo(Timeout_t _timeout)
-		: timeout_(_timeout), sender_(0) {
-	}
-
-	Timeout_t timeout_;
-	Sender_t sender_;
-};
+static const Timeout_t DEFAULT_SEND_TIMEOUT_MS = 5000;
 
 } // namespace CommonAPI
 
-#endif // COMMONAPI_ADDRESS_HPP_
+#endif // COMMONAPI_CONFIG_HPP_

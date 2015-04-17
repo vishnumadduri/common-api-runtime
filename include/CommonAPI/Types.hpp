@@ -65,7 +65,8 @@ enum class CallStatus {
     OUT_OF_MEMORY,
     NOT_AVAILABLE,
     CONNECTION_FAILED,
-    REMOTE_ERROR
+    REMOTE_ERROR,
+	UNKNOWN
 };
 
 typedef uint32_t CallId_t;
@@ -107,13 +108,6 @@ public:
 
 // Type identifier for polymorphic structs
 typedef uint32_t Serial;
-
-// Additional informations per call
-struct CallInfo {
-	Timeout_t timeout_; // Maximum wait time for a response
-	Sender_t sender_; // Identifier of the sending application/component
-};
-
 
 } // namespace CommonAPI
 

@@ -18,6 +18,7 @@
 #include <future>
 #include <memory>
 
+#include <CommonAPI/CallInfo.hpp>
 #include <CommonAPI/Event.hpp>
 #include <CommonAPI/Types.hpp>
 
@@ -45,7 +46,9 @@ class ReadonlyAttribute {
 	 * @param value Reference to be filled with value.
 	 * @return Call status of the operation.
 	 */
-	virtual void getValue(CallStatus& callStaus, _ValueType& value) const = 0;
+	virtual void getValue(CallStatus &_status,
+						  _ValueType &_value,
+						  const std::shared_ptr<CallInfo> _info = nullptr) const = 0;
 
 	/**
      * \brief Get value of attribute, usually from remote. Asynchronous call.
@@ -55,7 +58,8 @@ class ReadonlyAttribute {
      * @param attributeAsyncCallback std::function object for the callback to be invoked.
      * @return std::future containing the call status of the operation.
      */
-	virtual std::future<CallStatus> getValueAsync(AttributeAsyncCallback attributeAsyncCallback) = 0;
+	virtual std::future<CallStatus> getValueAsync(AttributeAsyncCallback attributeAsyncCallback,
+												  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
 };
 
 /**
@@ -80,7 +84,10 @@ class Attribute: public ReadonlyAttribute<_ValueType> {
      * @param callStatus call status reference will be filled with status of the operation
      * @param responseValue Reference which will contain the actuall value set by the remote.
      */
-	virtual void setValue(const _ValueType& requestValue, CallStatus& callStatus, _ValueType& responseValue) = 0;
+	virtual void setValue(const _ValueType& requestValue,
+						  CallStatus& callStatus,
+						  _ValueType& responseValue,
+						  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
 
 	/**
      * \brief Set value of attribute, usually to remote. Asynchronous call.
@@ -92,7 +99,8 @@ class Attribute: public ReadonlyAttribute<_ValueType> {
      * @return std::future containing the call status of the operation.
      */
 	virtual std::future<CallStatus> setValueAsync(const _ValueType& requestValue,
-												  AttributeAsyncCallback attributeAsyncCallback) = 0;
+												  AttributeAsyncCallback attributeAsyncCallback,
+												  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
 };
 
 /**
