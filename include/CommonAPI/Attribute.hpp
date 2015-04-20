@@ -48,7 +48,7 @@ class ReadonlyAttribute {
 	 */
 	virtual void getValue(CallStatus &_status,
 						  _ValueType &_value,
-						  const std::shared_ptr<CallInfo> _info = nullptr) const = 0;
+						  const CallInfo *_info = nullptr) const = 0;
 
 	/**
      * \brief Get value of attribute, usually from remote. Asynchronous call.
@@ -59,7 +59,7 @@ class ReadonlyAttribute {
      * @return std::future containing the call status of the operation.
      */
 	virtual std::future<CallStatus> getValueAsync(AttributeAsyncCallback attributeAsyncCallback,
-												  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
+												  const CallInfo *_info = nullptr) = 0;
 };
 
 /**
@@ -87,7 +87,7 @@ class Attribute: public ReadonlyAttribute<_ValueType> {
 	virtual void setValue(const _ValueType& requestValue,
 						  CallStatus& callStatus,
 						  _ValueType& responseValue,
-						  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
+						  const CallInfo *_info = nullptr) = 0;
 
 	/**
      * \brief Set value of attribute, usually to remote. Asynchronous call.
@@ -100,7 +100,7 @@ class Attribute: public ReadonlyAttribute<_ValueType> {
      */
 	virtual std::future<CallStatus> setValueAsync(const _ValueType& requestValue,
 												  AttributeAsyncCallback attributeAsyncCallback,
-												  const std::shared_ptr<CallInfo> _info = nullptr) = 0;
+												  const CallInfo *_info = nullptr) = 0;
 };
 
 /**
