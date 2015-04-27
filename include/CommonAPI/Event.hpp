@@ -61,7 +61,7 @@ public:
      * Remove a listener from this event
      * Note: Do not call this inside a listener notification callback it will deadlock! Use cancellable listeners instead.
      *
-     * @param listenerSubscription A listener token to be removed
+     * @param subscription A listener token to be removed
      */
     void unsubscribe(Subscription subscription);
 
