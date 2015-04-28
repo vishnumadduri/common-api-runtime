@@ -25,12 +25,19 @@ Source code and latest news can be found at http://projects.genivi.org/commonapi
 
 == Build Instructions for Linux
 
-Use CMake to build this library (we assume that your source directory is common-api-runtime):
-
+Use CMake to build this library. We assume that your source directory is +common-api-runtime+:
+ 
 ----
 $ cd common-api-runtime
 $ mkdir build
 $ cd build
-$ cmake ..
+$ cmake -D CMAKE_INSTALL_PREFIX=/usr/local ..
 $ make
+$ make install
 ----
+
+You can change the installation directory by the CMake variable +CMAKE_INSTALL_PREFIX+ or you can let it uninstalled (skip the +make install+ command). Please refer to the installation description of the binding runtime how to use uninstalled versions of CommonAPI.
+
+For further build instructions (build for windows, build documentation, tests etc.) please refer to the CommonAPI tutorial.
+
+
