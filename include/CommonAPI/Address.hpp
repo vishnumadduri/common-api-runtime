@@ -43,7 +43,7 @@ private:
 	std::string interface_;
 	std::string instance_;
 
-friend std::ostream &operator<<(std::ostream &_out, const Address &_address);
+	friend COMMONAPI_EXPORT std::ostream &operator<<(std::ostream &_out, const Address &_address);
 };
 
 } // namespace CommonAPI
