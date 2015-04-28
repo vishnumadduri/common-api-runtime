@@ -27,16 +27,30 @@ const char *COMMONAPI_DEFAULT_FOLDER = "/usr/local/lib/commonapi";
 const char *COMMONAPI_DEFAULT_CONFIG_FILE = "commonapi.ini";
 const char *COMMONAPI_DEFAULT_CONFIG_FOLDER = "/etc";
 
+std::map<std::string, std::string> properties__;
 std::shared_ptr<Runtime> Runtime::theRuntime__ = std::make_shared<Runtime>();
 
+std::string
+Runtime::getProperty(const std::string &_name) {
+	auto foundProperty = properties__.find(_name);
+	if (foundProperty != properties__.end())
+		return foundProperty->second;
+	return "";
+}
+
+void
+Runtime::setProperty(const std::string &_name, const std::string &_value) {
+	properties__[_name] = _value;
+}
+
 std::shared_ptr<Runtime> Runtime::get() {
+	theRuntime__->init();
 	return theRuntime__;
 }
 
 Runtime::Runtime()
 	: defaultBinding_(COMMONAPI_DEFAULT_BINDING),
 	  defaultFolder_(COMMONAPI_DEFAULT_FOLDER) {
-	init();
 }
 
 Runtime::~Runtime() {
@@ -68,32 +82,38 @@ Runtime::unregisterFactory(const std::string &_binding) {
  * Private
  */
 void Runtime::init() {
-	// Determine default configuration file
-	const char *config = getenv("COMMONAPI_CONFIG");
-	if (config) {
-		defaultConfig_ = config;
-	} else {
-		defaultConfig_ = COMMONAPI_DEFAULT_CONFIG_FOLDER;
-		defaultConfig_ += "/";
-		defaultConfig_ += COMMONAPI_DEFAULT_CONFIG_FILE;
+	static bool isInitialized(false);
+	std::lock_guard<std::mutex> itsLock(mutex_);
+	if (!isInitialized) {
+		// Determine default configuration file
+		const char *config = getenv("COMMONAPI_CONFIG");
+		if (config) {
+			defaultConfig_ = config;
+		} else {
+			defaultConfig_ = COMMONAPI_DEFAULT_CONFIG_FOLDER;
+			defaultConfig_ += "/";
+			defaultConfig_ += COMMONAPI_DEFAULT_CONFIG_FILE;
+		}
+
+		// TODO: evaluate return parameter and decide what to do
+		(void)readConfiguration();
+
+		// Determine default ipc & shared library folder
+		const char *binding = getenv("COMMONAPI_DEFAULT_BINDING");
+		if (binding)
+			defaultBinding_ = binding;
+
+		const char *folder = getenv("COMMONAPI_DEFAULT_FOLDER");
+		if (folder)
+			defaultFolder_ = folder;
+
+		// Log settings
+		COMMONAPI_INFO("Using default binding \'", defaultBinding_, "\'");
+		COMMONAPI_INFO("Using default shared library folder \'", defaultFolder_, "\'");
+		COMMONAPI_INFO("Using default configuration file \'", defaultConfig_, "\'");
+
+		isInitialized = false;
 	}
-
-	// TODO: evaluate return parameter and decide what to do
-	(void)readConfiguration();
-
-	// Determine default ipc & shared library folder
-	const char *binding = getenv("COMMONAPI_DEFAULT_BINDING");
-	if (binding)
-		defaultBinding_ = binding;
-
-	const char *folder = getenv("COMMONAPI_DEFAULT_FOLDER");
-	if (folder)
-		defaultFolder_ = folder;
-
-	// Log settings
-	COMMONAPI_INFO("Using default binding \'", defaultBinding_, "\'");
-	COMMONAPI_INFO("Using default shared library folder \'", defaultFolder_, "\'");
-	COMMONAPI_INFO("Using default configuration file \'", defaultConfig_, "\'");
 }
 
 bool
@@ -121,7 +141,20 @@ Runtime::readConfiguration() {
 		return false;
 
 	std::shared_ptr<IniFileReader::Section> section
-		= reader.getSection("default");
+		= reader.getSection("logging");
+	if (section) {
+		std::string itsConsole = section->getValue("console");
+		std::string itsFile = section->getValue("file");
+		std::string itsDlt = section->getValue("dlt");
+		std::string itsLevel = section->getValue("level");
+
+		Logger::init((itsConsole == "true"),
+					 itsFile,
+					 (itsDlt == "true"),
+					 itsLevel);
+	}
+
+	section	= reader.getSection("default");
 	if (section) {
 		std::string binding = section->getValue("binding");
 		if ("" != binding)
@@ -247,8 +280,10 @@ Runtime::getLibrary(
 		}
 	}
 
-	// If no library was found, create default name
-	if ("" == library) {
+	library = getProperty("LibraryBase");
+	if (library != "") {
+		library = "lib" + library + "-" + defaultBinding_;
+	} else {
 		library = "lib" + _domain + "__" + _interface + "__" + _instance;
 		std::replace(library.begin(), library.end(), '.', '_');
 	}
