@@ -308,11 +308,11 @@ Runtime::loadLibrary(const std::string &_library) {
 
 	// TODO: decide whether this really is a good idea...
 	#ifdef WIN32
-	if (itsLibrary.find(".dll") != itsLibrary.length() - 4) {
+	if (itsLibrary.rfind(".dll") != itsLibrary.length() - 4) {
 		itsLibrary += ".dll";
 	}
 	#else
-	if (itsLibrary.find(".so") != itsLibrary.length() - 3) {
+	if (itsLibrary.rfind(".so") != itsLibrary.length() - 3) {
 		itsLibrary += ".so";
 	}
 	#endif
