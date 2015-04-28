@@ -77,17 +77,31 @@ IF(MSVC)
 	add_definitions(-DCOMMONAPI_INTERNAL_COMPILATION)
 	add_compile_options(/EHsc /wd"4996")
 ELSE ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION -DUSE_CONSOLE")
 ENDIF(MSVC)
  
+FIND_PACKAGE(PkgConfig)
+pkg_check_modules(DLT "automotive-dlt >= 2.11")
+IF(DLT_FOUND) 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
+ENDIF(DLT_FOUND)
+
+##############################################################################
+
 include_directories(
     include
+    ${DLT_INCLUDE_DIRS}
+)
+
+link_directories(
+	${DLT_LIBDIR}
 )
 
 file(GLOB CAPI_SRCS "src/CommonAPI/*.cpp")
 add_library(CommonAPI ${CAPI_SRCS})
-target_link_libraries(CommonAPI ${DL_LIBRARY})
+target_link_libraries(CommonAPI PRIVATE ${DL_LIBRARY} ${DLT_LIBRARIES})
 set_target_properties(CommonAPI PROPERTIES VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION} SOVERSION ${LIBCOMMONAPI_MAJOR_VERSION} LINKER_LANGUAGE C)
+set_target_properties (CommonAPI PROPERTIES INTERFACE_LINK_LIBRARY "")
 
 ##############################################################################
 # configure files
