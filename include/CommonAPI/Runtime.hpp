@@ -40,10 +40,15 @@ std::shared_ptr<
 
 class COMMONAPI_EXPORT Runtime {
 public:
+	static std::string getProperty(const std::string &_name);
+	static void setProperty(const std::string &_name, const std::string &_value);
+
 	static std::shared_ptr<Runtime> get();
 
 	Runtime();
 	virtual ~Runtime();
+
+	void init();
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
     std::shared_ptr<
@@ -144,7 +149,6 @@ public:
     bool unregisterFactory(const std::string &_ipc);
 
 private:
-	void init();
 	bool readConfiguration();
 	bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
 
@@ -182,9 +186,11 @@ private:
 	std::map<std::string, std::map<bool, std::string>> libraries_;
 	std::set<std::string> loadedLibraries_; // Library name
 
+	std::mutex mutex_;
 	std::mutex factoriesMutex_;
 	std::mutex loadMutex_;
 
+	static std::map<std::string, std::string> properties_;
 	static std::shared_ptr<Runtime> theRuntime__;
 
 friend class ProxyManager;
