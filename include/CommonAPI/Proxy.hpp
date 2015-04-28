@@ -27,19 +27,19 @@ namespace CommonAPI {
 typedef Event<AvailabilityStatus> ProxyStatusEvent;
 typedef ReadonlyAttribute<Version> InterfaceVersionAttribute;
 
-class COMMONAPI_EXPORT Proxy {
+class Proxy {
 public:
-	virtual ~Proxy() {}
+	COMMONAPI_EXPORT virtual ~Proxy() {}
 
- 	const Address &getAddress() const;
+	COMMONAPI_EXPORT const Address &getAddress() const;
 
-	virtual bool isAvailable() const = 0;
+	COMMONAPI_EXPORT virtual bool isAvailable() const = 0;
 
-	virtual bool isAvailableBlocking() const = 0;
+	COMMONAPI_EXPORT virtual bool isAvailableBlocking() const = 0;
 
-	virtual ProxyStatusEvent& getProxyStatusEvent() = 0;
+	COMMONAPI_EXPORT virtual ProxyStatusEvent& getProxyStatusEvent() = 0;
 
-	virtual InterfaceVersionAttribute& getInterfaceVersionAttribute() = 0;
+	COMMONAPI_EXPORT virtual InterfaceVersionAttribute& getInterfaceVersionAttribute() = 0;
 
 protected:
 	Address address_;

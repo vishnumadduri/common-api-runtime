@@ -38,7 +38,7 @@ std::shared_ptr<
 > createProxyWithDefaultAttributeExtension(
 	const std::string &_domain, const std::string &_instance);
 
-class COMMONAPI_EXPORT Runtime {
+class Runtime {
 public:
 	static std::shared_ptr<Runtime> get();
 
@@ -46,7 +46,7 @@ public:
 	virtual ~Runtime();
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
-    std::shared_ptr<
+	COMMONAPI_EXPORT std::shared_ptr<
         _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
@@ -67,7 +67,7 @@ public:
     }
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
-    std::shared_ptr<
+	COMMONAPI_EXPORT std::shared_ptr<
         _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
@@ -87,7 +87,7 @@ public:
     }
 
     template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
-    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+	COMMONAPI_EXPORT std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
 											const ConnectionId &_connectionId = DEFAULT_CONNECTION_ID) {
@@ -103,7 +103,7 @@ public:
     }
 
     template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
-    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+	COMMONAPI_EXPORT std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
                                             std::shared_ptr<MainLoopContext> _context) {
@@ -119,7 +119,7 @@ public:
     }
 
     template<typename _Stub>
-	bool registerService(const std::string &_domain,
+	COMMONAPI_EXPORT bool registerService(const std::string &_domain,
 						 const std::string &_instance,
 						 std::shared_ptr<_Stub> _service,
 						 const ConnectionId &_connectionId = DEFAULT_CONNECTION_ID) {
@@ -127,21 +127,21 @@ public:
 	}
 
     template<typename _Stub>
-    bool registerService(const std::string &_domain,
+	COMMONAPI_EXPORT bool registerService(const std::string &_domain,
     					 const std::string &_instance,
     					 std::shared_ptr<_Stub> _service,
     					 std::shared_ptr<MainLoopContext> _context) {
     	return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _context);
     }
 
-	bool unregisterService(const std::string &_domain,
+	COMMONAPI_EXPORT bool unregisterService(const std::string &_domain,
 							const std::string &_interface,
 							const std::string &_instance) {
 		return unregisterStub(_domain, _interface, _instance);
 	}
 
-    bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
-    bool unregisterFactory(const std::string &_ipc);
+	COMMONAPI_EXPORT bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
+	COMMONAPI_EXPORT bool unregisterFactory(const std::string &_ipc);
 
 private:
 	void init();
