@@ -1,4 +1,4 @@
-# Copyrigt (C) 2015 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+# Copyright (C) 2015 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
 
 cmake_minimum_required (VERSION 2.8.1)
 
@@ -6,8 +6,8 @@ PROJECT(libcommonapi)
 
 # version of CommonAPI
 SET( LIBCOMMONAPI_MAJOR_VERSION 3 )
-SET( LIBCOMMONAPI_MINOR_VERSION 1 )
-SET( LIBCOMMONAPI_PATCH_VERSION 0 )
+SET( LIBCOMMONAPI_MINOR_VERSION 0 )
+SET( LIBCOMMONAPI_PATCH_VERSION 1 )
 
 message(STATUS "Project name: ${PROJECT_NAME}")
 
@@ -77,17 +77,31 @@ IF(MSVC)
 	add_definitions(-DCOMMONAPI_INTERNAL_COMPILATION)
 	add_compile_options(/EHsc /wd"4996")
 ELSE ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION -DUSE_CONSOLE")
 ENDIF(MSVC)
  
+FIND_PACKAGE(PkgConfig)
+pkg_check_modules(DLT "automotive-dlt >= 2.11")
+IF(DLT_FOUND) 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
+ENDIF(DLT_FOUND)
+
+##############################################################################
+
 include_directories(
     include
+    ${DLT_INCLUDE_DIRS}
+)
+
+link_directories(
+	${DLT_LIBDIR}
 )
 
 file(GLOB CAPI_SRCS "src/CommonAPI/*.cpp")
 add_library(CommonAPI ${CAPI_SRCS})
-target_link_libraries(CommonAPI ${DL_LIBRARY})
+target_link_libraries(CommonAPI PRIVATE ${DL_LIBRARY} ${DLT_LIBRARIES})
 set_target_properties(CommonAPI PROPERTIES VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION} SOVERSION ${LIBCOMMONAPI_MAJOR_VERSION} LINKER_LANGUAGE C)
+set_target_properties (CommonAPI PROPERTIES INTERFACE_LINK_LIBRARY "")
 
 ##############################################################################
 # configure files

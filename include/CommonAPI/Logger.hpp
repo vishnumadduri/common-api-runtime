@@ -7,9 +7,15 @@
 #ifndef COMMONAPI_LOGGER_HPP_
 #define COMMONAPI_LOGGER_HPP_
 
+#ifdef USE_DLT
+#include <dlt.h>
+#endif
+
 #include <cstdint>
-#include <iostream>
+#include <fstream>
 #include <memory>
+#include <mutex>
+#include <sstream>
 
 #define COMMONAPI_LOGLEVEL_FATAL	0
 #define COMMONAPI_LOGLEVEL_ERROR	1
@@ -112,20 +118,16 @@ public:
 		LL_FATAL = 0, LL_ERROR = 1, LL_WARNING = 2, LL_INFO = 3, LL_DEBUG = 4, LL_VERBOSE = 5
 	};
 
-	Logger() :
-		useConsole_(true),
-		useFile_(false),
-		useDlt_(false),
-		maximumLogLevel_(static_cast<Level>(COMMONAPI_LOGLEVEL)) {
-	}
+	Logger();
 
 	template<typename... _LogEntries>
 	static void log(Level _level, _LogEntries... _entries) {
-		if (Logger::get()->useConsole_) {
-			std::cout << "[CAPI " << Logger::get()->level_as_string(_level) << "] ";
-			Logger::get()->log_intern(_entries...);
-		}
+		std::stringstream buffer;
+		log_intern(buffer, _entries...);
+		Logger::get()->doLog(_level, buffer.str());
 	}
+
+	static void init(bool, const std::string &, bool = false, const std::string & = "");
 
 private:
 	static inline std::shared_ptr<Logger> get() {
@@ -133,39 +135,42 @@ private:
 		return theLogger;
 	}
 
-	void log_intern() {
-		std::cout << std::endl;
+	static void log_intern(std::stringstream &_buffer) {
 	}
 
 	template<typename _LogEntry, typename... _MoreLogEntries>
-	void log_intern(_LogEntry _entry, _MoreLogEntries... _moreEntries) {
-		std::cout << _entry;
-		log_intern(_moreEntries...);
+	static void log_intern(std::stringstream &_buffer, _LogEntry _entry, _MoreLogEntries... _moreEntries) {
+		_buffer << _entry;
+		log_intern(_buffer, _moreEntries...);
 	}
 
-	std::string level_as_string(Level _level) {
-		switch (_level) {
-		case Level::LL_FATAL:
-			return "FATAL";
-		case Level::LL_ERROR:
-			return "ERROR";
-		case Level::LL_WARNING:
-			return "WARNING";
-		case Level::LL_INFO:
-			return "INFO";
-		case Level::LL_DEBUG:
-			return "DEBUG";
-		case Level::LL_VERBOSE:
-			return "VERBOSE";
-		default:
-			return "";
-		}
-	}
+	void doLog(Level _level, const std::string &_message);
 
-	bool useConsole_;
-	bool useFile_;
-	bool useDlt_;
-	Level maximumLogLevel_;
+#if defined(USE_CONSOLE) || defined(USE_FILE) || defined(USE_DLT)
+	static Level stringAsLevel(const std::string &_level);
+#endif
+#if defined(USE_CONSOLE) || defined(USE_FILE)
+	static std::string levelAsString(Level _level);
+#endif
+#ifdef USE_DLT
+	static DltLogLevelType levelAsDlt(Level _level);
+#endif
+#if defined(USE_CONSOLE) || defined(USE_FILE)
+	static std::mutex mutex_;
+#endif
+#if defined(USE_CONSOLE) || defined(USE_FILE) || defined(USE_DLT)
+	static Level maximumLogLevel_;
+#endif
+#ifdef USE_CONSOLE
+	static bool useConsole_;
+#endif
+#ifdef USE_FILE
+	static std::shared_ptr<std::ofstream> file_;
+#endif
+#ifdef USE_DLT
+	static bool useDlt_;
+	DLT_DECLARE_CONTEXT(dlt_);
+#endif
 };
 
 } // namespace CommonAPI
