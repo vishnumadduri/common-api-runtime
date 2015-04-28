@@ -1,4 +1,4 @@
-# Copyrigt (C) 2015 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+# Copyright (C) 2015 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
 
 cmake_minimum_required (VERSION 2.8.1)
 
