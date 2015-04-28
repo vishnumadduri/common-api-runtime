@@ -44,7 +44,6 @@ class ReadonlyAttribute {
 	 *
 	 * @param value Reference to be filled with value.
 	 * @param callStatus call status reference will be filled with status of the operation
-	 * @return Call status of the operation.
 	 */
 	virtual void getValue(CallStatus& callStatus, _ValueType& value) const = 0;
 
