@@ -148,6 +148,8 @@ public:
     bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
     bool unregisterFactory(const std::string &_ipc);
 
+    inline const std::string &getDefaultBinding() const { return defaultBinding_; };
+
 private:
 	bool readConfiguration();
 	bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
@@ -183,6 +185,7 @@ private:
 	std::string defaultConfig_;
 
 	std::map<std::string, std::shared_ptr<Factory>> factories_;
+	std::shared_ptr<Factory> defaultFactory_;
 	std::map<std::string, std::map<bool, std::string>> libraries_;
 	std::set<std::string> loadedLibraries_; // Library name
 

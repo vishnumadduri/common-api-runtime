@@ -62,10 +62,14 @@ Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _
 	COMMONAPI_DEBUG("Registering factory for binding=", _binding);
 	bool isRegistered(false);
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
-	auto foundFactory = factories_.find(_binding);
-	if (foundFactory == factories_.end()) {
-		factories_[_binding] = _factory;
-		isRegistered = true;
+	if (_binding == defaultBinding_) {
+		defaultFactory_ = _factory;
+	} else {
+		auto foundFactory = factories_.find(_binding);
+		if (foundFactory == factories_.end()) {
+			factories_[_binding] = _factory;
+			isRegistered = true;
+		}
 	}
 	return isRegistered;
 }
@@ -74,7 +78,11 @@ bool
 Runtime::unregisterFactory(const std::string &_binding) {
 	COMMONAPI_DEBUG("Unregistering factory for binding=", _binding);
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
-	factories_.erase(_binding);
+	if (_binding == defaultBinding_) {
+		defaultFactory_.reset();
+	} else {
+		factories_.erase(_binding);
+	}
 	return true;
 }
 
@@ -340,7 +348,9 @@ Runtime::createProxyHelper(const std::string &_domain, const std::string &_inter
 		if (proxy)
 			return proxy;
 	}
-	return nullptr;
+	return (defaultFactory_ ?
+				defaultFactory_->createProxy(_domain, _interface, _instance, _connectionId)
+				: nullptr);
 }
 
 std::shared_ptr<Proxy>
@@ -353,7 +363,9 @@ Runtime::createProxyHelper(const std::string &_domain, const std::string &_inter
 		if (proxy)
 			return proxy;
 	}
-	return nullptr;
+	return (defaultFactory_ ?
+				defaultFactory_->createProxy(_domain, _interface, _instance, _context) :
+				nullptr);
 }
 
 bool
@@ -363,8 +375,12 @@ Runtime::registerStubHelper(const std::string &_domain, const std::string &_inte
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
 	for (auto factory : factories_) {
 		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _connectionId);
+		if (isRegistered)
+			return isRegistered;
 	}
-	return isRegistered;
+	return (defaultFactory_ ?
+				defaultFactory_->registerStub(_domain, _interface, _instance, _stub, _connectionId) :
+				false);
 }
 
 bool
@@ -374,8 +390,12 @@ Runtime::registerStubHelper(const std::string &_domain, const std::string &_inte
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
 	for (auto factory : factories_) {
 		isRegistered = factory.second->registerStub(_domain, _interface, _instance, _stub, _context);
+		if (isRegistered)
+			return isRegistered;
 	}
-	return isRegistered;
+	return (defaultFactory_ ?
+				defaultFactory_->registerStub(_domain, _interface, _instance, _stub, _context) :
+				false);
 }
 
 } //Namespace CommonAPI
