@@ -285,9 +285,11 @@ Runtime::getLibrary(
 		auto addressIterator = libraryIterator->second.find(_isProxy);
 		if (addressIterator != libraryIterator->second.end()) {
 			library = addressIterator->second;
+			return library;
 		}
 	}
 
+	//TODO: check why library was being thrown away
 	library = getProperty("LibraryBase");
 	if (library != "") {
 		library = "lib" + library + "-" + defaultBinding_;

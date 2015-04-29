@@ -17,6 +17,8 @@
 #include <mutex>
 #include <sstream>
 
+#include <CommonAPI\Export.hpp>
+
 #define COMMONAPI_LOGLEVEL_FATAL	0
 #define COMMONAPI_LOGLEVEL_ERROR	1
 #define COMMONAPI_LOGLEVEL_WARNING	2
@@ -114,37 +116,37 @@ namespace CommonAPI {
 
 class Logger {
 public:
-	enum class Level : uint8_t {
+	COMMONAPI_EXPORT enum class Level : uint8_t {
 		LL_FATAL = 0, LL_ERROR = 1, LL_WARNING = 2, LL_INFO = 3, LL_DEBUG = 4, LL_VERBOSE = 5
 	};
 
-	Logger();
+	COMMONAPI_EXPORT Logger();
 
 	template<typename... _LogEntries>
-	static void log(Level _level, _LogEntries... _entries) {
+	COMMONAPI_EXPORT static void log(Level _level, _LogEntries... _entries) {
 		std::stringstream buffer;
 		log_intern(buffer, _entries...);
 		Logger::get()->doLog(_level, buffer.str());
 	}
 
-	static void init(bool, const std::string &, bool = false, const std::string & = "");
+	COMMONAPI_EXPORT static void init(bool, const std::string &, bool = false, const std::string & = "");
 
 private:
-	static inline std::shared_ptr<Logger> get() {
+	COMMONAPI_EXPORT static inline std::shared_ptr<Logger> get() {
 		static std::shared_ptr<Logger> theLogger = std::make_shared<Logger>();
 		return theLogger;
 	}
 
-	static void log_intern(std::stringstream &_buffer) {
+	COMMONAPI_EXPORT static void log_intern(std::stringstream &_buffer) {
 	}
 
 	template<typename _LogEntry, typename... _MoreLogEntries>
-	static void log_intern(std::stringstream &_buffer, _LogEntry _entry, _MoreLogEntries... _moreEntries) {
+	COMMONAPI_EXPORT static void log_intern(std::stringstream &_buffer, _LogEntry _entry, _MoreLogEntries... _moreEntries) {
 		_buffer << _entry;
 		log_intern(_buffer, _moreEntries...);
 	}
 
-	void doLog(Level _level, const std::string &_message);
+	COMMONAPI_EXPORT void doLog(Level _level, const std::string &_message);
 
 #if defined(USE_CONSOLE) || defined(USE_FILE) || defined(USE_DLT)
 	static Level stringAsLevel(const std::string &_level);

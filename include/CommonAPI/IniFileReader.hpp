@@ -15,22 +15,22 @@
 
 namespace CommonAPI {
 
-class COMMONAPI_EXPORT IniFileReader {
+class IniFileReader {
 public:
-	class COMMONAPI_EXPORT Section {
+	class Section {
 	public:
-		const std::map<std::string, std::string> &getMappings() const;
-		std::string getValue(const std::string &_key) const;
+		COMMONAPI_EXPORT const std::map<std::string, std::string> &getMappings() const;
+		COMMONAPI_EXPORT std::string getValue(const std::string &_key) const;
 	private:
 		std::map<std::string, std::string> mappings_;
 
 	friend class IniFileReader;
 	};
 
-	bool load(const std::string &_path);
+	COMMONAPI_EXPORT bool load(const std::string &_path);
 
-	const std::map<std::string, std::shared_ptr<Section>> &getSections() const;
-	std::shared_ptr<Section> getSection(const std::string &_name) const;
+	COMMONAPI_EXPORT const std::map<std::string, std::shared_ptr<Section>> &getSections() const;
+	COMMONAPI_EXPORT std::shared_ptr<Section> getSection(const std::string &_name) const;
 
 private:
 	std::map<std::string, std::shared_ptr<Section>> sections_;
