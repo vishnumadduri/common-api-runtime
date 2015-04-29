@@ -17,7 +17,7 @@
 #include <mutex>
 #include <sstream>
 
-#include <CommonAPI\Export.hpp>
+#include <CommonAPI/Export.hpp>
 
 #define COMMONAPI_LOGLEVEL_FATAL	0
 #define COMMONAPI_LOGLEVEL_ERROR	1
