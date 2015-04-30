@@ -15,14 +15,16 @@
 #include <functional>
 #include <memory>
 
+#include <CommonAPI/Export.hpp>
+
 namespace CommonAPI {
 class ClientId;
 
-struct SharedPointerClientIdContentHash : public std::unary_function<std::shared_ptr<ClientId>, size_t> {
+struct COMMONAPI_EXPORT SharedPointerClientIdContentHash : public std::unary_function<std::shared_ptr<ClientId>, size_t> {
     size_t operator()(const std::shared_ptr<ClientId>& t) const;
 };
 
-struct SharedPointerClientIdContentEqual : public std::binary_function<std::shared_ptr<ClientId>, std::shared_ptr<ClientId>, bool> {
+struct COMMONAPI_EXPORT SharedPointerClientIdContentEqual : public std::binary_function<std::shared_ptr<ClientId>, std::shared_ptr<ClientId>, bool> {
     bool operator()(const std::shared_ptr<ClientId>& a, const std::shared_ptr<ClientId>& b) const;
 };
 

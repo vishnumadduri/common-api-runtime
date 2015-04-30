@@ -25,6 +25,14 @@ struct Enumeration {
 		return value_;
 	}
 
+	inline bool operator == (const Enumeration<_Base> &_other) const {
+		return value_ == _other.value_;
+	}
+
+	inline bool operator != (const Enumeration<_Base> &_other) const {
+		return value_ != _other.value_;
+	}
+
 	_Base value_;
 };
 

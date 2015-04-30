@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+
 cmake_minimum_required (VERSION 2.8.1)
 
 PROJECT(libcommonapi)
@@ -13,8 +15,7 @@ set(COMPONENT_VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION
 set(COMMONAPI_API_HEADER_VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}) # used in *.cmake.in
 
 SET(PACKAGE_VERSION "${COMPONENT_VERSION}") # used in *.cmake.in
-
-set(GTEST_ROOT "n/a" CACHE STRING "Path to root folder of googletest. Must be set for building the tests.")
+message(STATUS "This is CMake for Common API C++ Version ${COMPONENT_VERSION}.")
 
 # OS
 set(DL_LIBRARY "")
@@ -76,17 +77,31 @@ IF(MSVC)
 	add_definitions(-DCOMMONAPI_INTERNAL_COMPILATION)
 	add_compile_options(/EHsc /wd"4996")
 ELSE ()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -DCOMMONAPI_INTERNAL_COMPILATION -DUSE_CONSOLE")
 ENDIF(MSVC)
  
+FIND_PACKAGE(PkgConfig)
+pkg_check_modules(DLT "automotive-dlt >= 2.11")
+IF(DLT_FOUND) 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
+ENDIF(DLT_FOUND)
+
+##############################################################################
+
 include_directories(
     include
+    ${DLT_INCLUDE_DIRS}
+)
+
+link_directories(
+	${DLT_LIBDIR}
 )
 
 file(GLOB CAPI_SRCS "src/CommonAPI/*.cpp")
 add_library(CommonAPI ${CAPI_SRCS})
-target_link_libraries(CommonAPI ${DL_LIBRARY})
+target_link_libraries(CommonAPI PRIVATE ${DL_LIBRARY} ${DLT_LIBRARIES})
 set_target_properties(CommonAPI PROPERTIES VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION} SOVERSION ${LIBCOMMONAPI_MAJOR_VERSION} LINKER_LANGUAGE C)
+set_target_properties (CommonAPI PROPERTIES INTERFACE_LINK_LIBRARY "")
 
 ##############################################################################
 # configure files
@@ -148,7 +163,15 @@ install(EXPORT CommonAPITargets DESTINATION
 
 ##############################################################################
 # maintainer-clean
-add_custom_target(maintainer-clean COMMAND rm -rf *)
+add_custom_target(maintainer-clean
+   COMMAND rm -rf *
+)
+
+##############################################################################
+# dist
+add_custom_target(dist
+   COMMAND cd ${CMAKE_CURRENT_SOURCE_DIR} && git archive --format=tar.gz ${COMPONENT_VERSION} -o CommonAPI${COMPONENT_VERSION}.tar.gz
+)
 
 ##############################################################################
 # build documentation
@@ -158,7 +181,7 @@ if (NOT DOXYGEN_FOUND)
     message(STATUS "Doxygen is not installed. Documentation can not be built.")
 else()
     # set configuration variables for doxygen.in
-    set(PROJECT "GENIVI IPC Common API C++")
+    set(PROJECT "Common API C++")
     set(DOCDIR doc)
     set(SRCDIR .)
     set(GENERATE_HTML YES)
@@ -189,53 +212,9 @@ else()
                            COMMAND asciidoc
                                    -a version=${PACKAGE_VERSION}
                                    -b html
-                                   -o doc/html/README.html 
+                                   -o doc/readme/README.html 
                                    ${PROJECT_BINARY_DIR}/../README)
     endif()
 endif()
 
 ##############################################################################
-# Test section
-##############################################################################
-
-##############################################################################
-# google test
-
-# check for set environment variable
-if(${GTEST_ROOT} STREQUAL "n/a")
-    message(STATUS "GTEST_ROOT is not defined. For building the tests environment variable
-             GTEST_ROOT has to be defined. Tests can not be built.")
-    # early exit
-    return()  # test can not be build -> make commands build_tests and check are not available
-else()
-    message(STATUS "GTEST_ROOT is set. gtest root path set to ${GTEST_ROOT}")
-endif()
-
-# build google test as static library (always) -> therefore deactivate BUILD_SHARED_LIBS in case it is active
-set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
-if ("${BUILD_SHARED_LIBS}" STREQUAL "ON")
-    set(BUILD_SHARED_LIBS OFF)
-    set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 1)
-endif()
-add_subdirectory(${GTEST_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
-if ("${BUILD_SHARED_LIBS_AUTOMATIC_OFF}" STREQUAL "1")
-    set(BUILD_SHARED_LIBS ON)
-    set(BUILD_SHARED_LIBS_AUTOMATIC_OFF 0)
-endif()
-
-##############################################################################
-# build tests
-
-enable_testing()
-
-add_custom_target(build_tests)
-
-set(CMAKE_CTEST_COMMAND ctest -V)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-
-add_dependencies(check build_tests)
-
-##############################################################################
-# add test directory
-
-add_subdirectory( src/test EXCLUDE_FROM_ALL )

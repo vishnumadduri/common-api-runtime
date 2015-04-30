@@ -38,15 +38,20 @@ std::shared_ptr<
 > createProxyWithDefaultAttributeExtension(
 	const std::string &_domain, const std::string &_instance);
 
-class COMMONAPI_EXPORT Runtime {
+class Runtime {
 public:
-	static std::shared_ptr<Runtime> get();
+	COMMONAPI_EXPORT static std::string getProperty(const std::string &_name);
+	COMMONAPI_EXPORT static void setProperty(const std::string &_name, const std::string &_value);
 
-	Runtime();
-	virtual ~Runtime();
+	COMMONAPI_EXPORT static std::shared_ptr<Runtime> get();
+
+	COMMONAPI_EXPORT Runtime();
+	COMMONAPI_EXPORT virtual ~Runtime();
+
+	COMMONAPI_EXPORT void init();
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
-    std::shared_ptr<
+	COMMONAPI_EXPORT std::shared_ptr<
         _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
@@ -67,7 +72,7 @@ public:
     }
 
     template<template<typename ...> class _ProxyClass, typename ... _AttributeExtensions>
-    std::shared_ptr<
+	COMMONAPI_EXPORT std::shared_ptr<
         _ProxyClass<_AttributeExtensions...>
     >
     buildProxy(const std::string &_domain,
@@ -87,7 +92,7 @@ public:
     }
 
     template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
-    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+	COMMONAPI_EXPORT std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
 											const ConnectionId_t &_connectionId = DEFAULT_CONNECTION_ID) {
@@ -103,7 +108,7 @@ public:
     }
 
     template <template<typename ...> class _ProxyClass, template<typename> class _AttributeExtension>
-    std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
+	COMMONAPI_EXPORT std::shared_ptr<typename DefaultAttributeProxyHelper<_ProxyClass, _AttributeExtension>::class_t>
     buildProxyWithDefaultAttributeExtension(const std::string &_domain,
                                             const std::string &_instance,
                                             std::shared_ptr<MainLoopContext> _context) {
@@ -119,7 +124,7 @@ public:
     }
 
     template<typename _Stub>
-	bool registerService(const std::string &_domain,
+	COMMONAPI_EXPORT bool registerService(const std::string &_domain,
 						 const std::string &_instance,
 						 std::shared_ptr<_Stub> _service,
 						 const ConnectionId_t &_connectionId = DEFAULT_CONNECTION_ID) {
@@ -127,51 +132,52 @@ public:
 	}
 
     template<typename _Stub>
-    bool registerService(const std::string &_domain,
+	COMMONAPI_EXPORT bool registerService(const std::string &_domain,
     					 const std::string &_instance,
     					 std::shared_ptr<_Stub> _service,
     					 std::shared_ptr<MainLoopContext> _context) {
     	return registerStub(_domain, _Stub::StubInterface::getInterface(), _instance, _service, _context);
     }
 
-	bool unregisterService(const std::string &_domain,
+	COMMONAPI_EXPORT bool unregisterService(const std::string &_domain,
 							const std::string &_interface,
 							const std::string &_instance) {
 		return unregisterStub(_domain, _interface, _instance);
 	}
 
-    bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
-    bool unregisterFactory(const std::string &_ipc);
+	COMMONAPI_EXPORT bool registerFactory(const std::string &_ipc, std::shared_ptr<Factory> _factory);
+	COMMONAPI_EXPORT bool unregisterFactory(const std::string &_ipc);
+
+    inline const std::string &getDefaultBinding() const { return defaultBinding_; };
 
 private:
-	void init();
-	bool readConfiguration();
-	bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
+	COMMONAPI_EXPORT bool readConfiguration();
+	COMMONAPI_EXPORT bool splitAddress(const std::string &, std::string &, std::string &, std::string &);
 
-	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
 									   const ConnectionId_t &);
-	std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT std::shared_ptr<Proxy> createProxy(const std::string &, const std::string &, const std::string &,
 									   std::shared_ptr<MainLoopContext>);
 
-	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
 										     const ConnectionId_t &);
-	std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT std::shared_ptr<Proxy> createProxyHelper(const std::string &, const std::string &, const std::string &,
 										     std::shared_ptr<MainLoopContext>);
 
 
-	bool registerStub(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT bool registerStub(const std::string &, const std::string &, const std::string &,
 					  std::shared_ptr<StubBase>, const ConnectionId_t &);
-	bool registerStub(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT bool registerStub(const std::string &, const std::string &, const std::string &,
 					  std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
-	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT bool registerStubHelper(const std::string &, const std::string &, const std::string &,
 							std::shared_ptr<StubBase>, const ConnectionId_t &);
-	bool registerStubHelper(const std::string &, const std::string &, const std::string &,
+	COMMONAPI_EXPORT bool registerStubHelper(const std::string &, const std::string &, const std::string &,
 							std::shared_ptr<StubBase>, std::shared_ptr<MainLoopContext>);
 
-	bool unregisterStub(const std::string &, const std::string &, const std::string &);
+	COMMONAPI_EXPORT bool unregisterStub(const std::string &, const std::string &, const std::string &);
 
-	std::string getLibrary(const std::string &, const std::string &, const std::string &, bool);
-	bool loadLibrary(const std::string &);
+	COMMONAPI_EXPORT std::string getLibrary(const std::string &, const std::string &, const std::string &, bool);
+	COMMONAPI_EXPORT bool loadLibrary(const std::string &);
 
 private:
 	std::string defaultBinding_;
@@ -179,12 +185,15 @@ private:
 	std::string defaultConfig_;
 
 	std::map<std::string, std::shared_ptr<Factory>> factories_;
+	std::shared_ptr<Factory> defaultFactory_;
 	std::map<std::string, std::map<bool, std::string>> libraries_;
 	std::set<std::string> loadedLibraries_; // Library name
 
+	std::mutex mutex_;
 	std::mutex factoriesMutex_;
 	std::mutex loadMutex_;
 
+	static std::map<std::string, std::string> properties_;
 	static std::shared_ptr<Runtime> theRuntime__;
 
 friend class ProxyManager;

@@ -44,7 +44,7 @@ class ReadonlyAttribute {
 	 * Get value of attribute, usually from remote. Synchronous call.
 	 *
 	 * @param value Reference to be filled with value.
-	 * @return Call status of the operation.
+	 * @param callStatus call status reference will be filled with status of the operation
 	 */
 	virtual void getValue(CallStatus &_status,
 						  _ValueType &_value,
