@@ -275,10 +275,9 @@ Runtime::getLibrary(
 	bool _isProxy) {
 
 	std::string library;
-
 	std::string address = _domain + ":" + _interface + ":" + _instance;
 
-	COMMONAPI_DEBUG("Loading proxy library for ", address);
+	COMMONAPI_DEBUG("Loading library for ", address, (_isProxy ? " proxy." : " stub."));
 
 	auto libraryIterator = libraries_.find(address);
 	if (libraryIterator != libraries_.end()) {
@@ -289,7 +288,9 @@ Runtime::getLibrary(
 		}
 	}
 
-	//TODO: check why library was being thrown away
+	// If no library was explicitely configured, check whether property
+	// "LibraryBase" is set. If yes, use it, if not build default library
+	// name.
 	library = getProperty("LibraryBase");
 	if (library != "") {
 		library = "lib" + library + "-" + defaultBinding_;
