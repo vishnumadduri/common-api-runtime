@@ -61,7 +61,9 @@ bool
 Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _factory) {
 	COMMONAPI_DEBUG("Registering factory for binding=", _binding);
 	bool isRegistered(false);
+#ifndef WIN32
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+#endif
 	if (_binding == defaultBinding_) {
 		defaultFactory_ = _factory;
 	} else {
@@ -77,7 +79,9 @@ Runtime::registerFactory(const std::string &_binding, std::shared_ptr<Factory> _
 bool
 Runtime::unregisterFactory(const std::string &_binding) {
 	COMMONAPI_DEBUG("Unregistering factory for binding=", _binding);
+#ifndef WIN32
 	std::lock_guard<std::mutex> itsLock(factoriesMutex_);
+#endif
 	if (_binding == defaultBinding_) {
 		defaultFactory_.reset();
 	} else {
@@ -91,7 +95,9 @@ Runtime::unregisterFactory(const std::string &_binding) {
  */
 void Runtime::init() {
 	static bool isInitialized(false);
+#ifndef WIN32
 	std::lock_guard<std::mutex> itsLock(mutex_);
+#endif
 	if (!isInitialized) {
 		// Determine default configuration file
 		const char *config = getenv("COMMONAPI_CONFIG");
