@@ -125,7 +125,7 @@ void Runtime::init() {
 		COMMONAPI_INFO("Using default shared library folder \'", defaultFolder_, "\'");
 		COMMONAPI_INFO("Using default configuration file \'", defaultConfig_, "\'");
 
-		isInitialized = false;
+		isInitialized = true;
 	}
 }
 
