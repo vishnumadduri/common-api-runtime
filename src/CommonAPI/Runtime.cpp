@@ -271,7 +271,7 @@ Runtime::unregisterStub(const std::string &_domain, const std::string &_interfac
 			return true;
 	}
 
-	return false;
+	return (defaultFactory_ ? defaultFactory_->unregisterStub(_domain, _interface, _instance) : false);
 }
 
 std::string
