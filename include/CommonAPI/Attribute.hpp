@@ -12,7 +12,8 @@
 
 #include <cstdint>
 #include <functional>
-#include <future>
+#define BOOST_THREAD_PROVIDES_FUTURE
+#include <boost/thread/future.hpp>
 #include <memory>
 
 #include <CommonAPI/CallInfo.hpp>
@@ -53,9 +54,9 @@ class ReadonlyAttribute {
      * Get value of attribute, usually from remote. Asynchronous call.
      *
      * @param attributeAsyncCallback std::function object for the callback to be invoked.
-     * @return std::future containing the call status of the operation.
+     * @return boost::future containing the call status of the operation.
      */
-	virtual std::future<CallStatus> getValueAsync(AttributeAsyncCallback attributeAsyncCallback,
+	virtual boost::future<CallStatus> getValueAsync(AttributeAsyncCallback attributeAsyncCallback,
 												  const CallInfo *_info = nullptr) = 0;
 };
 
@@ -93,9 +94,9 @@ class Attribute: public ReadonlyAttribute<_ValueType> {
      *
      * @param requestValue Value to be set
      * @param attributeAsyncCallback std::function object for the callback to be invoked.
-     * @return std::future containing the call status of the operation.
+     * @return boost::future containing the call status of the operation.
      */
-	virtual std::future<CallStatus> setValueAsync(const _ValueType& requestValue,
+	virtual boost::future<CallStatus> setValueAsync(const _ValueType& requestValue,
 												  AttributeAsyncCallback attributeAsyncCallback,
 												  const CallInfo *_info = nullptr) = 0;
 };

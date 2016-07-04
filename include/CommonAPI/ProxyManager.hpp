@@ -11,7 +11,8 @@
 #define COMMONAPI_PROXY_MANAGER_HPP_
 
 #include <functional>
-#include <future>
+#define BOOST_THREAD_PROVIDES_FUTURE
+#include <boost/thread/future.hpp>
 #include <string>
 #include <vector>
 
@@ -39,13 +40,13 @@ public:
     virtual const ConnectionId_t &getConnectionId() const = 0;
 
     virtual void getAvailableInstances(CommonAPI::CallStatus&, std::vector<std::string>& availableInstances) = 0;
-	virtual std::future<CallStatus> getAvailableInstancesAsync(GetAvailableInstancesCallback callback) = 0;
+	virtual boost::future<CallStatus> getAvailableInstancesAsync(GetAvailableInstancesCallback callback) = 0;
 
     virtual void getInstanceAvailabilityStatus(const std::string& instanceAddress,
                                                CallStatus& callStatus,
                                                AvailabilityStatus& availabilityStatus) = 0;
 
-    virtual std::future<CallStatus> getInstanceAvailabilityStatusAsync(const std::string&,
+    virtual boost::future<CallStatus> getInstanceAvailabilityStatusAsync(const std::string&,
                                                                        GetInstanceAvailabilityStatusCallback callback) = 0;
 
     virtual InstanceAvailabilityStatusChangedEvent& getInstanceAvailabilityStatusChangedEvent() = 0;

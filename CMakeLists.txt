@@ -94,20 +94,26 @@ IF(DLT_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_DLT")
 ENDIF(DLT_FOUND)
 
+FIND_PACKAGE(Boost REQUIRED)
+
+
 ##############################################################################
 
 include_directories(
     include
     ${DLT_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
 link_directories(
 	${DLT_LIBDIR}
 )
 
+
+
 file(GLOB CAPI_SRCS "src/CommonAPI/*.cpp")
 add_library(CommonAPI ${CAPI_SRCS})
-target_link_libraries(CommonAPI PRIVATE ${DL_LIBRARY} ${DLT_LIBRARIES})
+target_link_libraries(CommonAPI PRIVATE ${DL_LIBRARY} ${DLT_LIBRARIES} -lboost_thread)
 set_target_properties(CommonAPI PROPERTIES VERSION ${LIBCOMMONAPI_MAJOR_VERSION}.${LIBCOMMONAPI_MINOR_VERSION}.${LIBCOMMONAPI_PATCH_VERSION} SOVERSION ${LIBCOMMONAPI_MAJOR_VERSION} LINKER_LANGUAGE C)
 set_target_properties (CommonAPI PROPERTIES INTERFACE_LINK_LIBRARY "")
 
